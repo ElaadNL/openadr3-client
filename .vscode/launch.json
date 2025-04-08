@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Run file custom",
+            "type": "python",
+            "module": "${command:extension.commandvariable.file.relativeFileDotsNoExtension}",
+            "request": "launch",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
