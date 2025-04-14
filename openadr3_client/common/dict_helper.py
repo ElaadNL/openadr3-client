@@ -1,11 +1,12 @@
 from collections.abc import Callable
-from typing import Dict
 
-def union_with[K, V](merge_func: Callable[[V, V], V], first_dict: Dict[K, V], second_dict: Dict[K, V]):
+
+def union_with[K, V](on_collision: Callable[[V, V], V], first_dict: dict[K, V], second_dict: dict[K, V]) -> dict[K, V]:
+    """Merges two dictionaries, if a key collision occurs, the func is used to resolve it."""
     result = dict(first_dict)
-    for key in second_dict:
+    for key, value in second_dict.items():
         if first_value := result.get(key):
-            result[key] = merge_func(first_value, second_dict[key])
+            result[key] = on_collision(first_value, value)
         else:
-              result[key] = second_dict[key]
+            result[key] = value
     return result

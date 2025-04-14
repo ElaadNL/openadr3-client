@@ -24,6 +24,7 @@ ValidationTarget = Model | Field
 
 DefaultTarget = Model()
 
+
 class ValidatorRegistry:
     """
     Registry which stores dynamic pydantic validators associated with a specific model.
@@ -78,8 +79,8 @@ class ValidatorRegistry:
         # Afterwards, we retrieve the validators for the base class(es) of the model.
         for base_cls in model.__mro__:
             base_class_validators = cls._validators.get(base_cls, {})
-    
-            validators = union_with(lambda a, b: a + b,validators, base_class_validators)
+
+            validators = union_with(lambda a, b: a + b, validators, base_class_validators)
 
         return validators
 
