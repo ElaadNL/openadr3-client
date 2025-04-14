@@ -5,8 +5,7 @@ from enum import Enum
 from typing import Tuple, Union
 from pydantic import field_validator
 
-from openadr3_client.domain.base_model import BaseModel
-
+from openadr3_client.domain.model import ValidatableModel
 
 class EventPayloadType(str, Enum):
     SIMPLE = "SIMPLE"
@@ -45,7 +44,7 @@ class EventPayloadType(str, Enum):
     CTA2045_SET_OVERRIDE_STATUS = "CTA2045_SET_OVERRIDE_STATUS"
 
 
-class EventPayloadDescriptor(BaseModel):
+class EventPayloadDescriptor(ValidatableModel):
     """A description explaining the payload."""
 
     description: str
@@ -57,7 +56,7 @@ class EventPayloadDescriptor(BaseModel):
     currency: str
 
 
-class EventPayload[T](ABC, BaseModel):
+class EventPayload[T](ABC, ValidatableModel):
     """The type of the event payload."""
 
     type: EventPayloadType
@@ -88,7 +87,7 @@ class BoolEventPayload(EventPayload[bool]):
     """A boolean event payload."""
 
 
-class Point(BaseModel):
+class Point(ValidatableModel):
     """A point in a 2D space."""
 
     x: float

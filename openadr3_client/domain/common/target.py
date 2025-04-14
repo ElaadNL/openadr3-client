@@ -1,10 +1,10 @@
 """Contains the domain models related to targeting."""
 
 from typing import Tuple
-from openadr3_client.domain.base_model import BaseModel
+from openadr3_client.domain.model import ValidatableModel
 
 
-class Target[T](BaseModel):
+class Target[T](ValidatableModel):
     """Class representing a target for an event."""
 
     """The type of the target."""

@@ -12,10 +12,10 @@ from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.event.event_interval import EventInterval
 from openadr3_client.domain.event.event_payload import EventPayloadDescriptor
 from openadr3_client.domain.common.target import Target
-from openadr3_client.domain.base_model import BaseModel
+from openadr3_client.domain.model import ValidatableModel
 
 
-class Event[T](ABC, BaseModel):
+class Event[T](ABC, ValidatableModel):
     """Base class for events."""
 
     """The identifier for the event."""
@@ -41,34 +41,6 @@ class Event[T](ABC, BaseModel):
 
     """The intervals of the event."""
     intervals: Tuple[EventInterval, ...]
-
-    @model_validator(mode="after")
-    def validate_interval_period(self: Event) -> 'Event':
-        interval_period = self.interval_period
-        intervals = self.intervals or ()
-
-        if interval_period is None:
-            # interval period not set at top level of the event.
-            # Ensure that all intervals have the interval_period defined, to comply with the GAC specification.
-            undefined_intervals_period = [
-                i for i in intervals if i.interval_period is None
-            ]
-            if undefined_intervals_period:
-                raise ValueError(
-                    "Either 'interval_period' must be set on the event once, or every interval must have its own 'interval_period'."
-                )
-        else:
-            # interval period set at top level of the event.
-            # Ensure that all intervals do not have the interval_period defined, to comply with the GAC specification.
-            duplicate_interval_period = [
-                i for i in intervals if i.interval_period is not None
-            ]
-            if duplicate_interval_period:
-                raise ValueError(
-                    "Either 'interval_period' must be set on the event once, or every interval must have its own 'interval_period'."
-                )
-
-        return self
 
 
 class NewEvent(Event[None]):

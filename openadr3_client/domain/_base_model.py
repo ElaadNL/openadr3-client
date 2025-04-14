@@ -1,7 +1,6 @@
 from pydantic import BaseModel as PydanticBaseModel, ConfigDict, field_validator
 from pydantic.alias_generators import to_camel
 
-
 class BaseModel(PydanticBaseModel):
     """Base model for all API models."""
 
