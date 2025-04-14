@@ -1,6 +1,5 @@
 """Contains the domain models related to targeting."""
 
-from typing import Tuple
 from openadr3_client.domain.model import ValidatableModel
 
 
@@ -11,4 +10,4 @@ class Target[T](ValidatableModel):
     type: T
 
     """The value(s) of the target."""
-    values: Tuple[T, ...]
+    values: tuple[T, ...]

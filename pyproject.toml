@@ -24,3 +24,43 @@ mypy = "^1.15.0"
 ruff = "^0.11.4"
 pytest = "^8.3.5"
 pytest-cov = "^6.1.1"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+# Do not require docstrings for functions, methods and classes
+ignore = [
+    # From:https://github.com/wemake-services/wemake-django-template/blob/master/pyproject.toml
+    "A005",   # allow to shadow stdlib and builtin module names
+    "COM812", # trailing comma, conflicts with `ruff format`
+    # Different doc rules that we don't really care about:
+    "D100",
+    "D104",
+    "D106",
+    "D203",
+    "D212",
+    "D401",
+    "D404",
+    "D405",
+    "ISC001",  # implicit string concat conflicts with `ruff format`
+    "ISC003",  # prefer explicit string concat over implicit concat
+    "PLR09",   # we have our own complexity rules
+    # "PLR2004", # do not report magic numbers -> I do want to report magic numbers
+    "PLR6301", # do not require classmethod / staticmethod when self not used
+    "TRY003",  # long exception messages from `tryceratops`
+    # Start of own error codes
+    "ANN002", # Ignore unused *args
+    "ANN003", # Ignore unused **kwargs
+    "D107", # Allow undocumented __init__
+    "TC001", # Move to type checking block (does not play nice with pydantic models)
+]
+
+# Ignores S101 ("Use of 'assert' detected") for the tests.
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "ANN201"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]

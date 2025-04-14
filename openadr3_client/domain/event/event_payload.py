@@ -2,13 +2,15 @@
 
 from abc import ABC
 from enum import Enum
-from typing import Tuple, Union
+
 from pydantic import field_validator
 
 from openadr3_client.domain.model import ValidatableModel
 
 
 class EventPayloadType(str, Enum):
+    """Enumeration of the event payload types of OpenADR 3."""
+
     SIMPLE = "SIMPLE"
     PRICE = "PRICE"
     CHARGE_STATE_SETPOINT = "CHARGE_STATE_SETPOINT"
@@ -62,13 +64,24 @@ class EventPayload[T](ABC, ValidatableModel):
 
     type: EventPayloadType
     """The values of the payload."""
-    values: Tuple[T, ...]
+    values: tuple[T, ...]
 
     @field_validator("values", mode="after")
     @classmethod
-    def payload_atleast_one(cls, values: Tuple[T, ...]) -> Tuple[T, ...]:
+    def payload_atleast_one(cls, values: tuple[T, ...]) -> tuple[T, ...]:
+        """
+        Validates that atleast one value must be present inside the payload.
+
+        Args:
+            values (tuple[T, ...]): The values of the payload.
+
+        Raises:
+            ValueError: Raised if the event payload does not have one or more values.
+
+        """
         if len(values) == 0:
-            raise ValueError("Event payload must contain at least one value.")
+            err_msg = "Event payload must contain at least one value."
+            raise ValueError(err_msg)
         return values
 
 
@@ -94,7 +107,15 @@ class Point(ValidatableModel):
     x: float
     y: float
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float, y: float) -> None:
+        """
+        Constructs a point.
+
+        Args:
+            x (float): The x coordinate.
+            y (float): The y coordinate.
+
+        """
         self.x = x
         self.y = y
 
@@ -103,4 +124,4 @@ class PointEventPayload(EventPayload[Point]):
     """A point event payload."""
 
 
-AllowedPayloadInputs = Union[int, float, str, bool, Point]
+AllowedPayloadInputs = int | float | str | bool | Point

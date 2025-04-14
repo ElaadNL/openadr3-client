@@ -1,5 +1,5 @@
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from openadr3_client.domain.event.event_interval import EventInterval
 

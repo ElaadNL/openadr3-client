@@ -1,14 +1,14 @@
 """Tests the conversion module inside the application module."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 import pandas as pd
 import pytest
-from pandera.errors import SchemaError, ParserError
+from pandera.errors import ParserError, SchemaError
 
-
-from openadr3_client.input_conversion.pandas import DataFrameEventIntervalConverter
 from openadr3_client.domain.event.event_interval import EventInterval, IntervalPeriod
 from openadr3_client.domain.event.event_payload import EventPayload, EventPayloadType
+from openadr3_client.input_conversion.pandas import DataFrameEventIntervalConverter
 
 
 def get_inputs() -> list[pd.DataFrame]:
@@ -72,121 +72,113 @@ def get_expected_outputs() -> list[list[EventInterval]]:
             EventInterval(
                 id=0,
                 interval_period=IntervalPeriod(
-                    start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+                    start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(hours=1),
                     randomize_start=timedelta(minutes=5),
                 ),
-                payloads=(
-                    EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),
-                ),
+                payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
             )
         ],
         [
             EventInterval(
                 id=0,
                 interval_period=IntervalPeriod(
-                    start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+                    start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(hours=1),
                     randomize_start=timedelta(minutes=5),
                 ),
-                payloads=(
-                    EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),
-                ),
+                payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
             ),
             EventInterval(
                 id=1,
                 interval_period=IntervalPeriod(
-                    start=datetime(2024, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+                    start=datetime(2024, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(minutes=5),
                     randomize_start=timedelta(minutes=15),
                 ),
-                payloads=(
-                    EventPayload(type=EventPayloadType.PRICE, values=("test", "test2")),
-                ),
+                payloads=(EventPayload(type=EventPayloadType.PRICE, values=("test", "test2")),),
             ),
         ],
         [
             EventInterval(
                 id=0,
                 interval_period=IntervalPeriod(
-                    start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc),
+                    start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(minutes=5),
                     randomize_start=None,
                 ),
-                payloads=(
-                    EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),
-                ),
+                payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
             )
         ],
         [
             EventInterval(
                 id=0,
                 interval_period=None,
-                payloads=(
-                    EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),
-                ),
+                payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
             )
         ],
     ]
 
 
-test_cases = list(zip(get_inputs(), get_expected_outputs()))
+test_cases = list(zip(get_inputs(), get_expected_outputs(), strict=False))
 
 
-@pytest.mark.parametrize("input,expected_output", test_cases)
-def test_conversion_pandas(input: pd.DataFrame, expected_output: list[EventInterval]):
+@pytest.mark.parametrize(("df_input", "expected_output"), test_cases)
+def test_conversion_pandas(df_input: pd.DataFrame, expected_output: list[EventInterval]):
     """Tests the conversion of pandas dataframes to event intervals."""
     converter = DataFrameEventIntervalConverter()
-    intervals_pd = converter.convert(input)
+    intervals_pd = converter.convert(df_input)
     assert intervals_pd == expected_output
 
 
 def test_conversion_pandas_no_timezone_offset_datetime():
-    """Tests the conversion of a dataframe with no timezone info in the datetime.
+    """
+    Tests the conversion of a dataframe with no timezone info in the datetime.
 
-    This action should result in a validation error, at timezone information is required."""
-    with pytest.raises(ExceptionGroup) as exception_group:
-        input = pd.DataFrame(
-            {
-                "start": [pd.Timestamp("2023-01-01 00:00:00.000").as_unit("ns")],
-                "duration": [pd.Timedelta(minutes=5)],
-                "type": ["SIMPLE"],
-                "values": [
-                    [1.0, 2.0],
-                ],
-            },
-            index=[0],
-        )
-
-        converter = DataFrameEventIntervalConverter()
-        _ = converter.convert(input)
-
-    assert exception_group.group_contains(
-        ParserError, match="When time_zone_agnostic=True, data must either be"
+    This action should result in a validation error, at timezone information is required.
+    """
+    df_input = pd.DataFrame(
+        {
+            "start": [pd.Timestamp("2023-01-01 00:00:00.000").as_unit("ns")],
+            "duration": [pd.Timedelta(minutes=5)],
+            "type": ["SIMPLE"],
+            "values": [
+                [1.0, 2.0],
+            ],
+        },
+        index=[0],
     )
+
+    converter = DataFrameEventIntervalConverter()
+
+    with pytest.raises(ExceptionGroup) as exception_group:
+        _ = converter.convert(df_input)
+
+    assert exception_group.group_contains(ParserError, match="When time_zone_agnostic=True, data must either be")
 
 
 def test_conversion_pandas_no_payloads_error():
-    """Tests the conversion of a dataframe with no payloads.
+    """
+    Tests the conversion of a dataframe with no payloads.
 
-    This action should result in a validation error, as atleast a single payload must be present."""
-    with pytest.raises(ExceptionGroup) as exception_group:
-        input = pd.DataFrame(
-            {
-                "start": pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
-                "duration": [pd.Timedelta(minutes=5)],
-                "type": "SIMPLE",
-                # Dataframes already validate that the count of values must be equal.
-                # So we validate on a 'malicious compliance' case, in which a value is provided
-                # that does not represent a value.
-                "values": [""],
-            },
-            index=[0],
-        )
-
-        converter = DataFrameEventIntervalConverter()
-        _ = converter.convert(input)
-
-    assert exception_group.group_contains(
-        SchemaError, match="payload_values_atleast_one"
+    This action should result in a validation error, as atleast a single payload must be present.
+    """
+    df_input = pd.DataFrame(
+        {
+            "start": pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
+            "duration": [pd.Timedelta(minutes=5)],
+            "type": "SIMPLE",
+            # Dataframes already validate that the count of values must be equal.
+            # So we validate on a 'malicious compliance' case, in which a value is provided
+            # that does not represent a value.
+            "values": [""],
+        },
+        index=[0],
     )
+
+    converter = DataFrameEventIntervalConverter()
+
+    with pytest.raises(ExceptionGroup) as exception_group:
+        _ = converter.convert(df_input)
+
+    assert exception_group.group_contains(SchemaError, match="payload_values_atleast_one")
