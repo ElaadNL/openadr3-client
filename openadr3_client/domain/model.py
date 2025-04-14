@@ -3,6 +3,7 @@ from typing import ClassVar
 
 from pydantic import model_validator
 
+from openadr3_client.common.dict_helper import union_with
 from openadr3_client.domain._base_model import BaseModel
 
 
@@ -22,7 +23,6 @@ class Field:
 ValidationTarget = Model | Field
 
 DefaultTarget = Model()
-
 
 class ValidatorRegistry:
     """
@@ -72,7 +72,16 @@ class ValidatorRegistry:
             dict[ValidationTarget, tuple[Callable, ...]]: The validators to execute on the model.
 
         """
-        return cls._validators.get(model, {})
+        # First we retrieve the validators for the specific type.
+        validators = cls._validators.get(model, {})
+
+        # Afterwards, we retrieve the validators for the base class(es) of the model.
+        for base_cls in model.__mro__:
+            base_class_validators = cls._validators.get(base_cls, {})
+    
+            validators = union_with(lambda a, b: a + b,validators, base_class_validators)
+
+        return validators
 
 
 class ValidatableModel(BaseModel):
