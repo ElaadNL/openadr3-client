@@ -7,6 +7,7 @@ from pydantic import field_validator
 
 from openadr3_client.domain.model import ValidatableModel
 
+
 class EventPayloadType(str, Enum):
     SIMPLE = "SIMPLE"
     PRICE = "PRICE"

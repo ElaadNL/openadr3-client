@@ -20,6 +20,7 @@ class IntervalPeriod(ValidatableModel):
         randomize_start (timedelta | None): Optional randomization window for the start time.
             None indicates no randomization. Defaults to None.
     """
+
     start: AwareDatetime
     duration: timedelta
     randomize_start: Optional[timedelta] = None

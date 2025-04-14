@@ -24,6 +24,7 @@ def test_new_event_no_intervals() -> None:
             intervals=(),
         )
 
+
 def test_new_event_creation_guard() -> None:
     """Test that validates that the NewEvent creation guard.
 

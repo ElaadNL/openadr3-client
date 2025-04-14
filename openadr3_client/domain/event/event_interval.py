@@ -13,7 +13,9 @@ class EventInterval(ValidatableModel):
 
     @field_validator("payloads", mode="after")
     @classmethod
-    def payload_atleast_one(cls, payloads: Tuple[EventPayload, ...]) -> Tuple[EventPayload, ...]:
+    def payload_atleast_one(
+        cls, payloads: Tuple[EventPayload, ...]
+    ) -> Tuple[EventPayload, ...]:
         if len(payloads) == 0:
             raise ValueError(
                 "Event interval payload must contain at least one payload."

@@ -1,10 +1,11 @@
-from dataclasses import dataclass
-from typing import Annotated, Callable, Dict, Literal, Tuple, Type, Union
+from typing import Callable, Dict, Tuple, Type
 from pydantic import model_validator
 from openadr3_client.domain._base_model import BaseModel
 
+
 class Model:
     pass
+
 
 class Field:
     field_name: str
@@ -12,11 +13,15 @@ class Field:
     def __init__(self, field_name: str) -> None:
         self.field_name = field_name
 
+
 ValidationTarget = Model | Field
 
+
 class ValidatorRegistry:
-    _validators: Dict[Type["ValidatableModel"], Dict[ValidationTarget, Tuple[Callable, ...]]] = {}
-    
+    _validators: Dict[
+        Type["ValidatableModel"], Dict[ValidationTarget, Tuple[Callable, ...]]
+    ] = {}
+
     @classmethod
     def register(
         self,
@@ -24,6 +29,7 @@ class ValidatorRegistry:
         target: ValidationTarget = Model(),
     ) -> Callable:
         """Decorator to register validators for specific models and fields"""
+
         def decorator(validator: Callable) -> Callable:
             if target_dict := self._validators.get(model):
                 if existing_validators := target_dict.get(target):
@@ -35,23 +41,24 @@ class ValidatorRegistry:
                     # No validator exists yet for this target in the model.
                     self._validators[model][target] = (validator,)
             else:
-                self._validators[model] = {
-                    target: (validator,)
-                }
-            
+                self._validators[model] = {target: (validator,)}
+
             return validator
+
         return decorator
-    
+
     @classmethod
-    def get_validators(self, model: Type["ValidatableModel"]) -> Dict[ValidationTarget, Tuple[Callable, ...]]:
+    def get_validators(
+        self, model: Type["ValidatableModel"]
+    ) -> Dict[ValidationTarget, Tuple[Callable, ...]]:
         return self._validators.get(model, {})
-    
-    
+
+
 class ValidatableModel(BaseModel):
     """Base class for all models that should support dynamic validators"""
 
-    @model_validator(mode='after')
-    def run_dynamic_validators(self) -> 'ValidatableModel':
+    @model_validator(mode="after")
+    def run_dynamic_validators(self) -> "ValidatableModel":
         current_value = self
         # Run model-level validators
         for key, validators in ValidatorRegistry.get_validators(self.__class__).items():
@@ -63,5 +70,5 @@ class ValidatableModel(BaseModel):
                     for validator in validators:
                         current_field_value = getattr(self, f_name)
                         setattr(self, f_name, validator(current_field_value))
-                        
+
         return current_value

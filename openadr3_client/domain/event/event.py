@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from threading import Lock
 from typing import Iterator, Optional, Tuple
 
-from pydantic import AwareDatetime, Field, PrivateAttr, field_validator, model_validator
+from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
 
 from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.event.event_interval import EventInterval

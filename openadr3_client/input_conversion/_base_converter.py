@@ -41,7 +41,9 @@ class BaseEventIntervalConverter[INPUTTYPE, ROWTYPE](ABC):  # type: ignore
         # We could support multiple, but we dont need to for the GAC spec.
         # So this would be a nice improvement further down the line.
         payload: EventPayload = EventPayload.model_validate(row)
-        return EventInterval(id=id, interval_period=interval_period, payloads=(payload,))
+        return EventInterval(
+            id=id, interval_period=interval_period, payloads=(payload,)
+        )
 
     def convert(self, input: INPUTTYPE) -> List[EventInterval]:
         """Convert the input to a list of event intervals"""
