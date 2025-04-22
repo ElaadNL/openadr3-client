@@ -11,7 +11,12 @@ dependencies = [
     "pandas (>=2.2.3,<3.0.0)",
     "pydantic (>=2.11.2,<3.0.0)",
     "pandera[mypy] (>=0.23.1,<0.24.0)",
-    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)"
+    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
+    "python-decouple (>=3.8,<4.0)",
+    "oauthlib[signedtoken] (>=3.2.2,<4.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "requests-oauthlib (>=2.0.0,<3.0.0)",
+    "cachetools (>=5.5.2,<6.0.0)",
 ]
 packages = [{include = "openadr3_client"}]
 
