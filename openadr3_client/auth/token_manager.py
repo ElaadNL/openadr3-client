@@ -1,5 +1,6 @@
+from datetime import datetime, timedelta, timezone
 from threading import Lock
-from typing import Optional
+from typing import Optional, Tuple
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
@@ -15,7 +16,7 @@ class OAuthTokenManager:
         self.oauth = OAuth2Session(client=self.client)
 
         self._lock = Lock()
-        self._cache: Optional[TTLCache] = None
+        self._cached_token: Optional[Tuple[datetime, str]] = None
 
     def get_access_token(self) -> str:
         """Retrieves an access token from the token manager.
@@ -27,28 +28,30 @@ class OAuthTokenManager:
             str: The access token.
         """
         with self._lock:
-            if self._cache:
-                token = self._cache.get("token")
+            if self._cached_token:
+                expiration_time, token = self._cached_token
 
-                if token:
-                    logger.debug("OAuthTokenManager - Returning cached access token")
+                if expiration_time > datetime.now(tz=timezone.utc):
                     return token
                 
-            logger.debug("OAuthTokenManager - Fetching new access token")
+                # If we reach here, the token has reached its expiration time.
+                # Remove the token and fetch a new one.
+                self._cached_token = None
+                
             return self._get_new_access_token()
     
     def _get_new_access_token(self) -> str:
         token_response = self.oauth.fetch_token(token_url=self.token_url, client_secret=self.client_secret)
 
-        # Calculate dynamic TTL (half of token lifetime)
+        # Calculate expiration time (half of token lifetime)
         expires_in_seconds = token_response.get("expires_in", 3600)
-        self._cache = TTLCache(maxsize=1, ttl=expires_in_seconds // 2)
-
+        expiration_time = datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in_seconds // 2)
+    
         access_token = token_response.get("access_token")
 
         if not access_token:
             logger.error("OAuthTokenManager - access_token not present in token response")
             raise ValueError("Access token was not present in token response")
 
-        self._cache['token'] = access_token
+        self._cached_token = (expiration_time, access_token)
         return access_token
