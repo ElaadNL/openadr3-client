@@ -48,7 +48,7 @@ def test_new_event_negative_priority() -> None:
 
 def test_new_event_creation_guard() -> None:
     """
-    Test that validates that the NewEvent creation guard.
+    Test that validates the NewEvent creation guard.
 
     The NewEvent creation guard should only allow invocation inside the context manager
     exactly once if no exception is raised in the yield method.

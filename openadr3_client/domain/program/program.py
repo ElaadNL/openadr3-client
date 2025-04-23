@@ -8,7 +8,7 @@ from threading import Lock
 from typing import TYPE_CHECKING
 
 import pycountry
-from pydantic import AnyUrl, AwareDatetime, Field, PrivateAttr, field_validator
+from pydantic import AnyUrl, AwareDatetime, Field, PrivateAttr, field_validator, model_validator
 from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client.domain.common.interval_period import IntervalPeriod
@@ -74,13 +74,23 @@ class Program[T](ABC, ValidatableModel):
     targets: tuple[Target, ...] | None = None
     """The targets of the program."""
 
-    @field_validator("principal_sub_division")
-    def validate_iso_3166_2(self, v: str | None) -> str | None:
+    @model_validator(mode="after")
+    def validate_iso_3166_2(self) -> "Program":
         """Validates that principal_sub_division is iso-3166-2 compliant."""
-        if v and not pycountry.subdivisions.match(v):
-            exc_msg = f"{v} is not a valid ISO 3166-2 division code."
-            raise ValueError(exc_msg)
-        return v
+        if self.principal_sub_division:
+            if not self.country:
+                exc_msg = "principal sub division cannot be set if country is not set."
+                raise ValueError(exc_msg)
+            else:
+                subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
+
+                principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
+                
+                if self.principal_sub_division not in principals_only:
+                    exc_msg = f"{self.principal_sub_division} is not a valid ISO 3166-2 division code for the program country {self.country}."
+                    raise ValueError(exc_msg)
+
+        return self
 
 
 class NewProgram(Program[None]):
