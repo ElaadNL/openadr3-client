@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from threading import Lock
 from typing import TYPE_CHECKING
 
-from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
+from pydantic import AwareDatetime, Field, NonNegativeInt, PrivateAttr, field_validator
 
 from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.common.target import Target
@@ -22,42 +22,42 @@ if TYPE_CHECKING:
 class Event[T](ABC, ValidatableModel):
     """Base class for events."""
 
-    """The identifier for the event."""
     id: T
+    """The identifier for the event."""
 
-    """Identifier of the program this event belongs to."""
     program_id: str = Field(alias="programID")
+    """Identifier of the program this event belongs to."""
 
-    """The name of the event."""
     event_name: str | None = None
+    """The name of the event."""
 
+    priority: NonNegativeInt | None = None
     """The priority of the event, less is higher priority."""
-    priority: int | None = None
 
-    """The targets of the event."""
     targets: tuple[Target, ...] | None = None
+    """The targets of the event."""
 
-    """The payload descriptors of the event."""
     payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    """The payload descriptors of the event."""
 
-    """The interval period of the event."""
     interval_period: IntervalPeriod | None = None
+    """The interval period of the event."""
 
-    """The intervals of the event."""
     intervals: tuple[EventInterval, ...]
+    """The intervals of the event."""
 
 
 class NewEvent(Event[None]):
     """Class representing a new event not yet pushed to the VTN."""
 
+    _created: bool = PrivateAttr(default=False)
     """Private flag to track if NewEvent has been used to create an event in the VTN.
 
     If this flag is set to true, calls to create an event inside the VTN with
     this NewEvent object will be rejected."""
-    _created: bool = PrivateAttr(default=False)
 
-    """Lock object to synchronize access to with_creation_guard."""
     _lock: Lock = PrivateAttr(default_factory=Lock)
+    """Lock object to synchronize access to with_creation_guard."""
 
     @contextmanager
     def with_creation_guard(self) -> Iterator[None]:

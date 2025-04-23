@@ -11,7 +11,9 @@ dependencies = [
     "pandas (>=2.2.3,<3.0.0)",
     "pydantic (>=2.11.2,<3.0.0)",
     "pandera[mypy] (>=0.23.1,<0.24.0)",
-    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)"
+    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
+    "pydantic-extra-types (>=2.10.3,<3.0.0)",
+    "pycountry (>=24.6.1,<25.0.0)"
 ]
 packages = [{include = "openadr3_client"}]
 
@@ -56,6 +58,7 @@ ignore = [
     "ANN003", # Ignore unused **kwargs
     "D107", # Allow undocumented __init__
     "TC001", # Move to type checking block (does not play nice with pydantic models)
+    "TC002", # Move to type checking block (does not play nice with pydantic models)
 ]
 
 # Ignores S101 ("Use of 'assert' detected") for the tests.

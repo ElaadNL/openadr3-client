@@ -51,20 +51,22 @@ class EventPayloadDescriptor(ValidatableModel):
     """A description explaining the payload."""
 
     description: str
-    """The type of payload being described."""
+    """A description of the payload parameter."""
     payload_type: EventPayloadType
-    """The units of the payload."""
+    """The type of payload being described."""
     units: str
-    """The currency of the payload."""
+    """The units of the payload."""
     currency: str
+    """The currency of the payload."""
 
 
 class EventPayload[T](ABC, ValidatableModel):
     """The type of the event payload."""
 
     type: EventPayloadType
-    """The values of the payload."""
+    """The type of payload."""
     values: tuple[T, ...]
+    """The value(s) of the payload."""
 
     @field_validator("values", mode="after")
     @classmethod
