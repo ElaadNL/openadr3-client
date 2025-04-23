@@ -1,5 +1,9 @@
 """Module containing common filters for VTN requests."""
 
+from dataclasses import dataclass
+
+
+@dataclass
 class TargetFilter:
     """Represents a single target filter on a request to the VTN."""
     target_type: str
@@ -7,6 +11,7 @@ class TargetFilter:
     target_values: list[str]
     """The target values to filter on, treated as a logical OR as per the OpenADR3 specification."""
 
+@dataclass
 class PaginationFilter:
     """Represents a pagination filter on a request to the VTN."""
     skip: int
