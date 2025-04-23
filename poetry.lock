@@ -1376,6 +1376,18 @@ doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphin
 test = ["coverage[toml] (>=7)", "mypy (>=1.2.0) ; platform_python_implementation != \"PyPy\"", "pytest (>=7)"]
 
 [[package]]
+name = "types-oauthlib"
+version = "3.2.0.20250408"
+description = "Typing stubs for oauthlib"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "types_oauthlib-3.2.0.20250408-py3-none-any.whl", hash = "sha256:1a41f0e18beeae05764f910ae59cc5df877807ae8c9e6f03f5f3af15ae4b9c01"},
+    {file = "types_oauthlib-3.2.0.20250408.tar.gz", hash = "sha256:8fceb310ee5da1f767428a3cb932cba60b281259322743e4b1321409b911ae0e"},
+]
+
+[[package]]
 name = "types-pytz"
 version = "2025.2.0.20250326"
 description = "Typing stubs for pytz"
@@ -1386,6 +1398,37 @@ files = [
     {file = "types_pytz-2025.2.0.20250326-py3-none-any.whl", hash = "sha256:3c397fd1b845cd2b3adc9398607764ced9e578a98a5d1fbb4a9bc9253edfb162"},
     {file = "types_pytz-2025.2.0.20250326.tar.gz", hash = "sha256:deda02de24f527066fc8d6a19e284ab3f3ae716a42b4adb6b40e75e408c08d36"},
 ]
+
+[[package]]
+name = "types-requests"
+version = "2.32.0.20250328"
+description = "Typing stubs for requests"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "types_requests-2.32.0.20250328-py3-none-any.whl", hash = "sha256:72ff80f84b15eb3aa7a8e2625fffb6a93f2ad5a0c20215fc1dcfa61117bcb2a2"},
+    {file = "types_requests-2.32.0.20250328.tar.gz", hash = "sha256:c9e67228ea103bd811c96984fac36ed2ae8da87a36a633964a21f199d60baf32"},
+]
+
+[package.dependencies]
+urllib3 = ">=2"
+
+[[package]]
+name = "types-requests-oauthlib"
+version = "2.0.0.20250306"
+description = "Typing stubs for requests-oauthlib"
+optional = false
+python-versions = ">=3.9"
+groups = ["dev"]
+files = [
+    {file = "types_requests_oauthlib-2.0.0.20250306-py3-none-any.whl", hash = "sha256:37707de81d9ce54894afcccd70d4a845dbe4c59e747908faaeba59a96453d993"},
+    {file = "types_requests_oauthlib-2.0.0.20250306.tar.gz", hash = "sha256:92e5f1ed35689b1804fdcd60b7ac39b0bd440a4b96693685879bc835b334797f"},
+]
+
+[package.dependencies]
+types-oauthlib = "*"
+types-requests = "*"
 
 [[package]]
 name = "typing-extensions"
@@ -1552,4 +1595,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <4"
-content-hash = "fc82be40e2fd90c28b358303299e04a0d992d50cad7e4254e1eac8db56fd8443"
+content-hash = "ad1d3538ba86a7f5b85066153a606d4553d799eb8514573108308b26fef64a2c"

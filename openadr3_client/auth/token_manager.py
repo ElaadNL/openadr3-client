@@ -14,7 +14,9 @@ class OAuthTokenManager:
         self.client_id = client_id
         self.client_secret = client_secret
         self.token_url = token_url
-        self.client = BackendApplicationClient(client_id=self.client_id, scope=scopes)
+        self.client = BackendApplicationClient(
+            client_id=self.client_id, scope=" ".join(scopes) if scopes is not None else None
+        )
         self.oauth = OAuth2Session(client=self.client)
 
         self._lock = Lock()
