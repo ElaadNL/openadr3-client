@@ -4,15 +4,14 @@ from typing import Optional, Tuple
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
-from cachetools import TTLCache
 from openadr3_client.logging import logger
 
 class OAuthTokenManager:
-    def __init__(self, client_id: str, client_secret: str, token_url: str) -> None:
+    def __init__(self, client_id: str, client_secret: str, token_url: str, scopes: Optional[list[str]]) -> None:
         self.client_id = client_id
         self.client_secret = client_secret
         self.token_url = token_url
-        self.client = BackendApplicationClient(client_id=self.client_id)
+        self.client = BackendApplicationClient(client_id=self.client_id, scope=scopes)
         self.oauth = OAuth2Session(client=self.client)
 
         self._lock = Lock()
@@ -41,7 +40,8 @@ class OAuthTokenManager:
             return self._get_new_access_token()
     
     def _get_new_access_token(self) -> str:
-        token_response = self.oauth.fetch_token(token_url=self.token_url, client_secret=self.client_secret)
+        token_response = self.oauth.fetch_token(token_url=self.token_url,
+                                                client_secret=self.client_secret)
 
         # Calculate expiration time (half of token lifetime)
         expires_in_seconds = token_response.get("expires_in", 3600)

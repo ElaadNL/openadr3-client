@@ -7,4 +7,5 @@ from decouple import config
 OAUTH_TOKEN_ENDPOINT = config("OAUTH_TOKEN_ENDPOINT")
 OAUTH_CLIENT_ID = config('OAUTH_CLIENT_ID')
 OAUTH_CLIENT_SECRET = config('OAUTH_CLIENT_SECRET')
+OAUTH_SCOPES = config("OAUTH_SCOPES", default="")
 
