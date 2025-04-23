@@ -23,6 +23,28 @@ def test_new_event_no_intervals() -> None:
             intervals=(),
         )
 
+def test_new_event_negative_priority() -> None:
+    """Test that validates that a priority must be a positive number for events."""
+    with pytest.raises(ValidationError, match="Input should be greater than or equal to 0"):
+        NewEvent(
+            id=None,
+            programID="test-program",
+            event_name=None,
+            priority=-1,
+            targets=(),
+            payload_descriptor=(),
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+            ),
+            intervals=(
+                EventInterval(
+                    id=0,
+                    interval_period=None,
+                    payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
+                ),
+            ),
+        )
 
 def test_new_event_creation_guard() -> None:
     """
