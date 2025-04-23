@@ -1,1 +1,1 @@
-"""OpenADR3 client root module"""
+"""OpenADR3 client root module."""
