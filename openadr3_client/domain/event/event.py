@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING
 
 from pydantic import AwareDatetime, Field, NonNegativeInt, PrivateAttr, field_validator
 
+from openadr3_client.domain.common.interval import Interval
 from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.common.target import Target
-from openadr3_client.domain.event.event_interval import EventInterval
-from openadr3_client.domain.event.event_payload import EventPayloadDescriptor
+from openadr3_client.domain.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.domain.model import ValidatableModel
 
 if TYPE_CHECKING:
@@ -25,7 +25,7 @@ class Event[T](ABC, ValidatableModel):
     id: T
     """The identifier for the event."""
 
-    program_id: str = Field(alias="programID")
+    program_id: str = Field(alias="programID", min_length=1, max_length=128)
     """Identifier of the program this event belongs to."""
 
     event_name: str | None = None
@@ -43,7 +43,7 @@ class Event[T](ABC, ValidatableModel):
     interval_period: IntervalPeriod | None = None
     """The interval period of the event."""
 
-    intervals: tuple[EventInterval, ...]
+    intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
 
 
@@ -86,16 +86,16 @@ class NewEvent(Event[None]):
 
     @field_validator("intervals", mode="after")
     @classmethod
-    def atleast_one_interval(cls, intervals: tuple[EventInterval, ...]) -> tuple[EventInterval, ...]:
+    def atleast_one_interval(cls, intervals: tuple[Interval, ...]) -> tuple[Interval, ...]:
         """
         Validatest that an event has atleast one interval defined.
 
         Args:
-            intervals (tuple[EventInterval, ...]): The intervals of the event.
+            intervals (tuple[Interval, ...]): The intervals of the event.
 
         """
         if len(intervals) == 0:
-            err_msg = "NewEvent must contain at least one event interval."
+            err_msg = "NewEvent must contain at least one interval."
             raise ValueError(err_msg)
         return intervals
 

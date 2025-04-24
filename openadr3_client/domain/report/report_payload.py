@@ -6,11 +6,10 @@ from enum import Enum
 from pydantic import field_validator
 
 from openadr3_client.domain.common.payload import _BasePayload
-from openadr3_client.domain.model import ValidatableModel
 
 
-class EventPayloadType(str, Enum):
-    """Enumeration of the event payload types of OpenADR 3."""
+class ReportPayloadType(str, Enum):
+    """Enumeration of the report payload types of OpenADR 3."""
 
     SIMPLE = "SIMPLE"
     PRICE = "PRICE"
@@ -48,17 +47,6 @@ class EventPayloadType(str, Enum):
     CTA2045_SET_OVERRIDE_STATUS = "CTA2045_SET_OVERRIDE_STATUS"
 
 
-class EventPayloadDescriptor(ValidatableModel):
-    """A description explaining the payload."""
+class ReportPayload[T](_BasePayload[ReportPayloadType, T]):
+    """The type of the report payload."""
 
-    description: str
-    """A description of the payload parameter."""
-    payload_type: EventPayloadType
-    """The type of payload being described."""
-    units: str
-    """The units of the payload."""
-    currency: str
-    """The currency of the payload."""
-
-class EventPayload[T](_BasePayload[EventPayloadType, T]):
-    """The type of the event payload."""

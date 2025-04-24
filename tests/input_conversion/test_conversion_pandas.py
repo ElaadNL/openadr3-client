@@ -6,7 +6,8 @@ import pandas as pd
 import pytest
 from pandera.errors import ParserError, SchemaError
 
-from openadr3_client.domain.event.event_interval import EventInterval, IntervalPeriod
+from openadr3_client.domain.common.interval import Interval
+from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.event.event_payload import EventPayload, EventPayloadType
 from openadr3_client.input_conversion.pandas import DataFrameEventIntervalConverter
 
@@ -65,11 +66,11 @@ def get_inputs() -> list[pd.DataFrame]:
     ]
 
 
-def get_expected_outputs() -> list[list[EventInterval]]:
+def get_expected_outputs() -> list[list[Interval[EventPayload]]]:
     """Returns a list of dataframe outputs for the test."""
     return [
         [
-            EventInterval(
+            Interval(
                 id=0,
                 interval_period=IntervalPeriod(
                     start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
@@ -80,7 +81,7 @@ def get_expected_outputs() -> list[list[EventInterval]]:
             )
         ],
         [
-            EventInterval(
+            Interval(
                 id=0,
                 interval_period=IntervalPeriod(
                     start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
@@ -89,7 +90,7 @@ def get_expected_outputs() -> list[list[EventInterval]]:
                 ),
                 payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
             ),
-            EventInterval(
+            Interval(
                 id=1,
                 interval_period=IntervalPeriod(
                     start=datetime(2024, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
@@ -100,7 +101,7 @@ def get_expected_outputs() -> list[list[EventInterval]]:
             ),
         ],
         [
-            EventInterval(
+            Interval(
                 id=0,
                 interval_period=IntervalPeriod(
                     start=datetime(2023, 1, 1, 0, 0, 0, 0, tzinfo=UTC),
@@ -111,7 +112,7 @@ def get_expected_outputs() -> list[list[EventInterval]]:
             )
         ],
         [
-            EventInterval(
+            Interval(
                 id=0,
                 interval_period=None,
                 payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
@@ -124,7 +125,7 @@ test_cases = list(zip(get_inputs(), get_expected_outputs(), strict=False))
 
 
 @pytest.mark.parametrize(("df_input", "expected_output"), test_cases)
-def test_conversion_pandas(df_input: pd.DataFrame, expected_output: list[EventInterval]):
+def test_conversion_pandas(df_input: pd.DataFrame, expected_output: list[Interval[EventPayload]]):
     """Tests the conversion of pandas dataframes to event intervals."""
     converter = DataFrameEventIntervalConverter()
     intervals_pd = converter.convert(df_input)

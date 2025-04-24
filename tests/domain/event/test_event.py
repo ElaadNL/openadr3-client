@@ -3,15 +3,15 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
+from openadr3_client.domain.common.interval import Interval
 from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.event.event import NewEvent
-from openadr3_client.domain.event.event_interval import EventInterval
 from openadr3_client.domain.event.event_payload import EventPayload, EventPayloadType
 
 
 def test_new_event_no_intervals() -> None:
     """Test that validates that intervals are required for new events."""
-    with pytest.raises(ValidationError, match="NewEvent must contain at least one event interval."):
+    with pytest.raises(ValidationError, match="NewEvent must contain at least one interval."):
         _ = NewEvent(
             id=None,
             programID="test-program",
@@ -39,7 +39,7 @@ def test_new_event_negative_priority() -> None:
                 duration=timedelta(minutes=5),
             ),
             intervals=(
-                EventInterval(
+                Interval(
                     id=0,
                     interval_period=None,
                     payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
@@ -67,7 +67,7 @@ def test_new_event_creation_guard() -> None:
             duration=timedelta(minutes=5),
         ),
         intervals=(
-            EventInterval(
+            Interval(
                 id=0,
                 interval_period=None,
                 payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),

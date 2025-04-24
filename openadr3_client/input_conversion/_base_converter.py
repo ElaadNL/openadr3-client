@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from openadr3_client.domain.event.event_interval import EventInterval, IntervalPeriod
+from openadr3_client.domain.common.interval_period import IntervalPeriod
+from openadr3_client.domain.common.interval import Interval
 from openadr3_client.domain.event.event_payload import EventPayload
 
 
@@ -31,17 +32,17 @@ class BaseEventIntervalConverter[INPUTTYPE, ROWTYPE](ABC):
     @abstractmethod
     def validate_input(self, given_input: INPUTTYPE) -> ValidationOutput: ...
 
-    def _do_convert(self, interval_id: int, row: ROWTYPE) -> EventInterval:
+    def _do_convert(self, interval_id: int, row: ROWTYPE) -> Interval[EventPayload]:
         interval_period = IntervalPeriod.model_validate(row) if self.has_interval_period(row) else None
         # For now, we are assuming that there will only be a single payload per interval.
         # We could support multiple, but we dont need to for the GAC spec.
         # So this would be a nice improvement further down the line.
         payload: EventPayload = EventPayload.model_validate(row)
-        return EventInterval(id=interval_id, interval_period=interval_period, payloads=(payload,))
+        return Interval(id=interval_id, interval_period=interval_period, payloads=(payload,))
 
-    def convert(self, given_input: INPUTTYPE) -> list[EventInterval]:
+    def convert(self, given_input: INPUTTYPE) -> list[Interval[EventPayload]]:
         """Convert the input to a list of event intervals."""
-        intervals: list[EventInterval] = []
+        intervals: list[Interval[EventPayload]] = []
         errors = []
 
         validation_result = self.validate_input(given_input)
