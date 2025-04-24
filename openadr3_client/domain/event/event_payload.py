@@ -2,6 +2,7 @@
 
 from abc import ABC
 from enum import Enum
+from typing import Literal
 
 from pydantic import field_validator
 
@@ -50,7 +51,8 @@ class EventPayloadType(str, Enum):
 
 class EventPayloadDescriptor(ValidatableModel):
     """A description explaining the payload."""
-
+    object_type = Literal["EVENT_PAYLOAD_DESCRIPTOR"]
+    """The object type of the payload descriptor."""
     description: str
     """A description of the payload parameter."""
     payload_type: EventPayloadType

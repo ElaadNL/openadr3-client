@@ -1,10 +1,9 @@
-from abc import ABC
 from pydantic import field_validator
 from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.common.payload import _BasePayload
 from openadr3_client.domain.model import ValidatableModel
 
-class Interval[PAYLOAD: _BasePayload](ABC, ValidatableModel):
+class Interval[PAYLOAD: _BasePayload](ValidatableModel):
     """
     Represents an interval within OpenADR 3.
 

@@ -32,7 +32,6 @@ class _BasePayload[PAYLOAD_TYPE, T](ABC, ValidatableModel):
 class StringPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, str]):
     """A string payload."""
 
-
 class IntPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, int]):
     """An integer payload."""
 

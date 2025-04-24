@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from threading import Lock
 from typing import TYPE_CHECKING
 
-from pydantic import AwareDatetime, Field, PrivateAttr
+from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
 
 from openadr3_client.domain.common.interval import Interval
 from openadr3_client.domain.common.interval_period import IntervalPeriod
@@ -52,6 +52,7 @@ class Report[T](ABC, ValidatableModel):
     """The payload descriptors of the report."""
 
     resources: tuple[ReportResource, ...]
+    """The resources of the report."""
 
 
 class NewReport(Report[None]):
@@ -90,6 +91,21 @@ class NewReport(Report[None]):
             except Exception:
                 self._created = False
                 raise
+
+    @field_validator("intervals", mode="after")
+    @classmethod
+    def atleast_one_resource(cls, resources: tuple[ReportResource, ...]) -> tuple[ReportResource, ...]:
+        """
+        Validatest that a report has atleast one resource defined.
+
+        Args:
+            resources (tuple[ReportResource, ...]): The resources of the report.
+
+        """
+        if len(resources) == 0:
+            err_msg = "NewReport must contain at least one resource."
+            raise ValueError(err_msg)
+        return resources
 
 
 class ExistingReport(Report[str]):
