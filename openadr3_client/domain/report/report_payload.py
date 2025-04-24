@@ -1,11 +1,11 @@
 """Contains the domain models related to event payloads."""
 
 from enum import Enum
-from typing import Literal
+from typing import Literal, final
 
-from pydantic import Field
+from pydantic import Field, computed_field
 
-from openadr3_client.domain.common.payload import _BasePayload
+from openadr3_client.domain.common.payload import _BasePayload, AllowedPayloadInputs, BasePayloadDescriptor
 from openadr3_client.domain.model import ValidatableModel
 
 class ReportReadingType(str, Enum):
@@ -46,9 +46,9 @@ class ReportPayloadType(str, Enum):
     IMPORT_RESERVATION_FEE = "IMPORT_RESERVATION_FEE"
     EXPORT_RESERVATION_CAPACITY = "EXPORT_RESERVATION_CAPACITY"
     EXPORT_RESERVATION_FEE = "EXPORT_RESERVATION_FEE"
-
-class ReportPayloadDescriptor(ValidatableModel):
-    object_type = Literal["REPORT_PAYLOAD_DESCRIPTOR"]
+    
+@final
+class ReportPayloadDescriptor(BasePayloadDescriptor):
     """The object type of the payload descriptor."""
     description: str
     """A description of the payload parameter."""
@@ -62,7 +62,12 @@ class ReportPayloadDescriptor(ValidatableModel):
     """The accuracy of the payload values."""
     confidence: int = Field(ge=0, le=100)
 
+    @property
+    @computed_field
+    def object_type(self) -> str:
+        return "REPORT_PAYLOAD_DESCRIPTOR"
 
-class ReportPayload[T](_BasePayload[ReportPayloadType, T]):
+@final
+class ReportPayload[T: AllowedPayloadInputs](_BasePayload[ReportPayloadType, T]):
     """The type of the report payload."""
 

@@ -2,11 +2,11 @@
 
 from abc import ABC
 from enum import Enum
-from typing import Literal
+from typing import Literal, final
 
-from pydantic import field_validator
+from pydantic import computed_field, field_validator
 
-from openadr3_client.domain.common.payload import _BasePayload
+from openadr3_client.domain.common.payload import _BasePayload, AllowedPayloadInputs, BasePayloadDescriptor
 from openadr3_client.domain.model import ValidatableModel
 
 
@@ -48,10 +48,8 @@ class EventPayloadType(str, Enum):
     CTA2045_REBOOT = "CTA2045_REBOOT"
     CTA2045_SET_OVERRIDE_STATUS = "CTA2045_SET_OVERRIDE_STATUS"
 
-
-class EventPayloadDescriptor(ValidatableModel):
-    """A description explaining the payload."""
-    object_type = Literal["EVENT_PAYLOAD_DESCRIPTOR"]
+@final
+class EventPayloadDescriptor(BasePayloadDescriptor):
     """The object type of the payload descriptor."""
     description: str
     """A description of the payload parameter."""
@@ -62,5 +60,11 @@ class EventPayloadDescriptor(ValidatableModel):
     currency: str
     """The currency of the payload."""
 
-class EventPayload[T](_BasePayload[EventPayloadType, T]):
+    @property
+    @computed_field
+    def object_type(self) -> str:
+        return "EVENT_PAYLOAD_DESCRIPTOR"
+
+@final
+class EventPayload[T: AllowedPayloadInputs](_BasePayload[EventPayloadType, T]):
     """The type of the event payload."""

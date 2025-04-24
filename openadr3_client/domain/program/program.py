@@ -5,10 +5,10 @@ from __future__ import annotations
 from abc import ABC
 from contextlib import contextmanager
 from threading import Lock
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 import pycountry
-from pydantic import AnyUrl, AwareDatetime, Field, PrivateAttr, field_validator, model_validator
+from pydantic import AnyUrl, AwareDatetime, Field, PrivateAttr, model_validator
 from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client.domain.common.interval_period import IntervalPeriod
@@ -92,7 +92,7 @@ class Program[T](ABC, ValidatableModel):
 
         return self
 
-
+@final
 class NewProgram(Program[None]):
     """Class representing a new program not yet pushed to the VTN."""
 
@@ -130,7 +130,7 @@ class NewProgram(Program[None]):
                 self._created = False
                 raise
 
-
+@final
 class ExistingProgram(Program[str]):
     """Class representing an existing program retrieved from the VTN."""
 

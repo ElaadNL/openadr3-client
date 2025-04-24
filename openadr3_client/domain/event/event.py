@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC
 from contextlib import contextmanager
 from threading import Lock
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from pydantic import AwareDatetime, Field, NonNegativeInt, PrivateAttr, field_validator
 
@@ -46,7 +46,7 @@ class Event[T](ABC, ValidatableModel):
     intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
 
-
+@final
 class NewEvent(Event[None]):
     """Class representing a new event not yet pushed to the VTN."""
 
@@ -99,7 +99,7 @@ class NewEvent(Event[None]):
             raise ValueError(err_msg)
         return intervals
 
-
+@final
 class ExistingEvent(Event[str]):
     """Class representing an existing event retrieved from the VTN."""
 
