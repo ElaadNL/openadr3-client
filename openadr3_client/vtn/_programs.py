@@ -1,6 +1,6 @@
 """Implements the communication with the programs interface of an OpenADR 3 VTN."""
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from pydantic.type_adapter import TypeAdapter
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
@@ -55,7 +55,7 @@ def update_program_by_id(self, program_id: str, updated_program: ExistingProgram
         updated_program (ExistingProgram): The updated program.
     """
     if program_id != updated_program.id:
-        raise ValueError("Program id does not match program id updated program object.")
+        raise ValueError("Program id does not match program id of updated program object.")
     
     # No lock on the ExistingProgram type exists similar to the creation guard of a NewProgram
     # Since calling update with the same object multiple times is an idempotent action that does not
