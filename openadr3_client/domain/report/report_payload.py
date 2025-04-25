@@ -6,8 +6,8 @@ from typing import Literal, final
 from pydantic import Field, computed_field
 
 from openadr3_client.domain.common.payload import _BasePayload, AllowedPayloadInputs, BasePayloadDescriptor
-from openadr3_client.domain.model import ValidatableModel
 
+@final
 class ReportReadingType(str, Enum):
     """Enumeration of the reading types of OpenADR 3."""
 
@@ -19,6 +19,7 @@ class ReportReadingType(str, Enum):
     FORECAST = "FORECAST"
     AVERAGE = "AVERAGE"
 
+@final
 class ReportPayloadType(str, Enum):
     """Enumeration of the report payload types of OpenADR 3."""
 

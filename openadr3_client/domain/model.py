@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import ClassVar
+from typing import ClassVar, final
 
 from pydantic import model_validator
 
@@ -24,7 +24,7 @@ ValidationTarget = Model | Field
 
 DefaultTarget = Model()
 
-
+@final
 class ValidatorRegistry:
     """
     Registry which stores dynamic pydantic validators associated with a specific model.

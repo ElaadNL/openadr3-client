@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC
 from contextlib import contextmanager
 from threading import Lock
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
 
@@ -17,7 +17,8 @@ from openadr3_client.domain.report.report_payload import ReportPayload
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-
+    
+@final
 class ReportResource(ValidatableModel):
     """Class representing a resource of a report."""
     resource_name: str = Field(min_length=1, max_length=128)
@@ -69,7 +70,7 @@ class Report[T](ABC, ValidatableModel):
     resources: tuple[ReportResource, ...]
     """The resources of the report."""
 
-
+@final
 class NewReport(Report[None]):
     """Class representing a new report not yet pushed to the VTN."""
 
@@ -122,7 +123,7 @@ class NewReport(Report[None]):
             raise ValueError(err_msg)
         return resources
 
-
+@final
 class ExistingReport(Report[str]):
     """Class representing an existing report retrieved from the VTN."""
 

@@ -2,12 +2,13 @@ from abc import ABC
 from contextlib import contextmanager
 from enum import Enum
 from threading import Lock
-from typing import Iterator, Optional, Tuple
+from typing import Iterator, Optional, Tuple, final
 
 from pydantic import AwareDatetime, Field, PrivateAttr, HttpUrl, field_validator
 from openadr3_client.domain.common.target import Target
 from openadr3_client.domain.model import ValidatableModel
 
+@final
 class Object(str, Enum):
     """Enumeration of the object types of OpenADR 3."""
     PROGRAM = "PROGRAM"
@@ -17,6 +18,7 @@ class Object(str, Enum):
     VEN = "VEN"
     RESOURCE = "RESOURCE"
 
+@final
 class Operation(str, Enum):
     """Enumeration of the operations of OpenADR 3."""
     GET = "GET"
@@ -24,6 +26,7 @@ class Operation(str, Enum):
     PUT = "PUT"
     DELETE = "DELETE"
 
+@final
 class ObjectOperation:
     """Represents a single object operation."""
     objects: Tuple[Object, ...]
@@ -105,7 +108,7 @@ class Subscription[T](ABC, ValidatableModel):
             raise ValueError(err_msg)
         return object_operations
 
-
+@final
 class NewSubscription(Subscription[None]):
     """Class representing a new subscription not yet pushed to the VTN."""
 
@@ -143,7 +146,7 @@ class NewSubscription(Subscription[None]):
                 self._created = False
                 raise
 
-
+@final
 class ExistingSubscription(Subscription[str]):
     """Class representing an existing subscription retrieved from the VTN."""
 

@@ -1,7 +1,7 @@
 from abc import ABC
 from contextlib import contextmanager
 from threading import Lock
-from typing import Iterator, Tuple
+from typing import Iterator, Tuple, final
 
 from pydantic import AwareDatetime, Field, PrivateAttr
 from openadr3_client.domain.common.attribute import Attribute
@@ -25,6 +25,7 @@ class Resource[T](ABC, ValidatableModel):
     targets: Tuple[Target, ...] | None = None
     """The targets of the resource."""
 
+@final
 class NewResource(Resource[None]):
     """Class representing a new resource not yet pushed to the VTN."""
 
@@ -62,7 +63,7 @@ class NewResource(Resource[None]):
                 self._created = False
                 raise
 
-
+@final
 class ExistingResource(Resource[str]):
     """Class representing an existing report retrieved from the VTN."""
 
