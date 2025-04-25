@@ -13,18 +13,18 @@ base_prefix = "/events"
 class EventsReadOnlyInterface:
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def get_events(self, target: TargetFilter, pagination: PaginationFilter, program_id: Optional[str]) -> Tuple[ExistingEvent, ...]:
+    def get_events(self, target: Optional[TargetFilter], pagination: Optional[PaginationFilter], program_id: Optional[str]) -> Tuple[ExistingEvent, ...]:
         """Retrieve events from the VTN.
         
         Args:
-            target (TargetFilter): The target to filter on.
-            pagination (PaginationFilter): The pagination to apply.
+            target (Optional[TargetFilter]): The target to filter on.
+            pagination (Optional[PaginationFilter]): The pagination to apply.
             program_id (Optional[str]): The program id to filter on.
         """
 
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
-        query_params = asdict(target) | asdict(pagination) | {"programID": program_id} if program_id else {}
+        query_params = asdict(target) if target else {} | asdict(pagination) if pagination else {} | {"programID": program_id} if program_id else {}
 
         response = bearer_authenticated_session.get(f"{base_prefix}", params=query_params)
         response.raise_for_status()

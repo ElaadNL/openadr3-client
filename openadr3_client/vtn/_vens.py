@@ -14,18 +14,18 @@ base_prefix = "/vens"
 class VensReadOnlyInterface:
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def get_vens(self, ven_name: Optional[str], target: TargetFilter, pagination: PaginationFilter) -> Tuple[ExistingVen, ...]:
+    def get_vens(self, ven_name: Optional[str], target: Optional[TargetFilter], pagination: Optional[PaginationFilter]) -> Tuple[ExistingVen, ...]:
         """Retrieve vens from the VTN.
         
         Args:
             ven_name (Optional[str]): The ven name to filter on.
-            target (TargetFilter): The target to filter on.
-            pagination (PaginationFilter): The pagination to apply.
+            target (Optional[TargetFilter]): The target to filter on.
+            pagination (Optional[PaginationFilter]): The pagination to apply.
         """
 
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
-        query_params = asdict(target) | asdict(pagination) | {"venName": ven_name} if ven_name else {}
+        query_params = asdict(target) if target else {} | asdict(pagination) if pagination else {} | {"venName": ven_name} if ven_name else {}
         
         response = bearer_authenticated_session.get(f"{base_prefix}", params=query_params)
         response.raise_for_status()
@@ -46,13 +46,18 @@ class VensReadOnlyInterface:
 
         return ExistingVen.model_validate_json(response.json())
     
-    def get_ven_resources(self, ven_id: str) -> Tuple[ExistingResource, ...]:
+    def get_ven_resources(self, ven_id: str, resource_name: Optional[str], target: Optional[TargetFilter], pagination: Optional[PaginationFilter]) -> Tuple[ExistingResource, ...]:
         """Retrieves a list of resources belonging to the ven with the given ven identifier.
 
         Args:
             ven_id (str): The ven identifier to retrieve.
+            resource_name (Optional[str]): The name of the resource to filter on.
+            target (Optional[TargetFilter]): The target to filter on.
+            pagination (Optional[PaginationFilter]): The pagination to apply.
         """
-        response = bearer_authenticated_session.get(f"{base_prefix}/{ven_id}/resources")
+        query_params = asdict(target) if target else {} | asdict(pagination) if pagination else {} | {"resourceName": resource_name} if resource_name else {}
+
+        response = bearer_authenticated_session.get(f"{base_prefix}/{ven_id}/resources" ,params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(List[ExistingResource])

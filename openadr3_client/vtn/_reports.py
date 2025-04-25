@@ -13,7 +13,7 @@ base_prefix = "/reports"
 class ReportsReadOnlyInterface:
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def get_reports(self, pagination: PaginationFilter, program_id: Optional[str], event_id: Optional[str], client_name: Optional[str]) -> Tuple[ExistingReport, ...]:
+    def get_reports(self, pagination: Optional[PaginationFilter], program_id: Optional[str], event_id: Optional[str], client_name: Optional[str]) -> Tuple[ExistingReport, ...]:
         """Retrieve reports from the VTN.
         
         Args:
@@ -27,7 +27,7 @@ class ReportsReadOnlyInterface:
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params = \
-            asdict(pagination) \
+            asdict(pagination) if pagination else {} \
             | {"programID": program_id} if program_id else {} \
             | {"eventID": event_id} if event_id else {} \
             | {"clientName": client_name} if client_name else {}

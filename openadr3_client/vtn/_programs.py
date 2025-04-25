@@ -1,6 +1,6 @@
 """Implements the communication with the programs interface of an OpenADR 3 VTN."""
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from pydantic.type_adapter import TypeAdapter
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
@@ -14,12 +14,17 @@ base_prefix = "/programs"
 class ProgramsReadOnlyInterface:
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def get_programs(self, target: TargetFilter, pagination: PaginationFilter) -> Tuple[ExistingProgram, ...]:
-        """Retrieve programs from the VTN"""
+    def get_programs(self, target: Optional[TargetFilter], pagination: Optional[PaginationFilter]) -> Tuple[ExistingProgram, ...]:
+        """Retrieve programs from the VTN.
+        
+        Args:
+            target (Optional[TargetFilter]): The target to filter on.
+            pagination (Optional[PaginationFilter]): The pagination to apply.
+        """
 
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
-        query_params = asdict(target) | asdict(pagination)
+        query_params = asdict(target) if target else {} | asdict(pagination) if pagination else {}
 
         response = bearer_authenticated_session.get(f"{base_prefix}", params=query_params)
         response.raise_for_status()
@@ -30,7 +35,11 @@ class ProgramsReadOnlyInterface:
     def get_program_by_id(self, program_id: str) -> ExistingProgram:
         """Retrieves a program by the program identifier.
         
-        Raises an error if the program could not be found."""
+        Raises an error if the program could not be found.
+        
+        Args:
+            program_id (str): The program identifier to retrieve.
+        """
         response = bearer_authenticated_session.get(f"{base_prefix}/{program_id}")
         response.raise_for_status()
 
