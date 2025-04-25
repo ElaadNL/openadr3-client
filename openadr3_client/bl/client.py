@@ -1,6 +1,7 @@
 from openadr3_client.vtn._events import EventsInterface
 from openadr3_client.vtn._programs import ProgramsInterface
 from openadr3_client.vtn._reports import ReportsReadOnlyInterface
+from openadr3_client.vtn._subscriptions import SubscriptionsReadOnlyInterface
 from openadr3_client.vtn._vens import VensReadOnlyInterface
 
 
@@ -14,13 +15,9 @@ class BusinessLogicClient:
     - Read all OpenADR3 resources.
     """
     def __init__(self):
-        """Initializes the business logic client with the given base URL.
-
-        Args:
-            base_url (str): The base URL of the OpenADR 3.0 server.
-        """
+        """Initializes the business logic client."""
         self.events = EventsInterface()
         self.programs = ProgramsInterface()
         self.reports = ReportsReadOnlyInterface()
-        self.vens = VensReadOnlyInterface
-        # TODO: READ ONLY INTERFACES OF OTHER RESOURCES.
+        self.vens = VensReadOnlyInterface()
+        self.subscriptions = SubscriptionsReadOnlyInterface()
