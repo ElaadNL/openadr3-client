@@ -2,16 +2,20 @@
 from typing import List, Optional, Tuple
 
 from pydantic.type_adapter import TypeAdapter
+from openadr3_client.vtn.common._vtn_interface import VtnHttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter
 from openadr3_client.domain.report.report import ExistingReport, NewReport
 from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
 
 from dataclasses import asdict
 
-base_prefix = "/reports"
+base_prefix = "reports"
 
-class ReportsReadOnlyInterface:
+class ReportsReadOnlyInterface(VtnHttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
 
     def get_reports(self, pagination: Optional[PaginationFilter], program_id: Optional[str], event_id: Optional[str], client_name: Optional[str]) -> Tuple[ExistingReport, ...]:
         """Retrieve reports from the VTN.
@@ -32,7 +36,7 @@ class ReportsReadOnlyInterface:
             | {"eventID": event_id} if event_id else {} \
             | {"clientName": client_name} if client_name else {}
 
-        response = bearer_authenticated_session.get(f"{base_prefix}", params=query_params)
+        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(List[ExistingReport])
@@ -46,13 +50,16 @@ class ReportsReadOnlyInterface:
         Args:
             report_id (str): The report identifier to retrieve.
         """
-        response = bearer_authenticated_session.get(f"{base_prefix}/{report_id}")
+        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{report_id}")
         response.raise_for_status()
 
         return ExistingReport.model_validate_json(response.json())
 
-class ReportsWriteOnlyInterface:
+class ReportsWriteOnlyInterface(VtnHttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
 
     def create_report(self, new_report: NewReport) -> ExistingReport:
         """Creates a report from the new report.
@@ -63,7 +70,7 @@ class ReportsWriteOnlyInterface:
             new_report (NewReport): The new report to create.
         """
         with new_report.with_creation_guard():
-            response = bearer_authenticated_session.post(base_prefix, data=new_report.model_dump_json())
+            response = bearer_authenticated_session.post(f"{self.base_url}/{base_prefix}", data=new_report.model_dump_json())
             response.raise_for_status()
             return ExistingReport.model_validate_json(response.json())
 
@@ -85,7 +92,7 @@ class ReportsWriteOnlyInterface:
         # No lock on the ExistingReport type exists similar to the creation guard of a NewReport.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(f"{base_prefix}/{report_id}",
+        response = bearer_authenticated_session.put(f"{self.base_url}/{base_prefix}/{report_id}",
                                                     data=updated_report.model_dump_json())
         response.raise_for_status()
         return ExistingReport.model_validate_json(response.json())
@@ -96,8 +103,11 @@ class ReportsWriteOnlyInterface:
         Args:
             report_id (str): The identifier of the report to delete.
         """
-        response = bearer_authenticated_session.delete(f"{base_prefix}/{report_id}")
+        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{report_id}")
         response.raise_for_status()
 
 class ReportsInterface(ReportsReadOnlyInterface, ReportsWriteOnlyInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)

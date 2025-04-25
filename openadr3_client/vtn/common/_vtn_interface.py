@@ -1,0 +1,12 @@
+from abc import ABC
+
+class VtnHttpInterface(ABC):
+    """Represents a base class for a VTN HTTP interface."""
+
+    def __init__(self, base_url: str) -> None:
+        """Initializes the client with a specified base URL.
+
+        Args:
+            base_url (str): The base URL for the HTTP interface.
+        """
+        self.base_url = base_url

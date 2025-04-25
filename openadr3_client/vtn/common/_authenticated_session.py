@@ -1,11 +1,10 @@
 """Implementation of a HTTP session which has an associated access token that is send to every request."""
 
-from urllib.parse import urljoin
 from requests import Session
 from requests.auth import AuthBase
 
 from openadr3_client.auth.token_manager import OAuthTokenManager
-from openadr3_client.config import OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT, OAUTH_SCOPES, VTN_BASE_URL
+from openadr3_client.config import OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT, OAUTH_SCOPES
 
 class _BearerAuth(AuthBase):
     """AuthBase implementation that includes a bearer token in all requests."""
@@ -28,20 +27,11 @@ class _BearerAuth(AuthBase):
         # for each request.
         r.headers["Authorization"] = "Bearer " + self._token_manager.get_access_token()
 
-class _BaseUrlPrependedSession(Session):
-    """Session that prepends the configured VTN base URL in all requests made through it."""
-    def __init__(self):
-        super().__init__()
-        self.base_url = VTN_BASE_URL
-
-    def request(self, method, url, *args, **kwargs):
-        joined_url = urljoin(self.base_url, url)
-        return super().request(method, joined_url, *args, **kwargs)
-
-class _BearerAuthenticatedSession(_BaseUrlPrependedSession):
+class _BearerAuthenticatedSession(Session):
     """Session that includes a bearer token in all requests made through it."""
     def __init__(self) -> None:
         self.auth = _BearerAuth()
+        super().__init__()
 
 
 bearer_authenticated_session = _BearerAuthenticatedSession()

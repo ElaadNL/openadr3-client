@@ -2,16 +2,20 @@
 from typing import List, Optional, Tuple
 
 from pydantic.type_adapter import TypeAdapter
+from openadr3_client.vtn.common._vtn_interface import VtnHttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
 from openadr3_client.domain.event.event import ExistingEvent, NewEvent
 from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
 
 from dataclasses import asdict
 
-base_prefix = "/events"
+base_prefix = "events"
 
-class EventsReadOnlyInterface:
+class EventsReadOnlyInterface(VtnHttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
 
     def get_events(self, target: Optional[TargetFilter], pagination: Optional[PaginationFilter], program_id: Optional[str]) -> Tuple[ExistingEvent, ...]:
         """Retrieve events from the VTN.
@@ -26,7 +30,7 @@ class EventsReadOnlyInterface:
         # of the filters are unique.
         query_params = asdict(target) if target else {} | asdict(pagination) if pagination else {} | {"programID": program_id} if program_id else {}
 
-        response = bearer_authenticated_session.get(f"{base_prefix}", params=query_params)
+        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(List[ExistingEvent])
@@ -40,13 +44,16 @@ class EventsReadOnlyInterface:
         Args:
             event_id (str): The event identifier to retrieve.
         """
-        response = bearer_authenticated_session.get(f"{base_prefix}/{event_id}")
+        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
 
         return ExistingEvent.model_validate_json(response.json())
 
-class EventsWriteOnlyInterface:
+class EventsWriteOnlyInterface(VtnHttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
 
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
         """Creates a event from the new event.
@@ -57,7 +64,7 @@ class EventsWriteOnlyInterface:
             new_event (NewEvent): The new event to create.
         """
         with new_event.with_creation_guard():
-            response = bearer_authenticated_session.post(base_prefix, data=new_event.model_dump_json())
+            response = bearer_authenticated_session.post(f"{self.base_url}/{base_prefix}", data=new_event.model_dump_json())
             response.raise_for_status()
             return ExistingEvent.model_validate_json(response.json())
 
@@ -79,7 +86,7 @@ class EventsWriteOnlyInterface:
         # No lock on the ExistingEvent type exists similar to the creation guard of a NewEvent.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(f"{base_prefix}/{event_id}",
+        response = bearer_authenticated_session.put(f"{self.base_url}/{base_prefix}/{event_id}",
                                                     data=updated_event.model_dump_json())
         response.raise_for_status()
         return ExistingEvent.model_validate_json(response.json())
@@ -90,8 +97,11 @@ class EventsWriteOnlyInterface:
         Args:
             event_id (str): The identifier of the event to delete.
         """
-        response = bearer_authenticated_session.delete(f"{base_prefix}/{event_id}")
+        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
 
 class EventsInterface(EventsReadOnlyInterface, EventsWriteOnlyInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)

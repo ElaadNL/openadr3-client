@@ -3,16 +3,20 @@
 from typing import List, Optional, Tuple
 
 from pydantic.type_adapter import TypeAdapter
+from openadr3_client.vtn.common._vtn_interface import VtnHttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
 from openadr3_client.domain.program.program import ExistingProgram, NewProgram
 from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
 
 from dataclasses import asdict
 
-base_prefix = "/programs"
+base_prefix = "programs"
 
-class ProgramsReadOnlyInterface:
+class ProgramsReadOnlyInterface(VtnHttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
 
     def get_programs(self, target: Optional[TargetFilter], pagination: Optional[PaginationFilter]) -> Tuple[ExistingProgram, ...]:
         """Retrieve programs from the VTN.
@@ -26,7 +30,7 @@ class ProgramsReadOnlyInterface:
         # of the filters are unique.
         query_params = asdict(target) if target else {} | asdict(pagination) if pagination else {}
 
-        response = bearer_authenticated_session.get(f"{base_prefix}", params=query_params)
+        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(List[ExistingProgram])
@@ -40,20 +44,23 @@ class ProgramsReadOnlyInterface:
         Args:
             program_id (str): The program identifier to retrieve.
         """
-        response = bearer_authenticated_session.get(f"{base_prefix}/{program_id}")
+        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{program_id}")
         response.raise_for_status()
 
         return ExistingProgram.model_validate_json(response.json())
 
-class ProgramsWriteOnlyInterface:
+class ProgramsWriteOnlyInterface(VtnHttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
 
     def create_program(self, new_program: NewProgram) -> ExistingProgram:
         """Creates a program from the new program.
         
         Returns the created program response from the VTN as an ExistingProgram."""
         with new_program.with_creation_guard():
-            response = bearer_authenticated_session.post(base_prefix, data=new_program.model_dump_json())
+            response = bearer_authenticated_session.post(f"{self.base_url}/{base_prefix}", data=new_program.model_dump_json())
             response.raise_for_status()
             return ExistingProgram.model_validate_json(response.json())
 
@@ -75,7 +82,7 @@ class ProgramsWriteOnlyInterface:
         # No lock on the ExistingProgram type exists similar to the creation guard of a NewProgram
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(f"{base_prefix}/{program_id}",
+        response = bearer_authenticated_session.put(f"{self.base_url}/{base_prefix}/{program_id}",
                                                     data=updated_program.model_dump_json())
         response.raise_for_status()
         return ExistingProgram.model_validate_json(response.json())
@@ -86,8 +93,11 @@ class ProgramsWriteOnlyInterface:
         Args:
             program_id (str): The identifier of the program to delete.
         """
-        response = bearer_authenticated_session.delete(f"{base_prefix}/{program_id}")
+        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{program_id}")
         response.raise_for_status()
 
 class ProgramsInterface(ProgramsReadOnlyInterface, ProgramsWriteOnlyInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
