@@ -49,8 +49,6 @@ class ReportPayloadType(str, Enum):
     
 @final
 class ReportPayloadDescriptor(BasePayloadDescriptor):
-    """The object type of the payload descriptor."""
-    description: str
     """A description of the payload parameter."""
     payload_type: ReportPayloadType
     """The type of payload being described."""

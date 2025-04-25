@@ -1,13 +1,7 @@
 """Contains the domain models related to targeting."""
 
-from openadr3_client.domain.model import ValidatableModel
+from openadr3_client.domain.common.value_map import ValueMap
 
-
-class Target[T](ValidatableModel):
-    """Class representing a target for an event."""
-
-    type: T
-    """The type of the target."""
-
-    values: tuple[T, ...]
-    """The value(s) of the target."""
+# TODO: CHECK IF THERE ARE CONSTRAINTS ON TYPE PARAM FOR TARGET AND ATTRIBUTES
+class Target[T](ValueMap[str, T]):
+    """Class representing a target."""

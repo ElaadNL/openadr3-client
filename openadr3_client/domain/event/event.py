@@ -103,5 +103,5 @@ class NewEvent(Event[None]):
 class ExistingEvent(Event[str]):
     """Class representing an existing event retrieved from the VTN."""
 
-    created_datetime: AwareDatetime
-    modification_datetime: AwareDatetime
+    created_date_time: AwareDatetime
+    modification_date_time: AwareDatetime

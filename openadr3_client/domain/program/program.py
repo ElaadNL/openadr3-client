@@ -134,5 +134,5 @@ class NewProgram(Program[None]):
 class ExistingProgram(Program[str]):
     """Class representing an existing program retrieved from the VTN."""
 
-    created_datetime: AwareDatetime
-    modification_datetime: AwareDatetime
+    created_date_time: AwareDatetime
+    modification_date_time: AwareDatetime

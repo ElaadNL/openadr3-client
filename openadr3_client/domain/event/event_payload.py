@@ -50,8 +50,6 @@ class EventPayloadType(str, Enum):
 
 @final
 class EventPayloadDescriptor(BasePayloadDescriptor):
-    """The object type of the payload descriptor."""
-    description: str
     """A description of the payload parameter."""
     payload_type: EventPayloadType
     """The type of payload being described."""

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from pydantic import computed_field, field_validator
+from openadr3_client.domain.common.value_map import ValueMap
 from openadr3_client.domain.model import ValidatableModel
 
 class BasePayloadDescriptor(ABC, ValidatableModel):
@@ -30,13 +31,8 @@ class Point(ValidatableModel):
 
 AllowedPayloadInputs = int | float | str | bool | Point
 
-class _BasePayload[PAYLOAD_TYPE, T: AllowedPayloadInputs](ABC, ValidatableModel):
+class _BasePayload[PAYLOAD_TYPE, T: AllowedPayloadInputs](ABC, ValueMap[PAYLOAD_TYPE, T]):
     """Represents a generic payload of OpenADR 3."""
-
-    type: PAYLOAD_TYPE
-    """The type of payload."""
-    values: tuple[T, ...]
-    """The value(s) of the payload."""
 
     @field_validator("values", mode="after")
     @classmethod

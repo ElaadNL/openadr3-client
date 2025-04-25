@@ -126,5 +126,5 @@ class NewReport(Report[None]):
 class ExistingReport(Report[str]):
     """Class representing an existing report retrieved from the VTN."""
 
-    created_datetime: AwareDatetime
-    modification_datetime: AwareDatetime
+    created_date_time: AwareDatetime
+    modification_date_time: AwareDatetime
