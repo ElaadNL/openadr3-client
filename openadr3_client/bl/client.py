@@ -1,6 +1,7 @@
 from openadr3_client.vtn._events import EventsInterface
 from openadr3_client.vtn._programs import ProgramsInterface
 from openadr3_client.vtn._reports import ReportsReadOnlyInterface
+from openadr3_client.vtn._vens import VensReadOnlyInterface
 
 
 class BusinessLogicClient:
@@ -21,4 +22,5 @@ class BusinessLogicClient:
         self.events = EventsInterface()
         self.programs = ProgramsInterface()
         self.reports = ReportsReadOnlyInterface()
+        self.vens = VensReadOnlyInterface
         # TODO: READ ONLY INTERFACES OF OTHER RESOURCES.

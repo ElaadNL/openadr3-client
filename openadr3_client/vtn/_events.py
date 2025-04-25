@@ -19,7 +19,7 @@ class EventsReadOnlyInterface:
         Args:
             target (TargetFilter): The target to filter on.
             pagination (PaginationFilter): The pagination to apply.
-            program_id (str): The program id to filter on.
+            program_id (Optional[str]): The program id to filter on.
         """
 
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
