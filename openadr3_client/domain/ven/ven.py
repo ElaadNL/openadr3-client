@@ -69,5 +69,5 @@ class NewVen(Ven[None]):
 class ExistingVen(Ven[str]):
     """Class representing an existing ven retrieved from the VTN."""
 
-    created_datetime: AwareDatetime
-    modification_datetime: AwareDatetime
+    created_date_time: AwareDatetime
+    modification_date_time: AwareDatetime
