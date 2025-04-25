@@ -15,10 +15,14 @@ class BusinessLogicClient:
     - Create, read, update and delete programs.
     - Read all OpenADR3 resources.
     """
-    def __init__(self):
-        """Initializes the business logic client."""
-        self.events = EventsInterface()
-        self.programs = ProgramsInterface()
-        self.reports = ReportsReadOnlyInterface()
-        self.vens = VensReadOnlyInterface()
-        self.subscriptions = SubscriptionsReadOnlyInterface()
+    def __init__(self, vtn_base_url: str) -> None:
+        """Initializes the business logic client.
+        
+        Args:
+            vtn_base_url (str): The base URL of the OpenADR 3.0 VTN.
+        """
+        self.events = EventsInterface(base_url=vtn_base_url)
+        self.programs = ProgramsInterface(base_url=vtn_base_url)
+        self.reports = ReportsReadOnlyInterface(base_url=vtn_base_url)
+        self.vens = VensReadOnlyInterface(base_url=vtn_base_url)
+        self.subscriptions = SubscriptionsReadOnlyInterface(base_url=vtn_base_url)
