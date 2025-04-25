@@ -1,16 +1,20 @@
 from abc import ABC
+from collections.abc import Iterator
 from contextlib import contextmanager
 from enum import Enum
 from threading import Lock
-from typing import Iterator, Optional, Tuple, final
+from typing import final
 
-from pydantic import AwareDatetime, Field, PrivateAttr, HttpUrl, field_validator
+from pydantic import AwareDatetime, Field, HttpUrl, PrivateAttr, field_validator
+
 from openadr3_client.domain.common.target import Target
 from openadr3_client.domain.model import ValidatableModel
+
 
 @final
 class Object(str, Enum):
     """Enumeration of the object types of OpenADR 3."""
+
     PROGRAM = "PROGRAM"
     EVENT = "EVENT"
     REPORT = "REPORT"
@@ -18,30 +22,35 @@ class Object(str, Enum):
     VEN = "VEN"
     RESOURCE = "RESOURCE"
 
+
 @final
 class Operation(str, Enum):
     """Enumeration of the operations of OpenADR 3."""
+
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
 
+
 @final
 class ObjectOperation:
     """Represents a single object operation."""
-    objects: Tuple[Object, ...]
+
+    objects: tuple[Object, ...]
     """The objects that trigger this operation."""
 
-    operations: Tuple[Operation, ...]
+    operations: tuple[Operation, ...]
     """The operations that trigger this operation."""
 
     callback_url: HttpUrl
     """Callback URL for the operation."""
 
-    bearer_token: Optional[str]
+    bearer_token: str | None
     """User provided bearer token.
-    
-    To avoid custom integrations, callback endpoints should accept the provided bearer token to authenticate VTN requests.
+
+    To avoid custom integrations, callback endpoints should accept
+    the provided bearer token to authenticate VTN requests.
     """
 
     @field_validator("objects", mode="after")
@@ -58,7 +67,7 @@ class ObjectOperation:
             err_msg = "ObjectOperation must contain at least one object."
             raise ValueError(err_msg)
         return objects
-    
+
     @field_validator("operations", mode="after")
     @classmethod
     def atleast_one_operation(cls, operations: tuple[Operation, ...]) -> tuple[Operation, ...]:
@@ -87,15 +96,17 @@ class Subscription[T](ABC, ValidatableModel):
     program_id: str = Field(alias="programID", min_length=1, max_length=128)
     """The program id of the subscription object."""
 
-    object_operations: Tuple[ObjectOperation, ...]
+    object_operations: tuple[ObjectOperation, ...]
     """The object operations of the subscription object."""
 
-    targets: Tuple[Target, ...] | None = None
+    targets: tuple[Target, ...] | None = None
     """The targets of the subscription object."""
 
     @field_validator("object_operations", mode="after")
     @classmethod
-    def atleast_one_object_operation(cls, object_operations: tuple[ObjectOperation, ...]) -> tuple[ObjectOperation, ...]:
+    def atleast_one_object_operation(
+        cls, object_operations: tuple[ObjectOperation, ...]
+    ) -> tuple[ObjectOperation, ...]:
         """
         Validates that a subscription has atleast one object operation defined.
 
@@ -107,6 +118,7 @@ class Subscription[T](ABC, ValidatableModel):
             err_msg = "Subscription must contain at least one resource."
             raise ValueError(err_msg)
         return object_operations
+
 
 @final
 class NewSubscription(Subscription[None]):
@@ -145,6 +157,7 @@ class NewSubscription(Subscription[None]):
             except Exception:
                 self._created = False
                 raise
+
 
 @final
 class ExistingSubscription(Subscription[str]):

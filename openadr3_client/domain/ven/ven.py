@@ -1,13 +1,16 @@
 from abc import ABC
+from collections.abc import Iterator
 from contextlib import contextmanager
 from threading import Lock
-from typing import Iterator, Tuple, final
+from typing import final
 
-from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
+from pydantic import AwareDatetime, Field, PrivateAttr
+
 from openadr3_client.domain.common.attribute import Attribute
 from openadr3_client.domain.common.target import Target
 from openadr3_client.domain.model import ValidatableModel
 from openadr3_client.domain.ven.resource import ExistingResource
+
 
 class Ven[T](ABC, ValidatableModel):
     """Base class for vens."""
@@ -18,14 +21,15 @@ class Ven[T](ABC, ValidatableModel):
     ven_name: str = Field(min_length=1, max_length=128)
     """The ven name of the ven object."""
 
-    attributes: Tuple[Attribute, ...] | None = None
+    attributes: tuple[Attribute, ...] | None = None
     """The attributes of the ven."""
 
-    targets: Tuple[Target, ...] | None = None
+    targets: tuple[Target, ...] | None = None
     """The targets of the ven object."""
 
-    resources: Tuple[ExistingResource, ...] | None = None
+    resources: tuple[ExistingResource, ...] | None = None
     """The resources of the ven object."""
+
 
 @final
 class NewVen(Ven[None]):
@@ -64,6 +68,7 @@ class NewVen(Ven[None]):
             except Exception:
                 self._created = False
                 raise
+
 
 @final
 class ExistingVen(Ven[str]):

@@ -75,22 +75,23 @@ class Program[T](ABC, ValidatableModel):
     """The targets of the program."""
 
     @model_validator(mode="after")
-    def validate_iso_3166_2(self) -> "Program":
+    def validate_iso_3166_2(self) -> Program:
         """Validates that principal_sub_division is iso-3166-2 compliant."""
         if self.principal_sub_division:
             if not self.country:
                 exc_msg = "principal sub division cannot be set if country is not set."
                 raise ValueError(exc_msg)
-            else:
-                subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
+            subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
 
-                principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
+            principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
 
-                if self.principal_sub_division not in principals_only:
-                    exc_msg = f"{self.principal_sub_division} is not a valid ISO 3166-2 division code for the program country {self.country}."
-                    raise ValueError(exc_msg)
+            if self.principal_sub_division not in principals_only:
+                exc_msg = f"""{self.principal_sub_division} is not a valid ISO 3166-2-
+                division code for the program country {self.country}."""
+                raise ValueError(exc_msg)
 
         return self
+
 
 @final
 class NewProgram(Program[None]):
@@ -129,6 +130,7 @@ class NewProgram(Program[None]):
             except Exception:
                 self._created = False
                 raise
+
 
 @final
 class ExistingProgram(Program[str]):

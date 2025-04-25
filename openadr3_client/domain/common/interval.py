@@ -1,7 +1,9 @@
 from pydantic import field_validator
+
 from openadr3_client.domain.common.interval_period import IntervalPeriod
 from openadr3_client.domain.common.payload import _BasePayload
 from openadr3_client.domain.model import ValidatableModel
+
 
 class Interval[PAYLOAD: _BasePayload](ValidatableModel):
     """
@@ -11,7 +13,9 @@ class Interval[PAYLOAD: _BasePayload](ValidatableModel):
 
     Args:
         ValidatableModel (ValidatableModel): The base class for pydantic models of the library.
+
     """
+
     id: int
     interval_period: IntervalPeriod | None = None
     payloads: tuple[PAYLOAD, ...]

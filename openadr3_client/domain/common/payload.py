@@ -1,15 +1,20 @@
 from abc import ABC, abstractmethod
 
 from pydantic import computed_field, field_validator
+
 from openadr3_client.domain.common.value_map import ValueMap
 from openadr3_client.domain.model import ValidatableModel
 
+
 class BasePayloadDescriptor(ABC, ValidatableModel):
+    """Base class for a payload descriptor."""
+
     @property
     @abstractmethod
     @computed_field
     def object_type(self) -> str:
         """Returns the object type of the payload descriptor."""
+
 
 class Point(ValidatableModel):
     """A point in a 2D space."""
@@ -29,7 +34,9 @@ class Point(ValidatableModel):
         self.x = x
         self.y = y
 
+
 AllowedPayloadInputs = int | float | str | bool | Point
+
 
 class _BasePayload[PAYLOAD_TYPE, T: AllowedPayloadInputs](ABC, ValueMap[PAYLOAD_TYPE, T]):
     """Represents a generic payload of OpenADR 3."""
@@ -51,18 +58,23 @@ class _BasePayload[PAYLOAD_TYPE, T: AllowedPayloadInputs](ABC, ValueMap[PAYLOAD_
             err_msg = "payload must contain at least one value."
             raise ValueError(err_msg)
         return values
-    
+
+
 class StringPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, str]):
     """A string payload."""
+
 
 class IntPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, int]):
     """An integer payload."""
 
+
 class FloatPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, float]):
     """A float payload."""
 
+
 class BoolPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, bool]):
     """A boolean payload."""
+
 
 class PointPayload[PAYLOAD_TYPE](_BasePayload[PAYLOAD_TYPE, Point]):
     """A point payload."""

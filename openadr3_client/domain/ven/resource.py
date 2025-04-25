@@ -1,29 +1,34 @@
 from abc import ABC
+from collections.abc import Iterator
 from contextlib import contextmanager
 from threading import Lock
-from typing import Iterator, Tuple, final
+from typing import final
 
 from pydantic import AwareDatetime, Field, PrivateAttr
+
 from openadr3_client.domain.common.attribute import Attribute
 from openadr3_client.domain.common.target import Target
 from openadr3_client.domain.model import ValidatableModel
 
+
 class Resource[T](ABC, ValidatableModel):
     """Class representing a resource, which is subject to control by a ven."""
+
     id: T
     """Identifier of the resource."""
-    
+
     resource_name: str = Field(min_length=1, max_length=128)
     """The name of the resource."""
 
     ven_id: str = Field(alias="venID", min_length=1, max_length=128)
     """The identifier of the ven this resource belongs to."""
 
-    attributes: Tuple[Attribute, ...] | None = None
+    attributes: tuple[Attribute, ...] | None = None
     """The attributes of the resource."""
 
-    targets: Tuple[Target, ...] | None = None
+    targets: tuple[Target, ...] | None = None
     """The targets of the resource."""
+
 
 @final
 class NewResource(Resource[None]):
@@ -62,6 +67,7 @@ class NewResource(Resource[None]):
             except Exception:
                 self._created = False
                 raise
+
 
 @final
 class ExistingResource(Resource[str]):

@@ -46,6 +46,7 @@ class Event[T](ABC, ValidatableModel):
     intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
 
+
 @final
 class NewEvent(Event[None]):
     """Class representing a new event not yet pushed to the VTN."""
@@ -98,6 +99,7 @@ class NewEvent(Event[None]):
             err_msg = "NewEvent must contain at least one interval."
             raise ValueError(err_msg)
         return intervals
+
 
 @final
 class ExistingEvent(Event[str]):

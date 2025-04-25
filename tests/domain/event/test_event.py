@@ -1,6 +1,6 @@
-from datetime import UTC, datetime, timedelta
 import random
 import string
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from pydantic import ValidationError
@@ -83,9 +83,9 @@ def test_new_event_creation_guard() -> None:
     with pytest.raises(ValueError, match="NewEvent has already been created."), event.with_creation_guard():
         pass
 
+
 def test_event_program_id_too_long() -> None:
     """Test that validates that the program id of an event can only be 128 characters max."""
-
     length = 129
     random_string = "".join(random.choices(string.ascii_letters + string.digits, k=length))
 
@@ -113,7 +113,6 @@ def test_event_program_id_too_long() -> None:
 
 def test_event_program_id_empty_string() -> None:
     """Test that validates that the program id of an event cannot be an empty string."""
-
     with pytest.raises(ValidationError, match="have at least 1 character"):
         _ = NewEvent(
             id=None,

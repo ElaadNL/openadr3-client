@@ -1,8 +1,11 @@
 import random
 import string
-from pydantic import ValidationError
+
 import pytest
+from pydantic import ValidationError
+
 from openadr3_client.domain.ven.ven import NewVen
+
 
 def test_new_ven_creation_guard() -> None:
     """
@@ -19,6 +22,7 @@ def test_new_ven_creation_guard() -> None:
     with pytest.raises(ValueError, match="NewVen has already been created."), ven.with_creation_guard():
         pass
 
+
 def test_ven_name_too_long() -> None:
     """Test that validates that the ven name of a ven can only be 128 characters max."""
     length = 129
@@ -30,6 +34,5 @@ def test_ven_name_too_long() -> None:
 
 def test_ven_name_empty_string() -> None:
     """Test that validates that the ven name of a ven cannot be an empty string."""
-
     with pytest.raises(ValidationError, match="have at least 1 character"):
         _ = NewVen(id=None, ven_name="")

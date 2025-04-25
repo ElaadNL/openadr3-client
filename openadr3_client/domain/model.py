@@ -24,6 +24,7 @@ ValidationTarget = Model | Field
 
 DefaultTarget = Model()
 
+
 @final
 class ValidatorRegistry:
     """

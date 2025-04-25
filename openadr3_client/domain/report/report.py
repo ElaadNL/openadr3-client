@@ -17,10 +17,12 @@ from openadr3_client.domain.report.report_payload import ReportPayload
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
-    
+
+
 @final
 class ReportResource(ValidatableModel):
     """Class representing a resource of a report."""
+
     resource_name: str = Field(min_length=1, max_length=128)
     """Resource name of the resource this report interval is related to."""
 
@@ -32,12 +34,14 @@ class ReportResource(ValidatableModel):
 
     @field_validator("intervals", mode="after")
     @classmethod
-    def atleast_one_interval(cls, intervals: tuple[Interval[ReportPayload], ...]) -> tuple[Interval[ReportPayload], ...]:
+    def atleast_one_interval(
+        cls, intervals: tuple[Interval[ReportPayload], ...]
+    ) -> tuple[Interval[ReportPayload], ...]:
         """
         Validatest that a resource has atleast one interval defined.
 
         Args:
-            resources (tuple[ReportResource, ...]): The resources of the report.
+            intervals (tuple[Interval[ReportPayload], ...]): The intervals of the resource.
 
         """
         if len(intervals) == 0:
@@ -69,6 +73,7 @@ class Report[T](ABC, ValidatableModel):
 
     resources: tuple[ReportResource, ...]
     """The resources of the report."""
+
 
 @final
 class NewReport(Report[None]):
@@ -122,6 +127,7 @@ class NewReport(Report[None]):
             err_msg = "NewReport must contain at least one resource."
             raise ValueError(err_msg)
         return resources
+
 
 @final
 class ExistingReport(Report[str]):

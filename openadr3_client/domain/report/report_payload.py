@@ -1,11 +1,12 @@
 """Contains the domain models related to event payloads."""
 
 from enum import Enum
-from typing import Literal, final
+from typing import final
 
 from pydantic import Field, computed_field
 
-from openadr3_client.domain.common.payload import _BasePayload, AllowedPayloadInputs, BasePayloadDescriptor
+from openadr3_client.domain.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
+
 
 @final
 class ReportReadingType(str, Enum):
@@ -18,6 +19,7 @@ class ReportReadingType(str, Enum):
     PEAK = "PEAK"
     FORECAST = "FORECAST"
     AVERAGE = "AVERAGE"
+
 
 @final
 class ReportPayloadType(str, Enum):
@@ -47,10 +49,12 @@ class ReportPayloadType(str, Enum):
     IMPORT_RESERVATION_FEE = "IMPORT_RESERVATION_FEE"
     EXPORT_RESERVATION_CAPACITY = "EXPORT_RESERVATION_CAPACITY"
     EXPORT_RESERVATION_FEE = "EXPORT_RESERVATION_FEE"
-    
+
+
 @final
 class ReportPayloadDescriptor(BasePayloadDescriptor):
     """A description of the payload parameter."""
+
     payload_type: ReportPayloadType
     """The type of payload being described."""
     reading_type: ReportReadingType
@@ -64,9 +68,10 @@ class ReportPayloadDescriptor(BasePayloadDescriptor):
     @property
     @computed_field
     def object_type(self) -> str:
+        """Returns the object type of the payload descriptor."""
         return "REPORT_PAYLOAD_DESCRIPTOR"
+
 
 @final
 class ReportPayload[T: AllowedPayloadInputs](_BasePayload[ReportPayloadType, T]):
     """The type of the report payload."""
-

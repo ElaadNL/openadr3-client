@@ -1,8 +1,11 @@
 import random
 import string
-from pydantic import ValidationError
+
 import pytest
+from pydantic import ValidationError
+
 from openadr3_client.domain.ven.resource import NewResource
+
 
 def test_new_resource_creation_guard() -> None:
     """
@@ -19,6 +22,7 @@ def test_new_resource_creation_guard() -> None:
     with pytest.raises(ValueError, match="NewResource has already been created."), resource.with_creation_guard():
         pass
 
+
 def test_resource_ven_id_too_long() -> None:
     """Test that validates that the ven id of a resource can only be 128 characters max."""
     length = 129
@@ -30,9 +34,9 @@ def test_resource_ven_id_too_long() -> None:
 
 def test_resource_ven_id_empty_string() -> None:
     """Test that validates that the ven id of a resource cannot be an empty string."""
-
     with pytest.raises(ValidationError, match="have at least 1 character"):
         _ = NewResource(id=None, resource_name="TestResource", venID="")
+
 
 def test_resource_name_too_long() -> None:
     """Test that validates that the resource name of a resource can only be 128 characters max."""
@@ -45,6 +49,5 @@ def test_resource_name_too_long() -> None:
 
 def test_resource_name_empty_string() -> None:
     """Test that validates that the resource name of a resource cannot be an empty string."""
-
     with pytest.raises(ValidationError, match="have at least 1 character"):
         _ = NewResource(id=None, resource_name="", venID="ven-id")

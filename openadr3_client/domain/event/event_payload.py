@@ -1,13 +1,11 @@
 """Contains the domain models related to event payloads."""
 
-from abc import ABC
 from enum import Enum
-from typing import Literal, final
+from typing import final
 
-from pydantic import computed_field, field_validator
+from pydantic import computed_field
 
-from openadr3_client.domain.common.payload import _BasePayload, AllowedPayloadInputs, BasePayloadDescriptor
-from openadr3_client.domain.model import ValidatableModel
+from openadr3_client.domain.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
 
 
 class EventPayloadType(str, Enum):
@@ -48,9 +46,11 @@ class EventPayloadType(str, Enum):
     CTA2045_REBOOT = "CTA2045_REBOOT"
     CTA2045_SET_OVERRIDE_STATUS = "CTA2045_SET_OVERRIDE_STATUS"
 
+
 @final
 class EventPayloadDescriptor(BasePayloadDescriptor):
     """A description of the payload parameter."""
+
     payload_type: EventPayloadType
     """The type of payload being described."""
     units: str
@@ -61,7 +61,9 @@ class EventPayloadDescriptor(BasePayloadDescriptor):
     @property
     @computed_field
     def object_type(self) -> str:
+        """Returns the object type of the payload descriptor."""
         return "EVENT_PAYLOAD_DESCRIPTOR"
+
 
 @final
 class EventPayload[T: AllowedPayloadInputs](_BasePayload[EventPayloadType, T]):
