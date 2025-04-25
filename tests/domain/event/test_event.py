@@ -1,4 +1,6 @@
 from datetime import UTC, datetime, timedelta
+import random
+import string
 
 import pytest
 from pydantic import ValidationError
@@ -80,3 +82,55 @@ def test_new_event_creation_guard() -> None:
 
     with pytest.raises(ValueError, match="NewEvent has already been created."), event.with_creation_guard():
         pass
+
+def test_event_program_id_too_long() -> None:
+    """Test that validates that the program id of an event can only be 128 characters max."""
+
+    length = 129
+    random_string = "".join(random.choices(string.ascii_letters + string.digits, k=length))
+
+    with pytest.raises(ValidationError, match="String should have at most 128 characters"):
+        _ = NewEvent(
+            id=None,
+            programID=random_string,
+            event_name=None,
+            priority=None,
+            targets=(),
+            payload_descriptor=(),
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+            ),
+            intervals=(
+                Interval(
+                    id=0,
+                    interval_period=None,
+                    payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
+                ),
+            ),
+        )
+
+
+def test_event_program_id_empty_string() -> None:
+    """Test that validates that the program id of an event cannot be an empty string."""
+
+    with pytest.raises(ValidationError, match="have at least 1 character"):
+        _ = NewEvent(
+            id=None,
+            programID="",
+            event_name=None,
+            priority=None,
+            targets=(),
+            payload_descriptor=(),
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+            ),
+            intervals=(
+                Interval(
+                    id=0,
+                    interval_period=None,
+                    payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
+                ),
+            ),
+        )
