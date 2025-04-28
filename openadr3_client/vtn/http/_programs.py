@@ -5,14 +5,15 @@ from dataclasses import asdict
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client.domain.program.program import ExistingProgram, NewProgram
-from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
-from openadr3_client.vtn.common._vtn_interface import _VtnHttpInterface
+from openadr3_client.vtn.common.programs import ReadOnlyProgramsInterface, WriteOnlyProgramsInterface, ReadWriteProgramsInterface
+from openadr3_client.vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client.vtn.http.common.http_interface import HttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
 
 base_prefix = "programs"
 
 
-class ProgramsReadOnlyInterface(_VtnHttpInterface):
+class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -55,7 +56,7 @@ class ProgramsReadOnlyInterface(_VtnHttpInterface):
         return ExistingProgram.model_validate_json(response.json())
 
 
-class ProgramsWriteOnlyInterface(_VtnHttpInterface):
+class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -113,7 +114,7 @@ class ProgramsWriteOnlyInterface(_VtnHttpInterface):
         response.raise_for_status()
 
 
-class ProgramsInterface(ProgramsReadOnlyInterface, ProgramsWriteOnlyInterface):
+class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:

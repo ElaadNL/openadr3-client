@@ -4,16 +4,17 @@ from dataclasses import asdict
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client.domain.ven.resource import ExistingResource
+from openadr3_client.domain.ven.resource import ExistingResource, NewResource
 from openadr3_client.domain.ven.ven import ExistingVen, NewVen
-from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
-from openadr3_client.vtn.common._vtn_interface import _VtnHttpInterface
+from openadr3_client.vtn.common.vens import ReadOnlyVensInterface, WriteOnlyVensInterface, ReadWriteVensInterface
+from openadr3_client.vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client.vtn.http.common.http_interface import HttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
 
 base_prefix = "vens"
 
 
-class VensReadOnlyInterface(_VtnHttpInterface):
+class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -114,13 +115,13 @@ class VensReadOnlyInterface(_VtnHttpInterface):
         return ExistingResource.model_validate_json(response.json())
 
 
-class VensWriteOnlyInterface(_VtnHttpInterface):
+class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
         super().__init__(base_url)
 
-    def create_report(self, new_ven: NewVen) -> ExistingVen:
+    def create_ven(self, new_ven: NewVen) -> ExistingVen:
         """
         Creates a ven from the new ven.
 
@@ -137,7 +138,7 @@ class VensWriteOnlyInterface(_VtnHttpInterface):
             response.raise_for_status()
             return ExistingVen.model_validate_json(response.json())
 
-    def update_report_by_id(self, ven_id: str, updated_ven: ExistingVen) -> ExistingVen:
+    def update_ven_by_id(self, ven_id: str, updated_ven: ExistingVen) -> ExistingVen:
         """
         Update the ven with the ven identifier in the VTN.
 
@@ -225,8 +226,26 @@ class VensWriteOnlyInterface(_VtnHttpInterface):
         )
         response.raise_for_status()
 
+    def create_ven_resource(self, ven_id: str, new_resource: NewResource) -> ExistingResource:
+        """
+        Creates a resource from the new resource.
 
-class VensInterface(VensReadOnlyInterface, VensWriteOnlyInterface):
+        Returns the created resource response from the VTN as an ExistingResource.
+
+        Args:
+            ven_id (str): The identifier of the VEN the resource belongs to.
+            new_ven (NewResource): The new resource to create.
+
+        """
+        with new_resource.with_creation_guard():
+            response = bearer_authenticated_session.post(
+                f"{self.base_url}/{base_prefix}/{ven_id}/resources", data=new_resource.model_dump_json()
+            )
+            response.raise_for_status()
+            return ExistingResource.model_validate_json(response.json())
+
+
+class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):
     """Implements the read and write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:

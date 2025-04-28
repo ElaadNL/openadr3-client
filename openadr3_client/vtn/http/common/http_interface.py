@@ -1,7 +1,7 @@
 
 
-class _VtnHttpInterface:
-    """Represents a base class for a VTN HTTP interface."""
+class HttpInterface:
+    """Represents a base class for a HTTP interface."""
 
     def __init__(self, base_url: str) -> None:
         """

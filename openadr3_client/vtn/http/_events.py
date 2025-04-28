@@ -1,18 +1,19 @@
 """Implements the communication with the events interface of an OpenADR 3 VTN."""
 
 from dataclasses import asdict
+from typing import final
 
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client.domain.event.event import ExistingEvent, NewEvent
-from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
-from openadr3_client.vtn.common._vtn_interface import _VtnHttpInterface
+from openadr3_client.vtn.common.events import ReadOnlyEventsInterface, WriteOnlyEventsInterface, ReadWriteEventsInterface
+from openadr3_client.vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client.vtn.http.common.http_interface import HttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
 
 base_prefix = "events"
 
-
-class EventsReadOnlyInterface(_VtnHttpInterface):
+class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -63,8 +64,7 @@ class EventsReadOnlyInterface(_VtnHttpInterface):
 
         return ExistingEvent.model_validate_json(response.json())
 
-
-class EventsWriteOnlyInterface(_VtnHttpInterface):
+class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -125,8 +125,8 @@ class EventsWriteOnlyInterface(_VtnHttpInterface):
         response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
 
-
-class EventsInterface(EventsReadOnlyInterface, EventsWriteOnlyInterface):
+@final
+class EventsHttpnterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:

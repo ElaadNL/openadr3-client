@@ -5,14 +5,15 @@ from dataclasses import asdict
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client.domain.report.report import ExistingReport, NewReport
-from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
-from openadr3_client.vtn.common._vtn_interface import _VtnHttpInterface
+from openadr3_client.vtn.common.reports import ReadOnlyReportsInterface, WriteOnlyReportsInterface, ReadWriteReportsInterface
+from openadr3_client.vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client.vtn.http.common.http_interface import HttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter
 
 base_prefix = "reports"
 
 
-class ReportsReadOnlyInterface(_VtnHttpInterface):
+class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -72,7 +73,7 @@ class ReportsReadOnlyInterface(_VtnHttpInterface):
         return ExistingReport.model_validate_json(response.json())
 
 
-class ReportsWriteOnlyInterface(_VtnHttpInterface):
+class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -134,7 +135,7 @@ class ReportsWriteOnlyInterface(_VtnHttpInterface):
         response.raise_for_status()
 
 
-class ReportsInterface(ReportsReadOnlyInterface, ReportsWriteOnlyInterface):
+class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:

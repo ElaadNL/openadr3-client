@@ -5,14 +5,15 @@ from dataclasses import asdict
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client.domain.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
-from openadr3_client.vtn.common._authenticated_session import bearer_authenticated_session
-from openadr3_client.vtn.common._vtn_interface import _VtnHttpInterface
+from openadr3_client.vtn.common.subscriptions import ReadOnlySubscriptionsInterface, WriteOnlySubscriptionsInterface, ReadWriteSubscriptionsInterface
+from openadr3_client.vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client.vtn.http.common.http_interface import HttpInterface
 from openadr3_client.vtn.common.filters import PaginationFilter, TargetFilter
 
 base_prefix = "subscriptions"
 
 
-class SubscriptionsReadOnlyInterface(_VtnHttpInterface):
+class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInterface):
     """Implements the read communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -76,7 +77,7 @@ class SubscriptionsReadOnlyInterface(_VtnHttpInterface):
         return ExistingSubscription.model_validate_json(response.json())
 
 
-class SubscriptionsWriteOnlyInterface(_VtnHttpInterface):
+class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpInterface):
     """Implements the write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
@@ -140,7 +141,7 @@ class SubscriptionsWriteOnlyInterface(_VtnHttpInterface):
         response.raise_for_status()
 
 
-class SubscriptionsInterface(SubscriptionsReadOnlyInterface, SubscriptionsWriteOnlyInterface):
+class SubscriptionsHttpInterface(ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface):
     """Implements the read and write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:
