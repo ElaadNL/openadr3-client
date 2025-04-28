@@ -3,6 +3,5 @@
 from openadr3_client.models.common.value_map import ValueMap
 
 
-# TODO: CHECK IF THERE ARE CONSTRAINTS ON TYPE PARAM FOR TARGET AND ATTRIBUTES
 class Target[T](ValueMap[str, T]):
     """Class representing a target."""
