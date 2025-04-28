@@ -4,7 +4,7 @@ import pytest
 from oauthlib.oauth2.rfc6749.errors import InvalidClientError, InvalidScopeError, UnauthorizedClientError
 from requests.exceptions import ConnectionError as requests_ConnectionError
 
-from openadr3_client.auth.token_manager import OAuthTokenManager
+from openadr3_client._auth.token_manager import OAuthTokenManager
 
 from .conftest import IntegrationTestOAuthClient
 

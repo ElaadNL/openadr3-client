@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from openadr3_client.domain.common.interval import Interval
-from openadr3_client.domain.common.interval_period import IntervalPeriod
-from openadr3_client.domain.event.event_payload import EventPayload
+from openadr3_client.models.common.interval import Interval
+from openadr3_client.models.common.interval_period import IntervalPeriod
+from openadr3_client.models.event.event_payload import EventPayload
 
 
 @dataclass
