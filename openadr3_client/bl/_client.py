@@ -6,6 +6,7 @@ from openadr3_client._vtn.interfaces.reports import ReadOnlyReportsInterface
 from openadr3_client._vtn.interfaces.subscriptions import ReadOnlySubscriptionsInterface
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface
 
+
 @final
 class BusinessLogicClient:
     """
@@ -14,12 +15,14 @@ class BusinessLogicClient:
     The business logic clients communicates with the VTN.
     """
 
-    def __init__(self,
-                 events: ReadWriteEventsInterface,
-                 programs: ReadWriteProgramsInterface,
-                 reports: ReadOnlyReportsInterface,
-                 vens: ReadOnlyVensInterface,
-                 subscriptions: ReadOnlySubscriptionsInterface) -> None:
+    def __init__(
+        self,
+        events: ReadWriteEventsInterface,
+        programs: ReadWriteProgramsInterface,
+        reports: ReadOnlyReportsInterface,
+        vens: ReadOnlyVensInterface,
+        subscriptions: ReadOnlySubscriptionsInterface,
+    ) -> None:
         """
         Initializes the business logic client.
 
@@ -29,6 +32,7 @@ class BusinessLogicClient:
             reports (ReadOnlyReportsInterface): The reports interface.
             vens (ReadOnlyVensInterface): The VENs interface.
             subscriptions (ReadOnlySubscriptionsInterface): The subscriptions interface.
+
         """
         self.events = events
         self.programs = programs

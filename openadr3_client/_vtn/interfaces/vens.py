@@ -1,9 +1,10 @@
 """Implements the abstract base class for the ven VTN interfaces."""
 
 from abc import ABC, abstractmethod
+
+from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.ven.resource import ExistingResource, NewResource
 from openadr3_client.models.ven.ven import ExistingVen, NewVen
-from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 
 
 class ReadOnlyVensInterface(ABC):
@@ -65,7 +66,7 @@ class ReadOnlyVensInterface(ABC):
 
         """
 
-    
+
 class WriteOnlyVensInterface(ABC):
     """Abstract class which contains the interface for write only methods of vens."""
 
@@ -151,6 +152,7 @@ class WriteOnlyVensInterface(ABC):
             new_resource (NewResource): The new resource to create.
 
         """
+
 
 class ReadWriteVensInterface(ReadOnlyVensInterface, WriteOnlyVensInterface):
     """Class which allows both read and write access on the resource."""

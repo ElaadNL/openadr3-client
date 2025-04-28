@@ -6,10 +6,10 @@ import pandas as pd
 import pytest
 from pandera.errors import ParserError, SchemaError
 
+from openadr3_client.input_conversion.pandas import DataFrameEventIntervalConverter
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType
-from openadr3_client.input_conversion.pandas import DataFrameEventIntervalConverter
 
 
 def get_inputs() -> list[pd.DataFrame]:

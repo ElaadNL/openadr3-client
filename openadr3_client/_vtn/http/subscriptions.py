@@ -4,11 +4,15 @@ from dataclasses import asdict
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
-from openadr3_client._vtn.interfaces.subscriptions import ReadOnlySubscriptionsInterface, WriteOnlySubscriptionsInterface, ReadWriteSubscriptionsInterface
 from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client._vtn.interfaces.subscriptions import (
+    ReadOnlySubscriptionsInterface,
+    ReadWriteSubscriptionsInterface,
+    WriteOnlySubscriptionsInterface,
+)
+from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
 
 base_prefix = "subscriptions"
 
@@ -141,7 +145,9 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         response.raise_for_status()
 
 
-class SubscriptionsHttpInterface(ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface):
+class SubscriptionsHttpInterface(
+    ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface
+):
     """Implements the read and write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str) -> None:

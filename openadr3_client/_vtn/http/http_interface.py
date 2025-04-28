@@ -1,5 +1,3 @@
-
-
 class HttpInterface:
     """Represents a base class for a HTTP interface."""
 

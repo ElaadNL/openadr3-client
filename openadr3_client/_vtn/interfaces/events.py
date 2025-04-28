@@ -1,8 +1,9 @@
 """Implements the abstract base classes for VTN interfaces."""
 
 from abc import ABC, abstractmethod
-from openadr3_client.models.event.event import ExistingEvent, NewEvent
+
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.event.event import ExistingEvent, NewEvent
 
 
 class ReadOnlyEventsInterface(ABC):
@@ -33,10 +34,11 @@ class ReadOnlyEventsInterface(ABC):
             event_id (str): The event identifier to retrieve.
 
         """
-    
+
 
 class WriteOnlyEventsInterface(ABC):
     """Abstract class which contains the interface for write only methods of events."""
+
     @abstractmethod
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
         """
@@ -74,6 +76,7 @@ class WriteOnlyEventsInterface(ABC):
             event_id (str): The identifier of the event to delete.
 
         """
+
 
 class ReadWriteEventsInterface(ReadOnlyEventsInterface, WriteOnlyEventsInterface):
     """Class which allows both read and write access on the events resource."""

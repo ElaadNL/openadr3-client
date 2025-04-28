@@ -5,13 +5,18 @@ from typing import final
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client.models.event.event import ExistingEvent, NewEvent
-from openadr3_client._vtn.interfaces.events import ReadOnlyEventsInterface, WriteOnlyEventsInterface, ReadWriteEventsInterface
 from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
 from openadr3_client._vtn.http.http_interface import HttpInterface
+from openadr3_client._vtn.interfaces.events import (
+    ReadOnlyEventsInterface,
+    ReadWriteEventsInterface,
+    WriteOnlyEventsInterface,
+)
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.event.event import ExistingEvent, NewEvent
 
 base_prefix = "events"
+
 
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
@@ -63,6 +68,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
         response.raise_for_status()
 
         return ExistingEvent.model_validate_json(response.json())
+
 
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
@@ -124,6 +130,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         """
         response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
+
 
 @final
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):

@@ -2,12 +2,12 @@ from collections.abc import Iterable
 from datetime import datetime, timedelta
 from typing import TypedDict
 
-from openadr3_client.models.common.payload import AllowedPayloadInputs
 from openadr3_client.input_conversion._base_converter import (
     OK,
     BaseEventIntervalConverter,
     ValidationOutput,
 )
+from openadr3_client.models.common.payload import AllowedPayloadInputs
 
 
 class _EventIntervalDictRequiredFields(TypedDict):

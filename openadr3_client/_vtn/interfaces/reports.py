@@ -1,12 +1,14 @@
 """Implements the abstract base class for the reports VTN interfaces."""
 
 from abc import ABC, abstractmethod
-from openadr3_client.models.report.report import ExistingReport, NewReport
+
 from openadr3_client._vtn.interfaces.filters import PaginationFilter
+from openadr3_client.models.report.report import ExistingReport, NewReport
 
 
 class ReadOnlyReportsInterface(ABC):
     """Abstract class which contains the interface for read only methods of reports."""
+
     @abstractmethod
     def get_reports(
         self,
@@ -38,7 +40,8 @@ class ReadOnlyReportsInterface(ABC):
             report_id (str): The report identifier to retrieve.
 
         """
-    
+
+
 class WriteOnlyReportsInterface(ABC):
     """Abstract class which contains the interface for write only methods of reports."""
 
@@ -69,7 +72,7 @@ class WriteOnlyReportsInterface(ABC):
             updated_report (ExistingReport): The updated report.
 
         """
-        
+
     @abstractmethod
     def delete_report_by_id(self, report_id: str) -> None:
         """
@@ -79,6 +82,7 @@ class WriteOnlyReportsInterface(ABC):
             report_id (str): The identifier of the report to delete.
 
         """
-    
+
+
 class ReadWriteReportsInterface(ReadOnlyReportsInterface, WriteOnlyReportsInterface):
     """Class which allows both read and write access on the resource."""

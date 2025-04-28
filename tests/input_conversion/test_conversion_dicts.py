@@ -5,13 +5,13 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.common.interval import Interval
-from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType
 from openadr3_client.input_conversion.iterable import (
     EventIntervalDictInput,
     IterableEventIntervalConverter,
 )
+from openadr3_client.models.common.interval import Interval
+from openadr3_client.models.common.interval_period import IntervalPeriod
+from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType
 
 
 def get_inputs() -> list[list[EventIntervalDictInput]]:

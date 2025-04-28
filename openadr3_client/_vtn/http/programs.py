@@ -4,11 +4,15 @@ from dataclasses import asdict
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
-from openadr3_client._vtn.interfaces.programs import ReadOnlyProgramsInterface, WriteOnlyProgramsInterface, ReadWriteProgramsInterface
 from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client._vtn.interfaces.programs import (
+    ReadOnlyProgramsInterface,
+    ReadWriteProgramsInterface,
+    WriteOnlyProgramsInterface,
+)
+from openadr3_client.models.program.program import ExistingProgram, NewProgram
 
 base_prefix = "programs"
 

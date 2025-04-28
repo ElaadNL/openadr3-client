@@ -1,8 +1,9 @@
 """Implements the abstract base class for the programs VTN interfaces."""
 
 from abc import ABC, abstractmethod
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
+
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.program.program import ExistingProgram, NewProgram
 
 
 class ReadOnlyProgramsInterface(ABC):
@@ -20,7 +21,7 @@ class ReadOnlyProgramsInterface(ABC):
             pagination (Optional[PaginationFilter]): The pagination to apply.
 
         """
-        
+
     @abstractmethod
     def get_program_by_id(self, program_id: str) -> ExistingProgram:
         """
@@ -32,7 +33,8 @@ class ReadOnlyProgramsInterface(ABC):
             program_id (str): The program identifier to retrieve.
 
         """
-    
+
+
 class WriteOnlyProgramsInterface(ABC):
     """Abstract class which contains the interface for write only methods of programs."""
 
@@ -69,6 +71,7 @@ class WriteOnlyProgramsInterface(ABC):
             program_id (str): The identifier of the program to delete.
 
         """
+
 
 class ReadWriteProgramsInterface(ReadOnlyProgramsInterface, WriteOnlyProgramsInterface):
     """Class which allows both read and write access on the resource."""

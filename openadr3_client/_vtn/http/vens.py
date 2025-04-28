@@ -4,12 +4,12 @@ from dataclasses import asdict
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client.models.ven.resource import ExistingResource, NewResource
-from openadr3_client.models.ven.ven import ExistingVen, NewVen
-from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, WriteOnlyVensInterface, ReadWriteVensInterface
 from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
+from openadr3_client.models.ven.resource import ExistingResource, NewResource
+from openadr3_client.models.ven.ven import ExistingVen, NewVen
 
 base_prefix = "vens"
 
@@ -234,7 +234,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
 
         Args:
             ven_id (str): The identifier of the VEN the resource belongs to.
-            new_ven (NewResource): The new resource to create.
+            new_resource (NewResource): The new resource to create.
 
         """
         with new_resource.with_creation_guard():
