@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from enum import Enum
 from threading import Lock
-from typing import final
+from typing import Tuple, final
 
 from pydantic import AwareDatetime, Field, HttpUrl, PrivateAttr, field_validator
 
@@ -34,13 +34,13 @@ class Operation(str, Enum):
 
 
 @final
-class ObjectOperation:
+class ObjectOperation(ValidatableModel):
     """Represents a single object operation."""
 
-    objects: tuple[Object, ...]
+    objects: Tuple[Object, ...]
     """The objects that trigger this operation."""
 
-    operations: tuple[Operation, ...]
+    operations: Tuple[Operation, ...]
     """The operations that trigger this operation."""
 
     callback_url: HttpUrl
@@ -55,7 +55,7 @@ class ObjectOperation:
 
     @field_validator("objects", mode="after")
     @classmethod
-    def atleast_one_object(cls, objects: tuple[Object, ...]) -> tuple[Object, ...]:
+    def atleast_one_object(cls, objects: Tuple[Object, ...]) -> Tuple[Object, ...]:
         """
         Validates that an object operation has atleast one object defined.
 
@@ -70,7 +70,7 @@ class ObjectOperation:
 
     @field_validator("operations", mode="after")
     @classmethod
-    def atleast_one_operation(cls, operations: tuple[Operation, ...]) -> tuple[Operation, ...]:
+    def atleast_one_operation(cls, operations: Tuple[Operation, ...]) -> Tuple[Operation, ...]:
         """
         Validates that an object operation has atleast one operation defined.
 

@@ -35,8 +35,8 @@ class _BearerAuthenticatedSession(Session):
     """Session that includes a bearer token in all requests made through it."""
 
     def __init__(self) -> None:
-        self.auth = _BearerAuth()
         super().__init__()
+        self.auth = _BearerAuth()
 
 
 bearer_authenticated_session = _BearerAuthenticatedSession()

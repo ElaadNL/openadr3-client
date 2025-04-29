@@ -8,7 +8,7 @@ import pandera as pa
 from pandera.engines.pandas_engine import DateTime
 from pandera.typing import Series, Timedelta
 
-from openadr3_client.input_conversion._base_converter import (
+from openadr3_client.conversion._base_converter import (
     ERROR,
     OK,
     BaseEventIntervalConverter,
