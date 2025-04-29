@@ -1,0 +1,31 @@
+{
+  "realm": "integration-test-realm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "test-client-id",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "my-client-secret",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "protocolMappers": [
+        {
+          "name": "custom roles mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.value": "[\n  {\"role\": \"AnyBusiness\"}\n]",
+            "claim.name": "roles",
+            "jsonType.label": "JSON",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ]
+}

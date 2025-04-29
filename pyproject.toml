@@ -80,6 +80,10 @@ exclude_dirs = ["tests", ".venv"]
 
 [tool.pytest_env]
 OAUTHLIB_INSECURE_TRANSPORT = 1
+OAUTH_TOKEN_ENDPOINT = "http://localhost:47005/realms/integration-test-realm/protocol/openid-connect/token"
+OAUTH_CLIENT_ID = "test-client-id"
+OAUTH_CLIENT_SECRET = "my-client-secret"
+DOCKER_DEFAULT_PLATFORM="linux/amd64"
 
 [[tool.mypy.overrides]]
 module = ["decouple", "testcontainers.keycloak"]
