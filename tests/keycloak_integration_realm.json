@@ -17,9 +17,33 @@
           "protocol": "openid-connect",
           "protocolMapper": "oidc-hardcoded-claim-mapper",
           "config": {
-            "claim.value": "[\n  {\"role\": \"AnyBusiness\"}\n]",
+            "claim.value": "[\n  {\"role\": \"AnyBusiness\"},\n  {\"role\": \"VenManager\"}\n]",
             "claim.name": "roles",
             "jsonType.label": "JSON",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "https://integration.test.elaad.nl",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "nbf mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.value": "1745926210",
+            "claim.name": "nbf",
+            "jsonType.label": "long",
             "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true"
