@@ -36,6 +36,7 @@ pytest-env = "^1.1.5"
 types-oauthlib = "^3.2.0.20250408"
 types-requests-oauthlib = "^2.0.0.20250306"
 types-requests = "^2.32.0.20250328"
+pyjwt = "^2.10.1"
 
 [tool.ruff]
 line-length = 120

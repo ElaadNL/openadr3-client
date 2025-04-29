@@ -52,7 +52,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingEvent])
-        return tuple(adapter.validate_json(response.json()))
+        return tuple(adapter.validate_python(response.json()))
 
     def get_event_by_id(self, event_id: str) -> ExistingEvent:
         """
@@ -67,7 +67,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
 
-        return ExistingEvent.model_validate_json(response.json())
+        return ExistingEvent.model_validate(response.json())
 
 
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
@@ -88,10 +88,10 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         """
         with new_event.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}", data=new_event.model_dump_json()
+                f"{self.base_url}/{base_prefix}", json=new_event.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
-            return ExistingEvent.model_validate_json(response.json())
+            return ExistingEvent.model_validate(response.json())
 
     def update_event_by_id(self, event_id: str, updated_event: ExistingEvent) -> ExistingEvent:
         """
@@ -115,10 +115,10 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{event_id}", data=updated_event.model_dump_json()
+            f"{self.base_url}/{base_prefix}/{event_id}", json=updated_event.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
-        return ExistingEvent.model_validate_json(response.json())
+        return ExistingEvent.model_validate(response.json())
 
     def delete_event_by_id(self, event_id: str) -> None:
         """

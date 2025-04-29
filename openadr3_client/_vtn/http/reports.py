@@ -59,7 +59,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingReport])
-        return tuple(adapter.validate_json(response.json()))
+        return tuple(adapter.validate_python(response.json()))
 
     def get_report_by_id(self, report_id: str) -> ExistingReport:
         """
@@ -74,7 +74,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{report_id}")
         response.raise_for_status()
 
-        return ExistingReport.model_validate_json(response.json())
+        return ExistingReport.model_validate(response.json())
 
 
 class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
@@ -95,10 +95,10 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
         """
         with new_report.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}", data=new_report.model_dump_json()
+                f"{self.base_url}/{base_prefix}", json=new_report.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
-            return ExistingReport.model_validate_json(response.json())
+            return ExistingReport.model_validate(response.json())
 
     def update_report_by_id(self, report_id: str, updated_report: ExistingReport) -> ExistingReport:
         """
@@ -122,10 +122,10 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{report_id}", data=updated_report.model_dump_json()
+            f"{self.base_url}/{base_prefix}/{report_id}", json=updated_report.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
-        return ExistingReport.model_validate_json(response.json())
+        return ExistingReport.model_validate(response.json())
 
     def delete_report_by_id(self, report_id: str) -> None:
         """

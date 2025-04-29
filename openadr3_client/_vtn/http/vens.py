@@ -48,7 +48,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingVen])
-        return tuple(adapter.validate_json(response.json()))
+        return tuple(adapter.validate_python(response.json()))
 
     def get_ven_by_id(self, ven_id: str) -> ExistingVen:
         """
@@ -63,7 +63,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{ven_id}")
         response.raise_for_status()
 
-        return ExistingVen.model_validate_json(response.json())
+        return ExistingVen.model_validate(response.json())
 
     def get_ven_resources(
         self,
@@ -98,7 +98,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingResource])
-        return tuple(adapter.validate_json(response.json()))
+        return tuple(adapter.validate_python(response.json()))
 
     def get_ven_resource_by_id(self, ven_id: str, resource_id: str) -> ExistingResource:
         """
@@ -112,7 +112,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
         response.raise_for_status()
 
-        return ExistingResource.model_validate_json(response.json())
+        return ExistingResource.model_validate(response.json())
 
 
 class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
@@ -133,10 +133,10 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         """
         with new_ven.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}", data=new_ven.model_dump_json()
+                f"{self.base_url}/{base_prefix}", json=new_ven.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
-            return ExistingVen.model_validate_json(response.json())
+            return ExistingVen.model_validate(response.json())
 
     def update_ven_by_id(self, ven_id: str, updated_ven: ExistingVen) -> ExistingVen:
         """
@@ -160,10 +160,10 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{ven_id}", data=updated_ven.model_dump_json()
+            f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
-        return ExistingVen.model_validate_json(response.json())
+        return ExistingVen.model_validate(response.json())
 
     def delete_ven_by_id(self, ven_id: str) -> None:
         """
@@ -207,10 +207,10 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{ven_id}", data=updated_resource.model_dump_json()
+            f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_resource.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
-        return ExistingResource.model_validate_json(response.json())
+        return ExistingResource.model_validate(response.json())
 
     def delete_ven_resource_by_id(self, ven_id: str, resource_id: str) -> None:
         """
@@ -239,10 +239,10 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         """
         with new_resource.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}/{ven_id}/resources", data=new_resource.model_dump_json()
+                f"{self.base_url}/{base_prefix}/{ven_id}/resources", json=new_resource.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
-            return ExistingResource.model_validate_json(response.json())
+            return ExistingResource.model_validate(response.json())
 
 
 class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):

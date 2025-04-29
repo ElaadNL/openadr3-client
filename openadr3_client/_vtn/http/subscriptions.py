@@ -63,7 +63,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingSubscription])
-        return tuple(adapter.validate_json(response.json()))
+        return tuple(adapter.validate_python(response.json()))
 
     def get_subscription_by_id(self, subscription_id: str) -> ExistingSubscription:
         """
@@ -78,7 +78,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{subscription_id}")
         response.raise_for_status()
 
-        return ExistingSubscription.model_validate_json(response.json())
+        return ExistingSubscription.model_validate(response.json())
 
 
 class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpInterface):
@@ -99,10 +99,10 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         """
         with new_subscription.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}", data=new_subscription.model_dump_json()
+                f"{self.base_url}/{base_prefix}", json=new_subscription.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
-            return ExistingSubscription.model_validate_json(response.json())
+            return ExistingSubscription.model_validate(response.json())
 
     def update_subscription_by_id(
         self, subscription_id: str, updated_subscription: ExistingSubscription
@@ -128,10 +128,10 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{subscription_id}", data=updated_subscription.model_dump_json()
+            f"{self.base_url}/{base_prefix}/{subscription_id}", json=updated_subscription.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
-        return ExistingSubscription.model_validate_json(response.json())
+        return ExistingSubscription.model_validate(response.json())
 
     def delete_subscription_by_id(self, subscription_id: str) -> None:
         """

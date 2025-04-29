@@ -42,7 +42,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingProgram])
-        return tuple(adapter.validate_json(response.json()))
+        return tuple(adapter.validate_python(response.json()))
 
     def get_program_by_id(self, program_id: str) -> ExistingProgram:
         """
@@ -57,7 +57,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{program_id}")
         response.raise_for_status()
 
-        return ExistingProgram.model_validate_json(response.json())
+        return ExistingProgram.model_validate(response.json())
 
 
 class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
@@ -74,10 +74,10 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
         """
         with new_program.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}", data=new_program.model_dump_json()
+                f"{self.base_url}/{base_prefix}", json=new_program.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
-            return ExistingProgram.model_validate_json(response.json())
+            return ExistingProgram.model_validate(response.json())
 
     def update_program_by_id(self, program_id: str, updated_program: ExistingProgram) -> ExistingProgram:
         """
@@ -101,10 +101,10 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{program_id}", data=updated_program.model_dump_json()
+            f"{self.base_url}/{base_prefix}/{program_id}", json=updated_program.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
-        return ExistingProgram.model_validate_json(response.json())
+        return ExistingProgram.model_validate(response.json())
 
     def delete_program_by_id(self, program_id: str) -> None:
         """

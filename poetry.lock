@@ -1057,7 +1057,7 @@ version = "2.10.1"
 description = "JSON Web Token implementation in Python"
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "PyJWT-2.10.1-py3-none-any.whl", hash = "sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb"},
     {file = "pyjwt-2.10.1.tar.gz", hash = "sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953"},
@@ -1631,4 +1631,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12, <4"
-content-hash = "76d1d6681db8ce01b5a1b73df67729d13dfc27b8f30ee6ce6a2ab149236df862"
+content-hash = "e60d7ef35f4da15eea5133469588c59209e4e727cca9a98bbe7322eef301c620"
