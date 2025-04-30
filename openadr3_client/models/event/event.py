@@ -14,6 +14,7 @@ from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models._base_model import BaseModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -44,6 +45,31 @@ class Event[T](ABC, ValidatableModel):
     """The interval period of the event."""
 
     intervals: tuple[Interval[EventPayload], ...]
+    """The intervals of the event."""
+
+
+class EventUpdate(BaseModel):
+    """Class representing an update to an existing event."""
+
+    program_id: str | None = Field(alias="programID", min_length=1, max_length=128, default=None)
+    """Identifier of the program this event belongs to."""
+
+    event_name: str | None = None
+    """The name of the event."""
+
+    priority: NonNegativeInt | None = None
+    """The priority of the event, less is higher priority."""
+
+    targets: tuple[Target, ...] | None = None
+    """The targets of the event."""
+
+    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    """The payload descriptors of the event."""
+
+    interval_period: IntervalPeriod | None = None
+    """The interval period of the event."""
+
+    intervals: tuple[Interval[EventPayload], ...] | None = None
     """The intervals of the event."""
 
 
@@ -107,3 +133,18 @@ class ExistingEvent(Event[str]):
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+    def update(self, update: EventUpdate) -> "ExistingEvent":
+        """
+        Update this event with the provided update.
+
+        Args:
+            update: The update to apply to this event.
+
+        Returns:
+            A new ExistingEvent instance with the updates applied.
+        """
+        current_data = self.model_dump()
+        update_data = update.model_dump(exclude_unset=True)
+        updated_data = {**current_data, **update_data}
+        return ExistingEvent(**updated_data)

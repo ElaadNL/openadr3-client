@@ -7,6 +7,7 @@ from typing import Tuple, final
 
 from pydantic import AwareDatetime, Field, HttpUrl, PrivateAttr, field_validator
 
+from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.model import ValidatableModel
 
@@ -158,10 +159,39 @@ class NewSubscription(Subscription[None]):
                 self._created = False
                 raise
 
+class SubscriptionUpdate(BaseModel):
+    """Class representing an update to a subscription."""
+    
+    client_name: str | None = Field(min_length=1, max_length=128)
+    """The client name of the subscription update."""
 
+    program_id: str | None = Field(alias="programID", min_length=1, max_length=128)
+    """The program id of the subscription update."""
+
+    object_operations: tuple[ObjectOperation, ...] | None = None
+    """The object operations of the subscription update."""
+
+    targets: tuple[Target, ...] | None = None
+    """The targets of the subscription update."""
+    
+    
 @final
 class ExistingSubscription(Subscription[str]):
     """Class representing an existing subscription retrieved from the VTN."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+    def update(self, update: SubscriptionUpdate) -> ExistingSubscription:
+        """Update the existing subscription with the provided update.
+        
+        Args:
+            update (SubscriptionUpdate): The update to apply to the subscription.
+
+        Returns:
+            ExistingSubscription: The updated subscription.
+        """
+        current_subscription = self.model_dump()
+        update_dict = update.model_dump(exclude_unset=True)
+        updated_subscription = current_subscription | update_dict
+        return ExistingSubscription(**updated_subscription)
