@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import TypedDict
+from typing import TypedDict, final
 
 from openadr3_client.conversion._base_converter import (
     OK,
@@ -36,7 +36,7 @@ class EventIntervalDictInput(_EventIntervalDictRequiredFields, total=False):
     duration: timedelta | None
     randomize_start: timedelta | None
 
-
+@final
 class IterableEventIntervalConverter(
     BaseEventIntervalConverter[Iterable[EventIntervalDictInput], EventIntervalDictInput]
 ):
