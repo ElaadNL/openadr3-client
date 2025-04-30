@@ -16,7 +16,7 @@ class Ven[T](ABC, ValidatableModel):
     """Base class for vens."""
 
     id: T
-    """The identifier for the report."""
+    """The identifier of the ven object."""
 
     ven_name: str = Field(min_length=1, max_length=128)
     """The ven name of the ven object."""
