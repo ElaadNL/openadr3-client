@@ -34,8 +34,28 @@ class VirtualEndNodeClient:
             subscriptions (ReadWriteSubscriptionsInterface): The subscriptions interface.
 
         """
-        self.events = events
-        self.programs = programs
-        self.reports = reports
-        self.vens = vens
-        self.subscriptions = subscriptions
+        self._events = events
+        self._programs = programs
+        self._reports = reports
+        self._vens = vens
+        self._subscriptions = subscriptions
+
+    @property
+    def events(self) -> ReadOnlyEventsInterface:
+        return self._events
+
+    @property
+    def programs(self) -> ReadOnlyProgramsInterface:
+        return self._programs
+
+    @property
+    def reports(self) -> ReadWriteReportsInterface:
+        return self._reports
+
+    @property
+    def vens(self) -> ReadWriteVensInterface:
+        return self._vens
+
+    @property
+    def subscriptions(self) -> ReadWriteSubscriptionsInterface:
+        return self._subscriptions
