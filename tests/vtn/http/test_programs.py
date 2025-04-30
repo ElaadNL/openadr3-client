@@ -1,14 +1,17 @@
 """Contains tests for the programs VTN module."""
 
-import pytest
-from requests import HTTPError
-from openadr3_client._vtn.http.programs import ProgramsHttpInterface
-from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
-from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
-from tests.conftest import IntegrationTestVTNClient
+from datetime import datetime, timedelta, timezone, UTC
 
-from datetime import UTC, datetime, timedelta, timezone
+import pytest
+from requests.exceptions import HTTPError
+
+from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.common.target import Target
+from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
+from openadr3_client.models.program.program import ExistingProgram, NewProgram
+from openadr3_client.models.common.interval_period import IntervalPeriod
+from openadr3_client._vtn.http.programs import ProgramsHttpInterface
+from tests.conftest import IntegrationTestVTNClient
 
 
 def test_get_programs_no_programs_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
@@ -84,4 +87,164 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
     
     assert response.id is not None, "program should be created successfully."
     assert response.program_name == "Test Program", "program name should match"
-    assert response.program_long_name == "Test Program Long Name", "program long name should match" 
+    assert response.program_long_name == "Test Program Long Name", "program long name should match"
+
+    interface.delete_program_by_id(program_id=response.id)
+
+
+def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate getting programs with various parameter combinations."""
+    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # Create two programs with different names and targets
+    program1 = NewProgram(
+        id=None,
+        program_name="test-program-1",
+        program_long_name="Test Program 1 Long Name",
+        interval_period=IntervalPeriod(
+            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+            duration=timedelta(minutes=5),
+        ),
+        payload_descriptor=(EventPayloadDescriptor(
+            payload_type=EventPayloadType.SIMPLE,
+            units="kWh",
+            currency="EUR"
+        ),),
+        targets=(
+            Target(type="test-target-1", values=("test-value-1",)),
+        )
+    )
+    program2 = NewProgram(
+        id=None,
+        program_name="test-program-2",
+        program_long_name="Test Program 2 Long Name",
+        interval_period=IntervalPeriod(
+            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+            duration=timedelta(minutes=5),
+        ),
+        payload_descriptor=(EventPayloadDescriptor(
+            payload_type=EventPayloadType.SIMPLE,
+            units="kWh",
+            currency="EUR"
+        ),),
+        targets=(
+            Target(type="test-target-2", values=("test-value-2",)),
+        )
+    )
+    created_program1 = interface.create_program(new_program=program1)
+    created_program2 = interface.create_program(new_program=program2)
+
+    try:
+        # Test getting all programs
+        all_programs = interface.get_programs(target=None, pagination=None)
+        assert len(all_programs) == 2, "Should return both programs"
+
+        # Test getting programs by target
+        target_filter = TargetFilter(target_type="test-target-1", target_values=["test-value-1"])
+        program1_by_target = interface.get_programs(target=target_filter, pagination=None)
+        assert len(program1_by_target) == 1, "Should return one program"
+        assert program1_by_target[0].program_name == "test-program-1", "Should return the correct program"
+
+        # Test pagination
+        pagination_filter = PaginationFilter(skip=0, limit=1)
+        paginated_programs = interface.get_programs(target=None, pagination=pagination_filter)
+        assert len(paginated_programs) == 1, "Should return one program due to pagination"
+    finally:
+        interface.delete_program_by_id(program_id=created_program1.id)
+        interface.delete_program_by_id(program_id=created_program2.id)
+
+
+def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate deleting a program that exists."""
+    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # Create a program to delete
+    program = NewProgram(
+        id=None,
+        program_name="test-program-to-delete",
+        program_long_name="Test Program To Delete Long Name",
+        interval_period=IntervalPeriod(
+            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+            duration=timedelta(minutes=5),
+        ),
+        payload_descriptor=(EventPayloadDescriptor(
+            payload_type=EventPayloadType.SIMPLE,
+            units="kWh",
+            currency="EUR"
+        ),),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+    created_program = interface.create_program(new_program=program)
+    assert created_program.id is not None, "program should be created successfully"
+
+    # Delete the program
+    interface.delete_program_by_id(program_id=created_program.id)
+
+    # Verify the program is deleted
+    with pytest.raises(HTTPError, match="404 Client Error"):
+        _ = interface.get_program_by_id(program_id=created_program.id)
+
+
+def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate updating a program that exists."""
+    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # Create a program to update
+    program = NewProgram(
+        id=None,
+        program_name="test-program-to-update",
+        program_long_name="Test Program To Update Long Name",
+        interval_period=IntervalPeriod(
+            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+            duration=timedelta(minutes=5),
+        ),
+        payload_descriptor=(EventPayloadDescriptor(
+            payload_type=EventPayloadType.SIMPLE,
+            units="kWh",
+            currency="EUR"
+        ),),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+    created_program = interface.create_program(new_program=program)
+    assert created_program.id is not None, "program should be created successfully"
+
+    try:
+        # Update the program
+        updated_program = interface.update_program_by_id(
+            program_id=created_program.id,
+            updated_program=ExistingProgram(
+                id=created_program.id,
+                program_name="test-program-updated",
+                program_long_name="Test Program Updated Long Name",
+                created_date_time=created_program.created_date_time,
+                modification_date_time=created_program.modification_date_time,
+                interval_period=IntervalPeriod(
+                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                    duration=timedelta(minutes=5),
+                ),
+                payload_descriptor=(EventPayloadDescriptor(
+                    payload_type=EventPayloadType.SIMPLE,
+                    units="kWh",
+                    currency="EUR"
+                ),),
+                targets=(
+                    Target(type="test-target-updated", values=("test-value-updated",)),
+                )
+            )
+        )
+
+        # Verify the update
+        assert updated_program.program_name == "test-program-updated", "program name should be updated"
+        assert updated_program.program_long_name == "Test Program Updated Long Name", "program long name should be updated"
+        assert updated_program.created_date_time == created_program.created_date_time, "created date time should match"
+        assert updated_program.modification_date_time != created_program.modification_date_time, "modification date time should not match"
+        assert updated_program.targets is not None, "targets should not be None"
+        assert len(updated_program.targets) > 0, "targets should not be empty"
+        assert updated_program.targets[0].type == "test-target-updated", "target type should be updated"
+        assert updated_program.targets[0].values == ("test-value-updated",), "target values should be updated"
+    finally:
+        interface.delete_program_by_id(program_id=created_program.id) 
