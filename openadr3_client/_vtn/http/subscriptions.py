@@ -1,7 +1,5 @@
 """Implements the communication with the subscriptions interface of an OpenADR 3 VTN."""
 
-from dataclasses import asdict
-
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
@@ -46,9 +44,9 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params = (
-            asdict(pagination)
+            pagination.model_dump(by_alias=True, mode="json")
             if pagination
-            else {} | asdict(target)
+            else {} | target.model_dump(by_alias=True, mode="json")
             if target
             else {} | {"programID": program_id}
             if program_id

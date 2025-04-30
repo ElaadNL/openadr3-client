@@ -1,6 +1,5 @@
 """Implements the communication with the events interface of an OpenADR 3 VTN."""
 
-from dataclasses import asdict
 from typing import final
 
 from pydantic.type_adapter import TypeAdapter
@@ -39,9 +38,9 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params = (
-            asdict(target)
+            target.model_dump(by_alias=True, mode="json")
             if target
-            else {} | asdict(pagination)
+            else {} | pagination.model_dump(by_alias=True, mode="json")
             if pagination
             else {} | {"programID": program_id}
             if program_id

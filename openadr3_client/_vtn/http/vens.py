@@ -1,7 +1,5 @@
 """Implements the communication with the vens interface of an OpenADR 3 VTN."""
 
-from dataclasses import asdict
-
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
@@ -35,9 +33,9 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params = (
-            asdict(target)
+            target.model_dump(by_alias=True, mode="json")
             if target
-            else {} | asdict(pagination)
+            else {} | pagination.model_dump(by_alias=True, mode="json")
             if pagination
             else {} | {"venName": ven_name}
             if ven_name
@@ -83,9 +81,9 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 
         """
         query_params = (
-            asdict(target)
+            target.model_dump(by_alias=True, mode="json")
             if target
-            else {} | asdict(pagination)
+            else {} | pagination.model_dump(by_alias=True, mode="json")
             if pagination
             else {} | {"resourceName": resource_name}
             if resource_name
@@ -207,7 +205,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_resource.model_dump(by_alias=True, mode="json")
+            f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}", json=updated_resource.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
         return ExistingResource.model_validate(response.json())

@@ -1,10 +1,9 @@
 """Module containing common filters for VTN requests."""
 
-from dataclasses import dataclass
+from openadr3_client.models._base_model import BaseModel
 
 
-@dataclass
-class TargetFilter:
+class TargetFilter(BaseModel):
     """Represents a single target filter on a request to the VTN."""
 
     target_type: str
@@ -13,8 +12,7 @@ class TargetFilter:
     """The target values to filter on, treated as a logical OR as per the OpenADR3 specification."""
 
 
-@dataclass
-class PaginationFilter:
+class PaginationFilter(BaseModel):
     """Represents a pagination filter on a request to the VTN."""
 
     skip: int
