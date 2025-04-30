@@ -5,7 +5,7 @@ from requests import HTTPError
 from openadr3_client._vtn.http.reports import ReportsHttpInterface
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.report.report import ExistingReport, NewReport, ReportResource
+from openadr3_client.models.report.report import ExistingReport, NewReport, ReportResource, ReportUpdate
 from openadr3_client.models.report.report_payload import ReportPayload, ReportPayloadType
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType, EventPayload
 from tests.conftest import IntegrationTestVTNClient
@@ -541,32 +541,29 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
                 try:
                     # Update the report
-                    updated_report = interface.update_report_by_id(
-                        report_id=created_report.id,
-                        updated_report=ExistingReport(
-                            id=created_report.id,
-                            programID=created_program.id,
-                            eventID=created_event.id,
-                            client_name="test-client-updated",
-                            created_date_time=created_report.created_date_time,
-                            modification_date_time=created_report.modification_date_time,
-                            resources=(
-                                ReportResource(
-                                    resource_name="test-resource-updated",
-                                    interval_period=IntervalPeriod(
+                    report_update = ReportUpdate(
+                        client_name="test-client-updated",
+                        resources=(
+                            ReportResource(
+                                resource_name="test-resource-updated",
+                                interval_period=IntervalPeriod(
                                         start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                                         duration=timedelta(minutes=5),
-                                    ),
-                                    intervals=(
-                                        Interval(
-                                            id=0,
-                                            interval_period=None,
-                                            payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),)
-                                        ),
-                                    )
                                 ),
-                            )
-                        )
+                                intervals=(
+                                    Interval(
+                                        id=0,
+                                        interval_period=None,
+                                        payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),)
+                                    ),
+                                )
+                            ),
+                        ),
+                    )
+
+                    updated_report = interface.update_report_by_id(
+                        report_id=created_report.id,
+                        updated_report=created_report.update(report_update)
                     )
 
                     # Verify the update

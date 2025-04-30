@@ -7,7 +7,7 @@ from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.event.event import ExistingEvent, NewEvent
+from openadr3_client.models.event.event import EventUpdate, ExistingEvent, NewEvent
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
 from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.models.program.program import NewProgram
@@ -393,37 +393,17 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
 
         try:
             # Update the event
+            event_update = EventUpdate(
+                event_name="test-event-updated",
+                priority=2,
+                targets=(
+                    Target(type="test-target-updated", values=("test-value-updated",)),
+                ),
+            )
+
             updated_event = interface.update_event_by_id(
                 event_id=created_event.id,
-                updated_event=ExistingEvent(
-                    id=created_event.id,
-                    programID=created_event.program_id,
-                    event_name="test-event-updated",
-                    priority=2,
-                    created_date_time=created_event.created_date_time,
-                    modification_date_time=created_event.modification_date_time,
-                    targets=(
-                        Target(type="test-target-updated", values=("test-value-updated",)),
-                    ),
-                    payload_descriptor=(
-                        EventPayloadDescriptor(
-                            payload_type=EventPayloadType.SIMPLE,
-                            units="kWh",
-                            currency="EUR"
-                        ),
-                    ),
-                    interval_period=IntervalPeriod(
-                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                        duration=timedelta(minutes=5),
-                    ),
-                    intervals=(
-                        Interval(
-                            id=0,
-                            interval_period=None,
-                            payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
-                        ),
-                    ),
-                )
+                updated_event=created_event.update(event_update)
             )
 
             # Verify the update

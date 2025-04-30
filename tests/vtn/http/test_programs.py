@@ -8,11 +8,10 @@ from requests.exceptions import HTTPError
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
+from openadr3_client.models.program.program import ExistingProgram, NewProgram, ProgramUpdate
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from tests.conftest import IntegrationTestVTNClient
-
 
 def test_get_programs_no_programs_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting programs in a VTN without any programs returns an empty list."""
@@ -214,27 +213,26 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
 
     try:
         # Update the program
+        program_update = ProgramUpdate(
+            program_name="test-program-updated",
+            program_long_name="Test Program Updated Long Name",
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+            ),
+            payload_descriptor=(EventPayloadDescriptor(
+                payload_type=EventPayloadType.SIMPLE,
+                units="kWh",
+                currency="EUR"
+            ),),
+            targets=(
+                Target(type="test-target-updated", values=("test-value-updated",)),
+            )
+        )
+        
         updated_program = interface.update_program_by_id(
             program_id=created_program.id,
-            updated_program=ExistingProgram(
-                id=created_program.id,
-                program_name="test-program-updated",
-                program_long_name="Test Program Updated Long Name",
-                created_date_time=created_program.created_date_time,
-                modification_date_time=created_program.modification_date_time,
-                interval_period=IntervalPeriod(
-                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                    duration=timedelta(minutes=5),
-                ),
-                payload_descriptor=(EventPayloadDescriptor(
-                    payload_type=EventPayloadType.SIMPLE,
-                    units="kWh",
-                    currency="EUR"
-                ),),
-                targets=(
-                    Target(type="test-target-updated", values=("test-value-updated",)),
-                )
-            )
+            updated_program=created_program.update(program_update)
         )
 
         # Verify the update
