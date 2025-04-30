@@ -1,17 +1,18 @@
 """Contains tests for the programs VTN module."""
 
-from datetime import datetime, timedelta, timezone, UTC
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from requests.exceptions import HTTPError
 
+from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.program.program import ExistingProgram, NewProgram, ProgramUpdate
-from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from tests.conftest import IntegrationTestVTNClient
+
 
 def test_get_programs_no_programs_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting programs in a VTN without any programs returns an empty list."""
@@ -41,9 +42,9 @@ def test_delete_program_by_id_non_existent(integration_test_vtn_client: Integrat
 def test_update_program_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a program by ID in a VTN with no such program raises a 404 error."""
     interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    
+
+    tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
-        tz_aware_dt = datetime.now(tz=timezone.utc)
         interface.update_program_by_id(
             program_id="fake-program-id",
             updated_program=ExistingProgram(
@@ -55,12 +56,11 @@ def test_update_program_by_id_non_existent(integration_test_vtn_client: Integrat
                     start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(minutes=5),
                 ),
-                payload_descriptor=(EventPayloadDescriptor(
-                    payload_type=EventPayloadType.SIMPLE,
-                    units="kWh",
-                    currency="EUR"
-                ),)
-            ))
+                payload_descriptor=(
+                    EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                ),
+            ),
+        )
 
 
 def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
@@ -75,15 +75,11 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(
-            payload_type=EventPayloadType.SIMPLE,
-            units="kWh",
-            currency="EUR"
-        ),)
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
     )
 
     response = interface.create_program(new_program=program)
-    
+
     assert response.id is not None, "program should be created successfully."
     assert response.program_name == "Test Program", "program name should match"
     assert response.program_long_name == "Test Program Long Name", "program long name should match"
@@ -104,14 +100,8 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(
-            payload_type=EventPayloadType.SIMPLE,
-            units="kWh",
-            currency="EUR"
-        ),),
-        targets=(
-            Target(type="test-target-1", values=("test-value-1",)),
-        )
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        targets=(Target(type="test-target-1", values=("test-value-1",)),),
     )
     program2 = NewProgram(
         id=None,
@@ -121,14 +111,8 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(
-            payload_type=EventPayloadType.SIMPLE,
-            units="kWh",
-            currency="EUR"
-        ),),
-        targets=(
-            Target(type="test-target-2", values=("test-value-2",)),
-        )
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        targets=(Target(type="test-target-2", values=("test-value-2",)),),
     )
     created_program1 = interface.create_program(new_program=program1)
     created_program2 = interface.create_program(new_program=program2)
@@ -166,14 +150,8 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(
-            payload_type=EventPayloadType.SIMPLE,
-            units="kWh",
-            currency="EUR"
-        ),),
-        targets=(
-            Target(type="test-target", values=("test-value",)),
-        )
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        targets=(Target(type="test-target", values=("test-value",)),),
     )
     created_program = interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -199,14 +177,8 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(
-            payload_type=EventPayloadType.SIMPLE,
-            units="kWh",
-            currency="EUR"
-        ),),
-        targets=(
-            Target(type="test-target", values=("test-value",)),
-        )
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        targets=(Target(type="test-target", values=("test-value",)),),
     )
     created_program = interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -220,29 +192,28 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
             ),
-            payload_descriptor=(EventPayloadDescriptor(
-                payload_type=EventPayloadType.SIMPLE,
-                units="kWh",
-                currency="EUR"
-            ),),
-            targets=(
-                Target(type="test-target-updated", values=("test-value-updated",)),
-            )
+            payload_descriptor=(
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+            ),
+            targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
         )
-        
+
         updated_program = interface.update_program_by_id(
-            program_id=created_program.id,
-            updated_program=created_program.update(program_update)
+            program_id=created_program.id, updated_program=created_program.update(program_update)
         )
 
         # Verify the update
         assert updated_program.program_name == "test-program-updated", "program name should be updated"
-        assert updated_program.program_long_name == "Test Program Updated Long Name", "program long name should be updated"
+        assert updated_program.program_long_name == "Test Program Updated Long Name", (
+            "program long name should be updated"
+        )
         assert updated_program.created_date_time == created_program.created_date_time, "created date time should match"
-        assert updated_program.modification_date_time != created_program.modification_date_time, "modification date time should not match"
+        assert updated_program.modification_date_time != created_program.modification_date_time, (
+            "modification date time should not match"
+        )
         assert updated_program.targets is not None, "targets should not be None"
         assert len(updated_program.targets) > 0, "targets should not be empty"
         assert updated_program.targets[0].type == "test-target-updated", "target type should be updated"
         assert updated_program.targets[0].values == ("test-value-updated",), "target values should be updated"
     finally:
-        interface.delete_program_by_id(program_id=created_program.id) 
+        interface.delete_program_by_id(program_id=created_program.id)

@@ -36,6 +36,7 @@ class EventIntervalDictInput(_EventIntervalDictRequiredFields, total=False):
     duration: timedelta | None
     randomize_start: timedelta | None
 
+
 @final
 class IterableEventIntervalConverter(
     BaseEventIntervalConverter[Iterable[EventIntervalDictInput], EventIntervalDictInput]

@@ -87,6 +87,7 @@ class VenUpdate(BaseModel):
     resources: tuple[ExistingResource, ...] | None = None
     """The resources of the ven object."""
 
+
 @final
 class ExistingVen(Ven[str]):
     """Class representing an existing ven retrieved from the VTN."""
@@ -95,13 +96,15 @@ class ExistingVen(Ven[str]):
     modification_date_time: AwareDatetime
 
     def update(self, update: VenUpdate) -> "ExistingVen":
-        """Update the existing ven with the provided update.
-        
+        """
+        Update the existing ven with the provided update.
+
         Args:
             update (VenUpdate): The update to apply to the ven.
 
         Returns:
             ExistingVen: The updated ven.
+
         """
         current_ven = self.model_dump()
         update_dict = update.model_dump(exclude_unset=True)

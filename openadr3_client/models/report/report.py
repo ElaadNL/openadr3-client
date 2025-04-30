@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING, final
 
 from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
 
+from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
 from openadr3_client.models.report.report_payload import ReportPayload
-from openadr3_client.models._base_model import BaseModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -129,9 +129,11 @@ class NewReport(Report[None]):
             raise ValueError(err_msg)
         return resources
 
+
 @final
 class ReportUpdate(BaseModel):
     """Class representing an update to a report."""
+
     program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
     """The program this report is related to."""
 
@@ -158,14 +160,16 @@ class ExistingReport(Report[str]):
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 
-    def update(self, update: ReportUpdate) -> "ExistingReport":
-        """Update the existing report with the provided update.
-        
+    def update(self, update: ReportUpdate) -> ExistingReport:
+        """
+        Update the existing report with the provided update.
+
         Args:
             update (ReportUpdate): The update to apply to the report.
 
         Returns:
             ExistingReport: The updated report.
+
         """
         current_report = self.model_dump()
         update_dict = update.model_dump(exclude_unset=True)

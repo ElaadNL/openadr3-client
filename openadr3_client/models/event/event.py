@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING, final
 
 from pydantic import AwareDatetime, Field, NonNegativeInt, PrivateAttr, field_validator
 
+from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
-from openadr3_client.models._base_model import BaseModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -46,6 +46,7 @@ class Event[T](ABC, ValidatableModel):
 
     intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
+
 
 @final
 class EventUpdate(BaseModel):
@@ -134,7 +135,7 @@ class ExistingEvent(Event[str]):
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 
-    def update(self, update: EventUpdate) -> "ExistingEvent":
+    def update(self, update: EventUpdate) -> ExistingEvent:
         """
         Update this event with the provided update.
 
@@ -143,6 +144,7 @@ class ExistingEvent(Event[str]):
 
         Returns:
             A new ExistingEvent instance with the updates applied.
+
         """
         current_data = self.model_dump()
         update_data = update.model_dump(exclude_unset=True)

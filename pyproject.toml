@@ -74,7 +74,7 @@ ignore = [
 
 # Ignores S101 ("Use of 'assert' detected") for the tests.
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "ANN201", "SLF001", "S106", "S105", "S311"]
+"tests/*" = ["S101", "ANN201", "SLF001", "S106", "S105", "S311", "PLR2004", "PT018"]
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]

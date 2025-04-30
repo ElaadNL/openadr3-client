@@ -95,13 +95,15 @@ class ExistingResource(Resource[str]):
     modification_date_time: AwareDatetime
 
     def update(self, update: ResourceUpdate) -> "ExistingResource":
-        """Update the existing resource with the provided update.
-        
+        """
+        Update the existing resource with the provided update.
+
         Args:
             update (ResourceUpdate): The update to apply to the resource.
 
         Returns:
             ExistingResource: The updated resource.
+
         """
         current_resource = self.model_dump()
         update_dict = update.model_dump(exclude_unset=True)

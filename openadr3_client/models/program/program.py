@@ -95,10 +95,12 @@ class Program[T](ABC, ValidatableModel):
                 raise ValueError(exc_msg)
 
         return self
-    
+
+
 @final
 class ProgramUpdate(BaseModel):
     """Class representing an update to a program."""
+
     program_name: str | None = Field(default=None, min_length=1, max_length=128)
     """The name of the program.
 
@@ -190,18 +192,20 @@ class NewProgram(Program[None]):
 @final
 class ExistingProgram(Program[str]):
     """Class representing an existing program retrieved from the VTN."""
-    
+
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 
-    def update(self, update: ProgramUpdate) -> "ExistingProgram":
-        """Update the existing program with the provided update.
-        
+    def update(self, update: ProgramUpdate) -> ExistingProgram:
+        """
+        Update the existing program with the provided update.
+
         Args:
             update (ProgramUpdate): The update to apply to the program.
 
         Returns:
             ExistingProgram: The updated program.
+
         """
         current_program = self.model_dump()
         update_dict = update.model_dump(exclude_unset=True)

@@ -34,6 +34,7 @@ class _EventIntervalDataFrameSchema(pa.DataFrameModel):
     def payload_values_atleast_one(self, values: Series) -> Series[bool]:
         return values.map(lambda v: isinstance(v, list) and len(v) > 0)  # type: ignore[return-value]
 
+
 @final
 class DataFrameEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, dict[Hashable, Any]]):
     """Class responsible for converting pandas dataframes to event interval(s)."""

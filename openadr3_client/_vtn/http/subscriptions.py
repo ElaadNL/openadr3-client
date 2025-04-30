@@ -126,7 +126,8 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{subscription_id}", json=updated_subscription.model_dump(by_alias=True, mode="json")
+            f"{self.base_url}/{base_prefix}/{subscription_id}",
+            json=updated_subscription.model_dump(by_alias=True, mode="json"),
         )
         response.raise_for_status()
         return ExistingSubscription.model_validate(response.json())

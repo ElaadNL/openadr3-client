@@ -34,7 +34,13 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
         """
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
-        query_params = target.model_dump(by_alias=True, mode="json") if target else {} | pagination.model_dump(by_alias=True, mode="json") if pagination else {}
+        query_params = (
+            target.model_dump(by_alias=True, mode="json")
+            if target
+            else {} | pagination.model_dump(by_alias=True, mode="json")
+            if pagination
+            else {}
+        )
 
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()

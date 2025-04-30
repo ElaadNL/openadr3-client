@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from enum import Enum
 from threading import Lock
-from typing import Tuple, final
+from typing import final
 
 from pydantic import AwareDatetime, Field, HttpUrl, PrivateAttr, field_validator
 
@@ -38,10 +38,10 @@ class Operation(str, Enum):
 class ObjectOperation(ValidatableModel):
     """Represents a single object operation."""
 
-    objects: Tuple[Object, ...]
+    objects: tuple[Object, ...]
     """The objects that trigger this operation."""
 
-    operations: Tuple[Operation, ...]
+    operations: tuple[Operation, ...]
     """The operations that trigger this operation."""
 
     callback_url: HttpUrl
@@ -56,7 +56,7 @@ class ObjectOperation(ValidatableModel):
 
     @field_validator("objects", mode="after")
     @classmethod
-    def atleast_one_object(cls, objects: Tuple[Object, ...]) -> Tuple[Object, ...]:
+    def atleast_one_object(cls, objects: tuple[Object, ...]) -> tuple[Object, ...]:
         """
         Validates that an object operation has atleast one object defined.
 
@@ -71,7 +71,7 @@ class ObjectOperation(ValidatableModel):
 
     @field_validator("operations", mode="after")
     @classmethod
-    def atleast_one_operation(cls, operations: Tuple[Operation, ...]) -> Tuple[Operation, ...]:
+    def atleast_one_operation(cls, operations: tuple[Operation, ...]) -> tuple[Operation, ...]:
         """
         Validates that an object operation has atleast one operation defined.
 
@@ -159,10 +159,11 @@ class NewSubscription(Subscription[None]):
                 self._created = False
                 raise
 
+
 @final
 class SubscriptionUpdate(BaseModel):
     """Class representing an update to a subscription."""
-    
+
     client_name: str | None = Field(default=None, min_length=1, max_length=128)
     """The client name of the subscription update."""
 
@@ -174,8 +175,8 @@ class SubscriptionUpdate(BaseModel):
 
     targets: tuple[Target, ...] | None = None
     """The targets of the subscription update."""
-    
-    
+
+
 @final
 class ExistingSubscription(Subscription[str]):
     """Class representing an existing subscription retrieved from the VTN."""
@@ -184,13 +185,15 @@ class ExistingSubscription(Subscription[str]):
     modification_date_time: AwareDatetime
 
     def update(self, update: SubscriptionUpdate) -> "ExistingSubscription":
-        """Update the existing subscription with the provided update.
-        
+        """
+        Update the existing subscription with the provided update.
+
         Args:
             update (SubscriptionUpdate): The update to apply to the subscription.
 
         Returns:
             ExistingSubscription: The updated subscription.
+
         """
         current_subscription = self.model_dump()
         update_dict = update.model_dump(exclude_unset=True)

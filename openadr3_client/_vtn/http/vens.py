@@ -205,7 +205,8 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = bearer_authenticated_session.put(
-            f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}", json=updated_resource.model_dump(by_alias=True, mode="json")
+            f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}",
+            json=updated_resource.model_dump(by_alias=True, mode="json"),
         )
         response.raise_for_status()
         return ExistingResource.model_validate(response.json())
@@ -237,7 +238,8 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         """
         with new_resource.with_creation_guard():
             response = bearer_authenticated_session.post(
-                f"{self.base_url}/{base_prefix}/{ven_id}/resources", json=new_resource.model_dump(by_alias=True, mode="json")
+                f"{self.base_url}/{base_prefix}/{ven_id}/resources",
+                json=new_resource.model_dump(by_alias=True, mode="json"),
             )
             response.raise_for_status()
             return ExistingResource.model_validate(response.json())
