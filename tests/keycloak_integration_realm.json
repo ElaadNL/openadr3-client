@@ -17,7 +17,7 @@
           "protocol": "openid-connect",
           "protocolMapper": "oidc-hardcoded-claim-mapper",
           "config": {
-            "claim.value": "[\n  {\"role\": \"AnyBusiness\"},\n  {\"role\": \"VenManager\"}\n]",
+            "claim.value": "[\n  {\"role\": \"AnyBusiness\"},\n  {\"role\": \"VenManager\"},\n  {\"role\": \"VEN\", \"id\": \"0\"}\n]",
             "claim.name": "roles",
             "jsonType.label": "JSON",
             "userinfo.token.claim": "true",
