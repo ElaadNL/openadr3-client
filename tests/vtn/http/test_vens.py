@@ -7,6 +7,7 @@ from openadr3_client.models.ven.ven import ExistingVen, NewVen
 from openadr3_client.models.ven.resource import ExistingResource, NewResource
 from openadr3_client.models.common.attribute import Attribute
 from openadr3_client.models.common.target import Target
+from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from tests.conftest import IntegrationTestVTNClient
 
 from datetime import UTC, datetime, timezone
@@ -81,6 +82,8 @@ def test_create_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     assert response.attributes is not None and len(response.attributes) == 1, "attributes should match"
     assert response.targets is not None and len(response.targets) == 1, "targets should match"
 
+    interface.delete_ven_by_id(ven_id=response.id)
+
 
 def test_get_ven_resources_no_resources(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting resources for a ven without any resources returns an empty list."""
@@ -119,7 +122,7 @@ def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
     # First create a ven
     ven = NewVen(
         id=None,
-        ven_name="test-ven",
+        ven_name="test-ven-with-with-non-existent-resource",
         attributes=(
             Attribute(type="test-attribute", values=("test-value",)),
         ),
@@ -129,27 +132,104 @@ def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
+    assert created_ven.ven_name == "test-ven-with-with-non-existent-resource", "ven name should match"
+    assert created_ven.attributes is not None and len(created_ven.attributes) == 1, "attribute count should match"
+    assert created_ven.attributes[0].type == "test-attribute", "attribute type should match"
+    assert created_ven.attributes[0].values == ("test-value",), "attribute values should match"
+    assert created_ven.targets is not None and len(created_ven.targets) == 1, "target count should match"
+    assert created_ven.targets[0].type == "test-target", "target type should match"
+    assert created_ven.targets[0].values == ("test-value",), "target values should match"
+
+    try:
+        with pytest.raises(HTTPError, match="404 Client Error"):
+            tz_aware_dt = datetime.now(tz=timezone.utc)
+
+            interface.update_ven_resource_by_id(
+                ven_id=created_ven.id,
+                resource_id="does-not-exist",
+                updated_resource=ExistingResource(
+                    id="does-not-exist",
+                    resource_name="test-resource",
+                    venID=created_ven.id,
+                    created_date_time=tz_aware_dt,
+                    modification_date_time=tz_aware_dt,
+                    attributes=(
+                        Attribute(type="test-attribute", values=("test-value",)),
+                    ),
+                    targets=(
+                        Target(type="test-target", values=("test-value",)),
+                    )
+                ))
+    finally:
+        interface.delete_ven_by_id(ven_id=created_ven.id)
+
+def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate that updating a resource by ID for a ven works when the resource exists."""
+    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # First create a ven
+    ven = NewVen(
+        id=None,
+        ven_name="test-ven-with-resource-to-update",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+    created_ven = interface.create_ven(new_ven=ven)
+    assert created_ven.id is not None, "ven should be created successfully"
+
+    # Now create a resource for the ven
+    resource = NewResource(
+        id=None,
+        resource_name="test-resource",
+        venID=created_ven.id,
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+
+    created_resource = interface.create_ven_resource(ven_id=created_ven.id, new_resource=resource)
+    assert created_resource.id is not None, "resource should be created successfully"
     
-    with pytest.raises(HTTPError, match="404 Client Error"):
-        tz_aware_dt = datetime.now(tz=timezone.utc)
-        interface.update_ven_resource_by_id(
-            ven_id="fake-ven-id",
-            resource_id="fake-resource-id",
-            updated_resource=ExistingResource(
-                id="fake-resource-id",
-                resource_name="test-resource",
-                venID="fake-ven-id",
-                created_date_time=tz_aware_dt,
-                modification_date_time=tz_aware_dt,
-                attributes=(
-                    Attribute(type="test-attribute", values=("test-value",)),
-                ),
-                targets=(
-                    Target(type="test-target", values=("test-value",)),
-                )
-            ))
-        
+    tz_aware_dt = datetime.now(tz=timezone.utc)
+
+    updated_resource = interface.update_ven_resource_by_id(
+        ven_id=created_ven.id,
+        resource_id=created_resource.id,
+        updated_resource=ExistingResource(
+            id=created_resource.id,
+            resource_name="test-resource-updated-name",
+            venID=created_resource.ven_id,
+            created_date_time=created_resource.created_date_time,
+            modification_date_time=created_resource.modification_date_time,
+            attributes=(
+                Attribute(type="test-attribute-updated", values=("test-value-updated",)),
+            ),
+            targets=(
+                Target(type="test-target-updated", values=("test-value-updated",)),
+            )
+        ))
+    
+    interface.delete_ven_resource_by_id(ven_id=created_ven.id, resource_id=updated_resource.id)
     interface.delete_ven_by_id(ven_id=created_ven.id)
+    
+    assert updated_resource.id == created_resource.id, "resource id should match"
+    assert updated_resource.resource_name == "test-resource-updated-name", "resource name should match"
+    assert updated_resource.ven_id == created_resource.ven_id, "ven id should match"
+    assert updated_resource.created_date_time == created_resource.created_date_time, "created date time should match"
+    assert updated_resource.modification_date_time != created_resource.modification_date_time, "modification date time should not match"
+    assert updated_resource.attributes is not None and len(updated_resource.attributes) == 1, "attribute count should match"
+    assert updated_resource.attributes[0].type == "test-attribute-updated", "attribute type should match"
+    assert updated_resource.attributes[0].values == ("test-value-updated",), "attribute values should match"
+    assert updated_resource.targets is not None and len(updated_resource.targets) == 1, "target count should match"
+    assert updated_resource.targets[0].type == "test-target-updated", "target type should match"
+    assert updated_resource.targets[0].values == ("test-value-updated",), "target values should match"
 
 
 def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
@@ -159,7 +239,7 @@ def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClie
     # First create a ven
     ven = NewVen(
         id=None,
-        ven_name="test-ven",
+        ven_name="test-ven-with-resource",
         attributes=(
             Attribute(type="test-attribute", values=("test-value",)),
         ),
@@ -192,5 +272,173 @@ def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClie
     assert response.resource_name == "test-resource", "resource name should match"
     assert response.ven_id == created_ven.id, "ven id should match"
     assert response.attributes is not None and len(response.attributes) == 1, "attributes should match"
-    assert response.targets is not None and len(response.targets) == 1, "targets should match" 
+    assert response.targets is not None and len(response.targets) == 1, "targets should match"
+
+
+def test_create_ven_duplicate_name(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate that creating a ven with a duplicate name raises a conflict error."""
+    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # First create a ven
+    ven = NewVen(
+        id=None,
+        ven_name="test-ven-duplicate",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+    created_ven = interface.create_ven(new_ven=ven)
+    assert created_ven.id is not None, "ven should be created successfully"
+
+    ven2 = NewVen(
+        id=None,
+        ven_name="test-ven-duplicate",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+
+    try:
+        # Try to create another ven with the same name
+        with pytest.raises(HTTPError, match="409 Client Error"):
+            _ = interface.create_ven(new_ven=ven2)
+    finally:
+        interface.delete_ven_by_id(ven_id=created_ven.id)
+
+
+def test_get_vens_with_parameters(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate getting vens with various parameter combinations."""
+    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # Create two vens with different names and targets
+    ven1 = NewVen(
+        id=None,
+        ven_name="test-ven-1",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target-1", values=("test-value-1",)),
+        )
+    )
+    ven2 = NewVen(
+        id=None,
+        ven_name="test-ven-2",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target-2", values=("test-value-2",)),
+        )
+    )
+    created_ven1 = interface.create_ven(new_ven=ven1)
+    created_ven2 = interface.create_ven(new_ven=ven2)
+
+    try:
+        # Test getting all vens
+        all_vens = interface.get_vens(ven_name=None, target=None, pagination=None)
+        assert len(all_vens) == 2, "Should return both vens"
+
+        # Test getting vens by name
+        ven1_by_name = interface.get_vens(ven_name="test-ven-1", target=None, pagination=None)
+        assert len(ven1_by_name) == 1, "Should return one ven"
+        assert ven1_by_name[0].ven_name == "test-ven-1", "Should return the correct ven"
+
+        # Test getting vens by target
+        target_filter = TargetFilter(target_type="test-target-1", target_values=["test-value-1"])
+        ven1_by_target = interface.get_vens(ven_name=None, target=target_filter, pagination=None)
+        assert len(ven1_by_target) == 1, "Should return one ven"
+        assert ven1_by_target[0].ven_name == "test-ven-1", "Should return the correct ven"
+
+        # Test pagination
+        pagination_filter = PaginationFilter(skip=0, limit=1)
+        paginated_vens = interface.get_vens(ven_name=None, target=None, pagination=pagination_filter)
+        assert len(paginated_vens) == 1, "Should return one ven due to pagination"
+    finally:
+        interface.delete_ven_by_id(ven_id=created_ven1.id)
+        interface.delete_ven_by_id(ven_id=created_ven2.id)
+
+
+def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate deleting a ven that exists."""
+    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # Create a ven to delete
+    ven = NewVen(
+        id=None,
+        ven_name="test-ven-to-delete",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+    created_ven = interface.create_ven(new_ven=ven)
+    assert created_ven.id is not None, "ven should be created successfully"
+
+    # Delete the ven
+    interface.delete_ven_by_id(ven_id=created_ven.id)
+
+    # Verify the ven is deleted
+    with pytest.raises(HTTPError, match="404 Client Error"):
+        _ = interface.get_ven_by_id(ven_id=created_ven.id)
+
+
+def test_update_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate updating a ven that exists."""
+    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+
+    # Create a ven to update
+    ven = NewVen(
+        id=None,
+        ven_name="test-ven-to-update",
+        attributes=(
+            Attribute(type="test-attribute", values=("test-value",)),
+        ),
+        targets=(
+            Target(type="test-target", values=("test-value",)),
+        )
+    )
+    created_ven = interface.create_ven(new_ven=ven)
+    assert created_ven.id is not None, "ven should be created successfully"
+
+    try:
+        # Update the ven
+        updated_ven = interface.update_ven_by_id(
+            ven_id=created_ven.id,
+            updated_ven=ExistingVen(
+                id=created_ven.id,
+                ven_name="test-ven-updated",
+                created_date_time=created_ven.created_date_time,
+                modification_date_time=created_ven.modification_date_time,
+                attributes=(
+                    Attribute(type="test-attribute-updated", values=("test-value-updated",)),
+                ),
+                targets=(
+                    Target(type="test-target-updated", values=("test-value-updated",)),
+                )
+            )
+        )
+
+        # Verify the update
+        assert updated_ven.ven_name == "test-ven-updated", "ven name should be updated"
+        assert updated_ven.attributes is not None, "attributes should not be None"
+        assert updated_ven.created_date_time == created_ven.created_date_time, "created date time should match"
+        assert updated_ven.modification_date_time != created_ven.modification_date_time, "modification date time should not match"
+        assert len(updated_ven.attributes) > 0, "attributes should not be empty"
+        assert updated_ven.attributes[0].type == "test-attribute-updated", "attribute type should be updated"
+        assert updated_ven.attributes[0].values == ("test-value-updated",), "attribute values should be updated"
+        assert updated_ven.targets is not None, "targets should not be None"
+        assert len(updated_ven.targets) > 0, "targets should not be empty"
+        assert updated_ven.targets[0].type == "test-target-updated", "target type should be updated"
+        assert updated_ven.targets[0].values == ("test-value-updated",), "target values should be updated"
+    finally:
+        interface.delete_ven_by_id(ven_id=created_ven.id) 
     
