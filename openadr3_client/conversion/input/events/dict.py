@@ -1,47 +1,19 @@
 from collections.abc import Iterable
-from datetime import datetime, timedelta
-from typing import TypedDict, final
+from typing import final
 
-from openadr3_client.conversion._base_converter import (
+from openadr3_client.conversion.common.dict import EventIntervalDictInput
+from openadr3_client.conversion.input.events._base_converter import (
     OK,
     BaseEventIntervalConverter,
     ValidationOutput,
 )
-from openadr3_client.models.common.payload import AllowedPayloadInputs
-
-
-class _EventIntervalDictRequiredFields(TypedDict):
-    """
-    Required dictionary keys for event interval dict.
-
-    Seperated from the optional parameters, as Optional[X] still requires the key to be present
-    in the dictionary. While we want them to be ommittable.
-    """
-
-    # EventPayload fields (flattened)
-    type: str
-    values: list[AllowedPayloadInputs]
-
-
-class EventIntervalDictInput(_EventIntervalDictRequiredFields, total=False):
-    """
-    TypedDict for the event interval input.
-
-    Inherits the required fields which are required inside the dictionary, all the keys
-    defined here are optional.
-    """
-
-    # IntervalPeriod fields (flattened)
-    start: datetime | None
-    duration: timedelta | None
-    randomize_start: timedelta | None
 
 
 @final
-class IterableEventIntervalConverter(
+class DictEventIntervalConverter(
     BaseEventIntervalConverter[Iterable[EventIntervalDictInput], EventIntervalDictInput]
 ):
-    """Class responsible for converting iterables to event interval(s)."""
+    """Class responsible for converting iterables of dictionaries to event interval(s)."""
 
     def validate_input(self, _: Iterable[EventIntervalDictInput]) -> ValidationOutput:
         """

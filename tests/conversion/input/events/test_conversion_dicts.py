@@ -5,9 +5,9 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.conversion.iterable import (
+from openadr3_client.conversion.input.events.dict import (
     EventIntervalDictInput,
-    IterableEventIntervalConverter,
+    DictEventIntervalConverter,
 )
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
@@ -117,7 +117,7 @@ def test_conversion_iterable(
     dict_input: list[EventIntervalDictInput], expected_output: list[Interval[EventPayload]]
 ) -> None:
     """Tests the conversion of pandas dataframes to event intervals."""
-    converter = IterableEventIntervalConverter()
+    converter = DictEventIntervalConverter()
     intervals_pd = converter.convert(dict_input)
     assert intervals_pd == expected_output
 
@@ -137,7 +137,7 @@ def test_conversion_iterable_no_timezone_offset_datetime() -> None:
         }
     ]
 
-    converter = IterableEventIntervalConverter()
+    converter = DictEventIntervalConverter()
 
     with pytest.raises(ExceptionGroup) as exception_group:
         _ = converter.convert(dict_input)
@@ -160,7 +160,7 @@ def test_conversion_iterable_no_payloads_error() -> None:
         }
     ]
 
-    converter = IterableEventIntervalConverter()
+    converter = DictEventIntervalConverter()
 
     with pytest.raises(ExceptionGroup) as exception_group:
         _ = converter.convert(dict_input)

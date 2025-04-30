@@ -4,36 +4,14 @@ from collections.abc import Hashable, Iterable
 from typing import Any, final
 
 import pandas as pd
-import pandera as pa
-from pandera.engines.pandas_engine import DateTime
-from pandera.typing import Series, Timedelta
 
-from openadr3_client.conversion._base_converter import (
+from openadr3_client.conversion.input.events._base_converter import (
     ERROR,
     OK,
     BaseEventIntervalConverter,
     ValidationOutput,
 )
-
-
-class _EventIntervalDataFrameSchema(pa.DataFrameModel):
-    # IntervalPeriod fields (flattened)
-    # time_zone_agnostic datetime available as of https://github.com/unionai-oss/pandera/pull/1902
-    start: Series[DateTime(time_zone_agnostic=True)] | None  # type: ignore[reportInvalidTypeForm, valid-type]
-    duration: Series[Timedelta] | None
-    randomize_start: Series[Timedelta] | None
-
-    # EventPayload fields (flattened)
-    type: Series[str]  # Enum type not directly supported with pandera, but pydantic will validate this later on.
-    values: Series[pa.Object]  # Type validation will be done by pydantic later.
-
-    class Config:
-        strict = "filter"  # Filter out any columns not specified in the schema here.
-
-    @pa.check("values")
-    def payload_values_atleast_one(self, values: Series) -> Series[bool]:
-        return values.map(lambda v: isinstance(v, list) and len(v) > 0)  # type: ignore[return-value]
-
+from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
 
 @final
 class DataFrameEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, dict[Hashable, Any]]):
@@ -53,7 +31,7 @@ class DataFrameEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, d
 
         """
         try:
-            _ = _EventIntervalDataFrameSchema.validate(df_input)
+            _ = EventIntervalDataFrameSchema.validate(df_input)
             return OK()
         except Exception as e:  # noqa: BLE001
             return ERROR(exception=ExceptionGroup("Validation errors occured", [e]))
