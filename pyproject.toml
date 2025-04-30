@@ -87,5 +87,5 @@ OAUTH_CLIENT_SECRET = "my-client-secret"
 DOCKER_DEFAULT_PLATFORM="linux/amd64"
 
 [[tool.mypy.overrides]]
-module = ["decouple", "testcontainers.keycloak"]
+module = ["decouple", "testcontainers.keycloak", "testcontainers.core.container", "testcontainers.core.network", "testcontainers.postgres", "testcontainers.core.waiting_utils"]
 ignore_missing_imports = true
