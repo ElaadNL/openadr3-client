@@ -129,13 +129,13 @@ class NewReport(Report[None]):
             raise ValueError(err_msg)
         return resources
 
-
+@final
 class ReportUpdate(BaseModel):
     """Class representing an update to a report."""
-    program_id: str | None = Field(alias="programID", min_length=1, max_length=128)
+    program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
     """The program this report is related to."""
 
-    event_id: str | None = Field(alias="eventID", min_length=1, max_length=128)
+    event_id: str | None = Field(alias="eventID", default=None, min_length=1, max_length=128)
     """The event this report is related to."""
 
     client_name: str | None = Field(min_length=1, max_length=128)

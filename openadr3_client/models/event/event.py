@@ -47,11 +47,11 @@ class Event[T](ABC, ValidatableModel):
     intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
 
-
+@final
 class EventUpdate(BaseModel):
     """Class representing an update to an existing event."""
 
-    program_id: str | None = Field(alias="programID", min_length=1, max_length=128, default=None)
+    program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
     """Identifier of the program this event belongs to."""
 
     event_name: str | None = None
@@ -146,5 +146,5 @@ class ExistingEvent(Event[str]):
         """
         current_data = self.model_dump()
         update_data = update.model_dump(exclude_unset=True)
-        updated_data = {**current_data, **update_data}
+        updated_data = current_data | update_data
         return ExistingEvent(**updated_data)

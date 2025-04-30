@@ -95,10 +95,11 @@ class Program[T](ABC, ValidatableModel):
                 raise ValueError(exc_msg)
 
         return self
-
+    
+@final
 class ProgramUpdate(BaseModel):
     """Class representing an update to a program."""
-    program_name: str | None = Field(min_length=1, max_length=128)
+    program_name: str | None = Field(default=None, min_length=1, max_length=128)
     """The name of the program.
 
     Must be between 1 and 128 characters long."""
@@ -189,7 +190,7 @@ class NewProgram(Program[None]):
 @final
 class ExistingProgram(Program[str]):
     """Class representing an existing program retrieved from the VTN."""
-
+    
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 

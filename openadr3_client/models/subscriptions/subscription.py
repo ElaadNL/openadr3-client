@@ -159,13 +159,14 @@ class NewSubscription(Subscription[None]):
                 self._created = False
                 raise
 
+@final
 class SubscriptionUpdate(BaseModel):
     """Class representing an update to a subscription."""
     
-    client_name: str | None = Field(min_length=1, max_length=128)
+    client_name: str | None = Field(default=None, min_length=1, max_length=128)
     """The client name of the subscription update."""
 
-    program_id: str | None = Field(alias="programID", min_length=1, max_length=128)
+    program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
     """The program id of the subscription update."""
 
     object_operations: tuple[ObjectOperation, ...] | None = None
@@ -182,7 +183,7 @@ class ExistingSubscription(Subscription[str]):
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 
-    def update(self, update: SubscriptionUpdate) -> ExistingSubscription:
+    def update(self, update: SubscriptionUpdate) -> "ExistingSubscription":
         """Update the existing subscription with the provided update.
         
         Args:
