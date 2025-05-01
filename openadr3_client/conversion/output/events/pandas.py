@@ -59,6 +59,24 @@ class PandasEventIntervalConverter(BaseOutputConverter[list[Interval[EventPayloa
         df.set_index("id", inplace=True)
         df.sort_index(inplace=True)
         df.index = df.index.astype(int)
+        df['start'] = self._ensure_utc(pd.to_datetime(df['start'], errors='coerce'))
+
+        df['duration'] = pd.to_timedelta(df['duration'], errors='coerce')
         df['randomize_start'] = pd.to_timedelta(df['randomize_start'], errors='coerce')
 
         return EventIntervalDataFrameSchema.validate(df)
+    
+    def _ensure_utc(self, series: pd.Series) -> pd.Series:
+        """Ensure that the series is in UTC time zone.
+
+        Args:
+            series (pd.Series): The series to ensure is in UTC time zone.
+
+        Returns: The series in UTC time zone.
+        """
+        if series.dt.tz is None:
+            # If all values are tz-naive, localize them
+            return series.dt.tz_localize("UTC")
+        else:
+            # If any values are already tz-aware, convert to UTC
+            return series.dt.tz_convert("UTC")

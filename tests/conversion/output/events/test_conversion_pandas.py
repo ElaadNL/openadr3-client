@@ -97,7 +97,7 @@ def get_expected_outputs() -> list[pd.DataFrame]:
         ).set_index("id"),
         pd.DataFrame(
             {
-                "id": 0,
+                "id": [0],
                 "start": [
                     pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
                 ],
@@ -108,20 +108,21 @@ def get_expected_outputs() -> list[pd.DataFrame]:
                 "values": [
                     [1.0, 2.0],
                 ],
-                "randomize_start": [pd.to_timedelta(pd.NaT)],
+                "randomize_start": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[ns]"),
             }
         ).set_index("id"),
         pd.DataFrame(
             {
-                "id": 0,
+                "id": [0],
                 "type": [
                     "SIMPLE",
                 ],
                 "values": [
                     [1.0, 2.0],
                 ],
-                "start": [None],
-                "randomize_start": [pd.to_timedelta(pd.NaT)],
+                "start": pd.Series([pd.Timedelta("NaT")], dtype="datetime64[ns, UTC]"),
+                "duration": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[ns]"),
+                "randomize_start": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[ns]"),
             }
         ).set_index("id"),
     ]
