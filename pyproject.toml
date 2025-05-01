@@ -36,6 +36,7 @@ pytest-env = "^1.1.5"
 types-oauthlib = "^3.2.0.20250408"
 types-requests-oauthlib = "^2.0.0.20250306"
 types-requests = "^2.32.0.20250328"
+pyjwt = "^2.10.1"
 
 [tool.ruff]
 line-length = 120
@@ -73,14 +74,18 @@ ignore = [
 
 # Ignores S101 ("Use of 'assert' detected") for the tests.
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "ANN201", "SLF001", "S106", "S105"]
+"tests/*" = ["S101", "ANN201", "SLF001", "S106", "S105", "S311", "PLR2004", "PT018"]
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
 
 [tool.pytest_env]
 OAUTHLIB_INSECURE_TRANSPORT = 1
+OAUTH_TOKEN_ENDPOINT = "http://localhost:47005/realms/integration-test-realm/protocol/openid-connect/token"
+OAUTH_CLIENT_ID = "test-client-id"
+OAUTH_CLIENT_SECRET = "my-client-secret"
+DOCKER_DEFAULT_PLATFORM="linux/amd64"
 
 [[tool.mypy.overrides]]
-module = ["decouple", "testcontainers.keycloak"]
+module = ["decouple", "testcontainers.keycloak", "testcontainers.core.container", "testcontainers.core.network", "testcontainers.postgres", "testcontainers.core.waiting_utils"]
 ignore_missing_imports = true

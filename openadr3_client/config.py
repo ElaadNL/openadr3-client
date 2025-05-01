@@ -12,7 +12,3 @@ OAUTH_CLIENT_SECRET = config("OAUTH_CLIENT_SECRET")
 _OAUTH_SCOPES = config("OAUTH_SCOPES", default="")
 """Comma delimited list of OAUTH scopes to request with the token, an empty string is interpreted as None."""
 OAUTH_SCOPES = _OAUTH_SCOPES.split(",") if _OAUTH_SCOPES != "" else None
-
-# VTN module
-VTN_BASE_URL = config("VTN_ROOT_URL")
-"""The base URL of the VTN."""
