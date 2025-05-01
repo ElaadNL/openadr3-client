@@ -85,7 +85,7 @@ class Program[T](ABC, ValidatableModel):
                 subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
 
                 principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
-                
+
                 if self.principal_sub_division not in principals_only:
                     exc_msg = f"{self.principal_sub_division} is not a valid ISO 3166-2 division code for the program country {self.country}."
                     raise ValueError(exc_msg)

@@ -23,6 +23,7 @@ def test_new_event_no_intervals() -> None:
             intervals=(),
         )
 
+
 def test_new_event_negative_priority() -> None:
     """Test that validates that a priority must be a positive number for events."""
     with pytest.raises(ValidationError, match="Input should be greater than or equal to 0"):
@@ -45,6 +46,7 @@ def test_new_event_negative_priority() -> None:
                 ),
             ),
         )
+
 
 def test_new_event_creation_guard() -> None:
     """
