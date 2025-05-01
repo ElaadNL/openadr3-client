@@ -199,3 +199,14 @@ When converting an event interval to a list of dictionaries, the output is check
 3. Choose the appropriate client interface (BL or VEN)
 4. Initialize the client with the required interfaces
 5. Start interacting with the OpenADR3 VTN system.
+
+## GAC compliance
+
+An additional plugin package is available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the dutch GAC (Grid Aware Charging) specification.
+
+Integrating this plugin with the OpenADR3 client can be done by importing the gac compliance package once globally:
+
+```python
+# This could be done for example in the root __init__.py of your python project.
+import openadr3_client_gac_compliance 
+```
