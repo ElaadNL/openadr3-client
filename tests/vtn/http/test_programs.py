@@ -74,6 +74,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
+            randomize_start=timedelta(minutes=5),
         ),
         payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
     )
