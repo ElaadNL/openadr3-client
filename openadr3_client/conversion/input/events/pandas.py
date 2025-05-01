@@ -3,6 +3,7 @@
 from collections.abc import Hashable, Iterable
 from typing import Any, final
 
+import numpy as np
 import pandas as pd
 
 from openadr3_client.conversion.input.events._base_converter import (
@@ -14,7 +15,7 @@ from openadr3_client.conversion.input.events._base_converter import (
 from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
 
 @final
-class DataFrameEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, dict[Hashable, Any]]):
+class PandasEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, dict[Hashable, Any]]):
     """Class responsible for converting pandas dataframes to event interval(s)."""
 
     def validate_input(self, df_input: pd.DataFrame) -> ValidationOutput:
@@ -59,4 +60,8 @@ class DataFrameEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, d
         Returns: An iterable of the dataframe, in records orientation.
 
         """
-        return df_input.to_dict(orient="records")
+        # Convert any columns that are potential pandas types (NaT) to 'normal' types (None).
+        df_pre_processed = df_input.copy(deep=True)
+        # Replace NaNs / NaTs with None.
+        df_pre_processed = df_pre_processed.replace({np.nan: None})
+        return df_pre_processed.to_dict(orient="records")

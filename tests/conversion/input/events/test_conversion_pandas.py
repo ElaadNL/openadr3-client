@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from pandera.errors import ParserError, SchemaError
 
-from openadr3_client.conversion.input.events.pandas import DataFrameEventIntervalConverter
+from openadr3_client.conversion.input.events.pandas import PandasEventIntervalConverter
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType
@@ -127,7 +127,7 @@ test_cases = list(zip(get_inputs(), get_expected_outputs(), strict=False))
 @pytest.mark.parametrize(("df_input", "expected_output"), test_cases)
 def test_conversion_pandas(df_input: pd.DataFrame, expected_output: list[Interval[EventPayload]]):
     """Tests the conversion of pandas dataframes to event intervals."""
-    converter = DataFrameEventIntervalConverter()
+    converter = PandasEventIntervalConverter()
     intervals_pd = converter.convert(df_input)
     assert intervals_pd == expected_output
 
@@ -150,7 +150,7 @@ def test_conversion_pandas_no_timezone_offset_datetime():
         index=[0],
     )
 
-    converter = DataFrameEventIntervalConverter()
+    converter = PandasEventIntervalConverter()
 
     with pytest.raises(ExceptionGroup) as exception_group:
         _ = converter.convert(df_input)
@@ -177,7 +177,7 @@ def test_conversion_pandas_no_payloads_error():
         index=[0],
     )
 
-    converter = DataFrameEventIntervalConverter()
+    converter = PandasEventIntervalConverter()
 
     with pytest.raises(ExceptionGroup) as exception_group:
         _ = converter.convert(df_input)
