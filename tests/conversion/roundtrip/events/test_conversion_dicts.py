@@ -1,9 +1,11 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
+
 from openadr3_client.conversion.common.dict import EventIntervalDictInput
 from openadr3_client.conversion.input.events.dict import DictEventIntervalConverter
 from openadr3_client.conversion.output.events.dict import DictEventIntervalConverter as DictEventIntervalConverterOutput
+
 
 def get_original_inputs() -> list[list[EventIntervalDictInput]]:
     """Returns a list of dict inputs for the test."""
@@ -53,15 +55,14 @@ def get_original_inputs() -> list[list[EventIntervalDictInput]]:
         ],
     ]
 
-@pytest.mark.parametrize("input", get_original_inputs())
-def test_conversion_iterable(
-    input: list[EventIntervalDictInput]
-) -> None:
+
+@pytest.mark.parametrize("dict_input", get_original_inputs())
+def test_conversion_iterable(dict_input: list[EventIntervalDictInput]) -> None:
     """Tests the conversion of pandas dataframes to event intervals."""
     input_converter = DictEventIntervalConverter()
     output_converter = DictEventIntervalConverterOutput()
 
-    input_intervals = input_converter.convert(input)
+    input_intervals = input_converter.convert(dict_input)
     output_intervals = output_converter.convert(input_intervals)
 
-    assert input == output_intervals
+    assert dict_input == output_intervals

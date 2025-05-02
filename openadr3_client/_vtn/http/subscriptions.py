@@ -10,8 +10,8 @@ from openadr3_client._vtn.interfaces.subscriptions import (
     ReadWriteSubscriptionsInterface,
     WriteOnlySubscriptionsInterface,
 )
-from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
 from openadr3_client.logging import logger
+from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
 
 base_prefix = "subscriptions"
 
@@ -45,7 +45,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params: dict = {}
-        
+
         if target:
             query_params |= target.model_dump(by_alias=True, mode="json")
 

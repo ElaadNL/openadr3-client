@@ -6,9 +6,9 @@ from openadr3_client._vtn.http.common._authenticated_session import bearer_authe
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
+from openadr3_client.logging import logger
 from openadr3_client.models.ven.resource import ExistingResource, NewResource
 from openadr3_client.models.ven.ven import ExistingVen, NewVen
-from openadr3_client.logging import logger
 
 base_prefix = "vens"
 
@@ -32,7 +32,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 
         """
         query_params: dict = {}
-        
+
         if target:
             query_params |= target.model_dump(by_alias=True, mode="json")
 
@@ -83,7 +83,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 
         """
         query_params: dict = {}
-        
+
         if target:
             query_params |= target.model_dump(by_alias=True, mode="json")
 

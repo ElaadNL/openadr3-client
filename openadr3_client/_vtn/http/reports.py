@@ -10,8 +10,8 @@ from openadr3_client._vtn.interfaces.reports import (
     ReadWriteReportsInterface,
     WriteOnlyReportsInterface,
 )
-from openadr3_client.models.report.report import ExistingReport, NewReport
 from openadr3_client.logging import logger
+from openadr3_client.models.report.report import ExistingReport, NewReport
 
 base_prefix = "reports"
 
@@ -43,7 +43,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params: dict = {}
-        
+
         if pagination:
             query_params |= pagination.model_dump(by_alias=True, mode="json")
 

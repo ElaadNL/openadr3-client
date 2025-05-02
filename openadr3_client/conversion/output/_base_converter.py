@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 
+
 class BaseOutputConverter[InputType, OutputType](ABC):
     @abstractmethod
     def convert(self, given_input: InputType) -> OutputType:
@@ -12,5 +13,6 @@ class BaseOutputConverter[InputType, OutputType](ABC):
             given_input (InputType): The input to convert.
 
         Returns: The converted output.
+
         """
         ...

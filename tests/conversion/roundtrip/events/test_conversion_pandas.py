@@ -1,10 +1,10 @@
-from datetime import UTC, datetime, timedelta
-
 import pandas as pd
 import pytest
 
 from openadr3_client.conversion.input.events.pandas import PandasEventIntervalConverter
-from openadr3_client.conversion.output.events.pandas import PandasEventIntervalConverter as PandasEventIntervalConverterOutput
+from openadr3_client.conversion.output.events.pandas import (
+    PandasEventIntervalConverter as PandasEventIntervalConverterOutput,
+)
 
 
 def get_original_inputs() -> list[pd.DataFrame]:
@@ -68,19 +68,18 @@ def get_original_inputs() -> list[pd.DataFrame]:
         ).set_index("id"),
     ]
 
-@pytest.mark.parametrize("input", get_original_inputs())
-def test_conversion_iterable(
-    input: pd.DataFrame
-) -> None:
+
+@pytest.mark.parametrize("df_input", get_original_inputs())
+def test_conversion_iterable(df_input: pd.DataFrame) -> None:
     """Tests the conversion of pandas dataframes to event intervals."""
     input_converter = PandasEventIntervalConverter()
     output_converter = PandasEventIntervalConverterOutput()
 
-    input_intervals = input_converter.convert(input)
+    input_intervals = input_converter.convert(df_input)
     output_intervals = output_converter.convert(input_intervals)
 
     # Sort columns alphabetically (requirement for equality check)
-    input_df_sorted = input[sorted(input.columns)]
+    input_df_sorted = df_input[sorted(df_input.columns)]
     output_df_sorted = output_intervals[sorted(output_intervals.columns)]
 
     assert input_df_sorted.equals(output_df_sorted)

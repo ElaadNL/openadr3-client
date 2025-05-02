@@ -1,4 +1,5 @@
-"""Contains tests for the input and output module of the conversion module.
+"""
+Contains tests for the input and output module of the conversion module.
 
 This module performs a roundtrip test on the input and output of the conversion module.
 The roundtrip test ensures that the input and output conversion are inverse operations of each other.

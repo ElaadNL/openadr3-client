@@ -10,8 +10,8 @@ from openadr3_client._vtn.interfaces.programs import (
     ReadWriteProgramsInterface,
     WriteOnlyProgramsInterface,
 )
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
 from openadr3_client.logging import logger
+from openadr3_client.models.program.program import ExistingProgram, NewProgram
 
 base_prefix = "programs"
 
@@ -34,7 +34,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
 
         """
         query_params: dict = {}
-        
+
         if target:
             query_params |= target.model_dump(by_alias=True, mode="json")
 

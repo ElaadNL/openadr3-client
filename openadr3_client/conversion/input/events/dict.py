@@ -10,9 +10,7 @@ from openadr3_client.conversion.input.events._base_converter import (
 
 
 @final
-class DictEventIntervalConverter(
-    BaseEventIntervalConverter[Iterable[EventIntervalDictInput], EventIntervalDictInput]
-):
+class DictEventIntervalConverter(BaseEventIntervalConverter[Iterable[EventIntervalDictInput], EventIntervalDictInput]):
     """Class responsible for converting iterables of dictionaries to event interval(s)."""
 
     def validate_input(self, _: Iterable[EventIntervalDictInput]) -> ValidationOutput:

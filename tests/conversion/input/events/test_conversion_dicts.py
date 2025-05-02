@@ -6,12 +6,13 @@ import pytest
 from pydantic import ValidationError
 
 from openadr3_client.conversion.input.events.dict import (
-    EventIntervalDictInput,
     DictEventIntervalConverter,
+    EventIntervalDictInput,
 )
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType
+
 
 def get_inputs() -> list[list[EventIntervalDictInput]]:
     """Returns a list of dict inputs for the test."""

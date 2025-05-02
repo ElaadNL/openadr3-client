@@ -6,13 +6,14 @@ from typing import Any, final
 import numpy as np
 import pandas as pd
 
+from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
 from openadr3_client.conversion.input.events._base_converter import (
     ERROR,
     OK,
     BaseEventIntervalConverter,
     ValidationOutput,
 )
-from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
+
 
 @final
 class PandasEventIntervalConverter(BaseEventIntervalConverter[pd.DataFrame, dict[Hashable, Any]]):

@@ -131,12 +131,12 @@ def get_expected_outputs() -> list[pd.DataFrame]:
 test_cases = list(zip(get_inputs(), get_expected_outputs(), strict=False))
 
 
-@pytest.mark.parametrize(("input", "expected_df_output"), test_cases)
-def test_conversion_pandas(input: list[Interval[EventPayload]], expected_df_output: pd.DataFrame):
+@pytest.mark.parametrize(("interval_input", "expected_df_output"), test_cases)
+def test_conversion_pandas(interval_input: list[Interval[EventPayload]], expected_df_output: pd.DataFrame):
     """Tests the conversion of event intervals to pandas dataframes."""
     converter = PandasEventIntervalConverter()
-    intervals_pd = converter.convert(input)
-    
+    intervals_pd = converter.convert(interval_input)
+
     # Sort columns alphabetically
     intervals_pd_sorted = intervals_pd[sorted(intervals_pd.columns)]
     expected_df_output_sorted = expected_df_output[sorted(expected_df_output.columns)]

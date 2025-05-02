@@ -12,8 +12,8 @@ from openadr3_client._vtn.interfaces.events import (
     WriteOnlyEventsInterface,
 )
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.event.event import ExistingEvent, NewEvent
 from openadr3_client.logging import logger
+from openadr3_client.models.event.event import ExistingEvent, NewEvent
 
 base_prefix = "events"
 
@@ -37,7 +37,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
 
         """
         query_params: dict = {}
-        
+
         if target:
             query_params |= target.model_dump(by_alias=True, mode="json")
 
