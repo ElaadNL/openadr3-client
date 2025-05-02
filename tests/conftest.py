@@ -15,6 +15,7 @@ from testcontainers.keycloak import KeycloakContainer
 
 from openadr3_client.config import OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT
 from tests.openleadr_test_container import OpenLeadrVtnTestContainer
+from pathlib import Path
 
 # Set up logging for the testcontainers package
 logging.basicConfig(level=logging.DEBUG)
@@ -98,27 +99,29 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
         if isinstance(rsa_pub_key, RSAPrivateKey):
             exc_msg = "JWK should not contain RSAPrivateKey."
             raise TypeError(exc_msg)
+        
+        temp_pem_file_path = Path(__file__).parent / "temp_pem_file.pem"
 
-        temp_pem_file = tempfile.NamedTemporaryFile(delete=False)
-        try:
-            # Write the public key PEM bytes of the keycloak instance to the temp file.
-            temp_pem_file.write(
-                rsa_pub_key.public_bytes(
-                    encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+        with temp_pem_file_path.open("wb") as temp_pem_file:
+            try:
+                # Write the public key PEM bytes of the keycloak instance to the temp file.
+                temp_pem_file.write(
+                    rsa_pub_key.public_bytes(
+                        encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    )
                 )
-            )
-            temp_pem_file.flush()
-            temp_pem_file.close()
+                temp_pem_file.flush()
+                temp_pem_file.close()
 
-            yield IntegrationTestOAuthClient(
-                OAUTH_CLIENT_ID,
-                OAUTH_CLIENT_SECRET,
-                token_url=OAUTH_TOKEN_ENDPOINT,
-                public_signing_key_pem_path=temp_pem_file.name,
-            )
-            
-        finally:
-            os.remove(temp_pem_file.name)
+                yield IntegrationTestOAuthClient(
+                    OAUTH_CLIENT_ID,
+                    OAUTH_CLIENT_SECRET,
+                    token_url=OAUTH_TOKEN_ENDPOINT,
+                    public_signing_key_pem_path=temp_pem_file.name,
+                )
+
+            finally:
+                os.remove(temp_pem_file.name)  # noqa: PTH107
 
 
 @pytest.fixture(scope="session")
