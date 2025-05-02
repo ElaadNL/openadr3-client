@@ -6,6 +6,7 @@ from testcontainers.core.network import Network
 from testcontainers.core.waiting_utils import wait_for_logs
 from testcontainers.postgres import PostgresContainer
 
+from openadr3_client.logging import logger
 
 class OpenLeadrVtnTestContainer:
     """A test container for an OpenLeadr-rs VTN with a PostgreSQL testcontainer dependency."""
@@ -103,11 +104,25 @@ class OpenLeadrVtnTestContainer:
 
     def _wait_for_ready(self) -> None:
         """Wait for the VTN to be ready to accept connections."""
-        wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=180)
+        try:
+            wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=30, raise_on_exit=True)
+        except RuntimeError:
+            stdout, stderr = self._vtn.get_logs()
+            stdout = stdout.decode()
+            stderr = stderr.decode()
+            logger.error("VTN exited: stdout: %s, stderr: %s", stdout, stderr)
+            raise
 
     def _wait_for_postgres_ready(self) -> None:
         """Wait for the PostgreSQL container to be ready."""
-        wait_for_logs(self._postgres, "database system is ready to accept connections", timeout=30)
+        try:
+            wait_for_logs(self._postgres, "database system is ready to accept connections", timeout=30, raise_on_exit=True)
+        except RuntimeError:
+            stdout, stderr = self._postgres.get_logs()
+            stdout = stdout.decode()
+            stderr = stderr.decode()
+            logger.error("PostgreSQL exited: stdout: %s, stderr: %s", stdout, stderr)
+            raise
 
     def get_base_url(self) -> str:
         """Get the base URL for the VTN."""
