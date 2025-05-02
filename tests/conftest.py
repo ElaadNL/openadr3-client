@@ -1,6 +1,7 @@
 """Module containing fixtures relevant for testing the authentication module."""
 
 import logging
+import os
 import tempfile
 from collections.abc import Iterable
 
@@ -98,7 +99,8 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
             exc_msg = "JWK should not contain RSAPrivateKey."
             raise TypeError(exc_msg)
 
-        with tempfile.NamedTemporaryFile() as temp_pem_file:
+        temp_pem_file = tempfile.NamedTemporaryFile(delete=False)
+        try:
             # Write the public key PEM bytes of the keycloak instance to the temp file.
             temp_pem_file.write(
                 rsa_pub_key.public_bytes(
@@ -106,6 +108,7 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
                 )
             )
             temp_pem_file.flush()
+            temp_pem_file.close()
 
             yield IntegrationTestOAuthClient(
                 OAUTH_CLIENT_ID,
@@ -113,6 +116,9 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
                 token_url=OAUTH_TOKEN_ENDPOINT,
                 public_signing_key_pem_path=temp_pem_file.name,
             )
+            
+        finally:
+            os.remove(temp_pem_file.name)
 
 
 @pytest.fixture(scope="session")
