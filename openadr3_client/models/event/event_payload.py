@@ -53,9 +53,9 @@ class EventPayloadDescriptor(BasePayloadDescriptor):
 
     payload_type: EventPayloadType
     """The type of payload being described."""
-    units: str
+    units: str | None = None
     """The units of the payload."""
-    currency: str
+    currency: str | None = None
     """The currency of the payload."""
 
     @property

@@ -57,13 +57,13 @@ class ReportPayloadDescriptor(BasePayloadDescriptor):
 
     payload_type: ReportPayloadType
     """The type of payload being described."""
-    reading_type: ReportReadingType
+    reading_type: ReportReadingType | None = None
     """The type of reading being described."""
-    units: str
+    units: str | None = None
     """The units of the payload."""
-    accuracy: float
+    accuracy: float | None = None
     """The accuracy of the payload values."""
-    confidence: int = Field(ge=0, le=100)
+    confidence: int | None = Field(default=None, ge=0, le=100)
 
     @property
     @computed_field
