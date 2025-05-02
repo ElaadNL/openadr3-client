@@ -8,6 +8,7 @@ from testcontainers.postgres import PostgresContainer
 
 from openadr3_client.logging import logger
 
+
 class OpenLeadrVtnTestContainer:
     """A test container for an OpenLeadr-rs VTN with a PostgreSQL testcontainer dependency."""
 
@@ -116,7 +117,9 @@ class OpenLeadrVtnTestContainer:
     def _wait_for_postgres_ready(self) -> None:
         """Wait for the PostgreSQL container to be ready."""
         try:
-            wait_for_logs(self._postgres, "database system is ready to accept connections", timeout=30, raise_on_exit=True)
+            wait_for_logs(
+                self._postgres, "database system is ready to accept connections", timeout=30, raise_on_exit=True
+            )
         except RuntimeError:
             stdout, stderr = self._postgres.get_logs()
             stdout = stdout.decode()
