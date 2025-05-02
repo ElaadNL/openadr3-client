@@ -2,9 +2,11 @@ name: Python Default CI
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches:
+      - main
   pull_request:
-    branches: [ $default-branch ]
+    branches:
+      - main
 
 env:
   python_version: 3.13
