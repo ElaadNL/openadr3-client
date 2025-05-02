@@ -56,7 +56,7 @@ class OAuthTokenManager:
         access_token = token_response.get("access_token")
 
         if not access_token:
-            logger.error("OAuthTokenManager - access_token not present in token response")
+            logger.error("OAuthTokenManager - access_token not present in response")
             exc_msg = "Access token was not present in token response"
             raise ValueError(exc_msg)
 

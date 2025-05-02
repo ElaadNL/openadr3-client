@@ -13,6 +13,7 @@ from openadr3_client._vtn.interfaces.events import (
 )
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.event.event import ExistingEvent, NewEvent
+from openadr3_client.logging import logger
 
 base_prefix = "events"
 
@@ -35,17 +36,18 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
             program_id (Optional[str]): The program id to filter on.
 
         """
-        # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
-        # of the filters are unique.
-        query_params = (
-            target.model_dump(by_alias=True, mode="json")
-            if target
-            else {} | pagination.model_dump(by_alias=True, mode="json")
-            if pagination
-            else {} | {"programID": program_id}
-            if program_id
-            else {}
-        )
+        query_params: dict = {}
+        
+        if target:
+            query_params |= target.model_dump(by_alias=True, mode="json")
+
+        if pagination:
+            query_params |= pagination.model_dump(by_alias=True, mode="json")
+
+        if program_id:
+            query_params |= {"programID": program_id}
+
+        logger.debug("Events - Performing get_events request with query params: %s", query_params)
 
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()

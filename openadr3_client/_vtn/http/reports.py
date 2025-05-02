@@ -11,6 +11,7 @@ from openadr3_client._vtn.interfaces.reports import (
     WriteOnlyReportsInterface,
 )
 from openadr3_client.models.report.report import ExistingReport, NewReport
+from openadr3_client.logging import logger
 
 base_prefix = "reports"
 
@@ -41,17 +42,21 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
         """
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
-        query_params = (
-            pagination.model_dump(by_alias=True, mode="json")
-            if pagination
-            else {} | {"programID": program_id}
-            if program_id
-            else {} | {"eventID": event_id}
-            if event_id
-            else {} | {"clientName": client_name}
-            if client_name
-            else {}
-        )
+        query_params: dict = {}
+        
+        if pagination:
+            query_params |= pagination.model_dump(by_alias=True, mode="json")
+
+        if program_id:
+            query_params |= {"programID": program_id}
+
+        if client_name:
+            query_params |= {"clientName": client_name}
+
+        if event_id:
+            query_params |= {"eventID": event_id}
+
+        logger.debug("Reports - Performing get_reports request with query params: %s", query_params)
 
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()

@@ -8,6 +8,7 @@ from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilt
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
 from openadr3_client.models.ven.resource import ExistingResource, NewResource
 from openadr3_client.models.ven.ven import ExistingVen, NewVen
+from openadr3_client.logging import logger
 
 base_prefix = "vens"
 
@@ -30,17 +31,18 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
             pagination (Optional[PaginationFilter]): The pagination to apply.
 
         """
-        # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
-        # of the filters are unique.
-        query_params = (
-            target.model_dump(by_alias=True, mode="json")
-            if target
-            else {} | pagination.model_dump(by_alias=True, mode="json")
-            if pagination
-            else {} | {"venName": ven_name}
-            if ven_name
-            else {}
-        )
+        query_params: dict = {}
+        
+        if target:
+            query_params |= target.model_dump(by_alias=True, mode="json")
+
+        if pagination:
+            query_params |= pagination.model_dump(by_alias=True, mode="json")
+
+        if ven_name:
+            query_params |= {"venName": ven_name}
+
+        logger.debug("Ven - Performing get_vens request with query params: %s", query_params)
 
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
@@ -80,15 +82,18 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
             pagination (Optional[PaginationFilter]): The pagination to apply.
 
         """
-        query_params = (
-            target.model_dump(by_alias=True, mode="json")
-            if target
-            else {} | pagination.model_dump(by_alias=True, mode="json")
-            if pagination
-            else {} | {"resourceName": resource_name}
-            if resource_name
-            else {}
-        )
+        query_params: dict = {}
+        
+        if target:
+            query_params |= target.model_dump(by_alias=True, mode="json")
+
+        if pagination:
+            query_params |= pagination.model_dump(by_alias=True, mode="json")
+
+        if resource_name:
+            query_params |= {"resourceName": resource_name}
+
+        logger.debug("Ven - Performing get_ven_resources request with query params: %s", query_params)
 
         response = bearer_authenticated_session.get(
             f"{self.base_url}/{base_prefix}/{ven_id}/resources", params=query_params

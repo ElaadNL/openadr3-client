@@ -11,6 +11,7 @@ from openadr3_client._vtn.interfaces.subscriptions import (
     WriteOnlySubscriptionsInterface,
 )
 from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
+from openadr3_client.logging import logger
 
 base_prefix = "subscriptions"
 
@@ -43,19 +44,24 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         """
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
-        query_params = (
-            pagination.model_dump(by_alias=True, mode="json")
-            if pagination
-            else {} | target.model_dump(by_alias=True, mode="json")
-            if target
-            else {} | {"programID": program_id}
-            if program_id
-            else {} | {"clientName": client_name}
-            if client_name
-            else {} | {"objects": [objects]}
-            if objects
-            else {}
-        )
+        query_params: dict = {}
+        
+        if target:
+            query_params |= target.model_dump(by_alias=True, mode="json")
+
+        if pagination:
+            query_params |= pagination.model_dump(by_alias=True, mode="json")
+
+        if program_id:
+            query_params |= {"programID": program_id}
+
+        if client_name:
+            query_params |= {"clientName": client_name}
+
+        if objects:
+            query_params |= {"objects": [objects]}
+
+        logger.debug("Subscriptions - Performing get_subscriptions request with query params: %s", query_params)
 
         response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
