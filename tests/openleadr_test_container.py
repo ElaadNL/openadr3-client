@@ -103,7 +103,7 @@ class OpenLeadrVtnTestContainer:
 
     def _wait_for_ready(self) -> None:
         """Wait for the VTN to be ready to accept connections."""
-        wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=30)
+        wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=180)
 
     def _wait_for_postgres_ready(self) -> None:
         """Wait for the PostgreSQL container to be ready."""
