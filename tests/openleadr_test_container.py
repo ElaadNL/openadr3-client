@@ -100,21 +100,18 @@ class OpenLeadrVtnTestContainer:
 
         # Configure the VTN with the database URL prior to starting it.
         self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).start()
-        logger.debug("Entering wait for ready VTN")
         self._wait_for_ready()
-        logger.debug("Exiting wait for ready VTN")
         return self
 
     def _wait_for_ready(self) -> None:
         """Wait for the VTN to be ready to accept connections."""
         try:
             wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=30, raise_on_exit=True)
-        except:
+        finally:
             stdout, stderr = self._vtn.get_logs()
             stdout = stdout.decode()
             stderr = stderr.decode()
-            logger.error("VTN exited: stdout: %s, stderr: %s", stdout, stderr)
-            raise
+            logger.debug("VTN: stdout: %s, stderr: %s", stdout, stderr)
 
     def _wait_for_postgres_ready(self) -> None:
         """Wait for the PostgreSQL container to be ready."""
@@ -122,12 +119,11 @@ class OpenLeadrVtnTestContainer:
             wait_for_logs(
                 self._postgres, "database system is ready to accept connections", timeout=30, raise_on_exit=True
             )
-        except RuntimeError:
+        finally:
             stdout, stderr = self._postgres.get_logs()
             stdout = stdout.decode()
             stderr = stderr.decode()
-            logger.error("PostgreSQL exited: stdout: %s, stderr: %s", stdout, stderr)
-            raise
+            logger.debug("PostgreSQL: stdout: %s, stderr: %s", stdout, stderr)
 
     def get_base_url(self) -> str:
         """Get the base URL for the VTN."""

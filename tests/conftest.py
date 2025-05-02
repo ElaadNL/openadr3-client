@@ -1,8 +1,9 @@
 """Module containing fixtures relevant for testing the authentication module."""
 
 import logging
-import tempfile
+import os
 from collections.abc import Iterable
+from pathlib import Path
 
 import jwt
 import jwt.algorithms
@@ -98,21 +99,28 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
             exc_msg = "JWK should not contain RSAPrivateKey."
             raise TypeError(exc_msg)
 
-        with tempfile.NamedTemporaryFile() as temp_pem_file:
-            # Write the public key PEM bytes of the keycloak instance to the temp file.
-            temp_pem_file.write(
-                rsa_pub_key.public_bytes(
-                    encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
-                )
-            )
-            temp_pem_file.flush()
+        temp_pem_file_path = Path(__file__).parent / "temp_pem_file.pem"
 
-            yield IntegrationTestOAuthClient(
-                OAUTH_CLIENT_ID,
-                OAUTH_CLIENT_SECRET,
-                token_url=OAUTH_TOKEN_ENDPOINT,
-                public_signing_key_pem_path=temp_pem_file.name,
-            )
+        with temp_pem_file_path.open("wb") as temp_pem_file:
+            try:
+                # Write the public key PEM bytes of the keycloak instance to the temp file.
+                temp_pem_file.write(
+                    rsa_pub_key.public_bytes(
+                        encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    )
+                )
+                temp_pem_file.flush()
+                temp_pem_file.close()
+
+                yield IntegrationTestOAuthClient(
+                    OAUTH_CLIENT_ID,
+                    OAUTH_CLIENT_SECRET,
+                    token_url=OAUTH_TOKEN_ENDPOINT,
+                    public_signing_key_pem_path=temp_pem_file.name,
+                )
+
+            finally:
+                os.remove(temp_pem_file.name)  # noqa: PTH107
 
 
 @pytest.fixture(scope="session")
