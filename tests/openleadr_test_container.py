@@ -100,14 +100,16 @@ class OpenLeadrVtnTestContainer:
 
         # Configure the VTN with the database URL prior to starting it.
         self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).start()
+        logger.debug("Entering wait for ready VTN")
         self._wait_for_ready()
+        logger.debug("Exiting wait for ready VTN")
         return self
 
     def _wait_for_ready(self) -> None:
         """Wait for the VTN to be ready to accept connections."""
         try:
             wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=30, raise_on_exit=True)
-        except RuntimeError:
+        except:
             stdout, stderr = self._vtn.get_logs()
             stdout = stdout.decode()
             stderr = stderr.decode()
