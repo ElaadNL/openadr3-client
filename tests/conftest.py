@@ -2,8 +2,8 @@
 
 import logging
 import os
-import tempfile
 from collections.abc import Iterable
+from pathlib import Path
 
 import jwt
 import jwt.algorithms
@@ -15,7 +15,6 @@ from testcontainers.keycloak import KeycloakContainer
 
 from openadr3_client.config import OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT
 from tests.openleadr_test_container import OpenLeadrVtnTestContainer
-from pathlib import Path
 
 # Set up logging for the testcontainers package
 logging.basicConfig(level=logging.DEBUG)
@@ -99,7 +98,7 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
         if isinstance(rsa_pub_key, RSAPrivateKey):
             exc_msg = "JWK should not contain RSAPrivateKey."
             raise TypeError(exc_msg)
-        
+
         temp_pem_file_path = Path(__file__).parent / "temp_pem_file.pem"
 
         with temp_pem_file_path.open("wb") as temp_pem_file:
