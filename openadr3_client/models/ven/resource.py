@@ -10,11 +10,8 @@ from openadr3_client.models.common.target import Target
 from openadr3_client.models.model import ValidatableModel
 
 
-class Resource[T](ABC, ValidatableModel):
+class Resource(ABC, ValidatableModel):
     """Class representing a resource, which is subject to control by a ven."""
-
-    id: T
-    """Identifier of the resource."""
 
     resource_name: str = Field(min_length=1, max_length=128)
     """The name of the resource."""
@@ -30,7 +27,7 @@ class Resource[T](ABC, ValidatableModel):
 
 
 @final
-class NewResource(Resource[None], CreationGuarded):
+class NewResource(Resource, CreationGuarded):
     """Class representing a new resource not yet pushed to the VTN."""
 
 
@@ -52,8 +49,11 @@ class ResourceUpdate(BaseModel):
 
 
 @final
-class ExistingResource(Resource[str]):
+class ExistingResource(Resource):
     """Class representing an existing report retrieved from the VTN."""
+
+    id: str
+    """Identifier of the resource."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime

@@ -8,8 +8,8 @@ class _EventIntervalDictRequiredFields(TypedDict):
     """
     Required dictionary keys for event interval dict.
 
-    Seperated from the optional parameters, as Optional[X] still requires the key to be present
-    in the dictionary. While we want them to be ommittable.
+    Separated from the optional parameters, as Optional[X] still requires the key to be present
+    in the dictionary. While we want them to be omittable.
     """
 
     # EventPayload fields (flattened)

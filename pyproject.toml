@@ -20,11 +20,13 @@ dependencies = [
     "requests-oauthlib (>=2.0.0,<3.0.0)",
     "cachetools (>=5.5.2,<6.0.0)",
 ]
-packages = [{include = "openadr3_client"}]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{include = "openadr3_client"}]
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"

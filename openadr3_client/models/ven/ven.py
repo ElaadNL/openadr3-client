@@ -11,11 +11,8 @@ from openadr3_client.models.model import ValidatableModel
 from openadr3_client.models.ven.resource import ExistingResource
 
 
-class Ven[T](ABC, ValidatableModel):
+class Ven(ABC, ValidatableModel):
     """Base class for vens."""
-
-    id: T
-    """The identifier of the ven object."""
 
     ven_name: str = Field(min_length=1, max_length=128)
     """The ven name of the ven object."""
@@ -31,7 +28,7 @@ class Ven[T](ABC, ValidatableModel):
 
 
 @final
-class NewVen(Ven[None], CreationGuarded):
+class NewVen(Ven, CreationGuarded):
     """Class representing a new ven not yet pushed to the VTN."""
 
 
@@ -53,8 +50,11 @@ class VenUpdate(BaseModel):
 
 
 @final
-class ExistingVen(Ven[str]):
+class ExistingVen(Ven):
     """Class representing an existing ven retrieved from the VTN."""
+
+    id: str
+    """The identifier of the ven object."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
