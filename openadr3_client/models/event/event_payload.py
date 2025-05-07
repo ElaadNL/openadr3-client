@@ -1,9 +1,10 @@
 """Contains the domain models related to event payloads."""
 
 from enum import Enum
-from typing import final
+from typing import Any, final
 
 from pydantic import computed_field
+from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client.models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
 
@@ -46,6 +47,32 @@ class EventPayloadType(str, Enum):
     CTA2045_REBOOT = "CTA2045_REBOOT"
     CTA2045_SET_OVERRIDE_STATUS = "CTA2045_SET_OVERRIDE_STATUS"
 
+    @classmethod
+    def _missing_(cls: type["EventPayloadType"], value: Any) -> "EventPayloadType":  # noqa: ANN401
+        """
+        Add support for custom event payload cases.
+
+        Args:
+            cls (type[&quot;EventPayloadType&quot;]): The event payload type class.
+            value (Any): The custom enum value to add.
+
+        Returns:
+            EventPayloadType: The new event payload type.
+
+        """
+        min_length = 1
+        max_length = 128
+        if isinstance(value, str) and min_length <= len(value) <= max_length:
+            # Create a new enum member dynamically
+            new_member = str.__new__(cls, value)
+            new_member._name_ = value
+            new_member._value_ = value
+            # Add it to the enum
+            cls._member_map_[value] = new_member
+            return new_member
+        exc_msg = f"Invalid event payload value: {value}"
+        raise ValueError(exc_msg)
+
 
 @final
 class EventPayloadDescriptor(BasePayloadDescriptor):
@@ -55,7 +82,7 @@ class EventPayloadDescriptor(BasePayloadDescriptor):
     """The type of payload being described."""
     units: str | None = None
     """The units of the payload."""
-    currency: str | None = None
+    currency: ISO4217 | None = None
     """The currency of the payload."""
 
     @property

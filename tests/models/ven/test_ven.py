@@ -19,7 +19,7 @@ def test_new_ven_creation_guard() -> None:
     with ven.with_creation_guard():
         pass  # simply pass through, without an exception.
 
-    with pytest.raises(ValueError, match="NewVen has already been created."), ven.with_creation_guard():
+    with pytest.raises(ValueError, match="CreationGuarded object has already been created."), ven.with_creation_guard():
         pass
 
 

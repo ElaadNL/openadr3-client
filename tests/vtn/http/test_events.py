@@ -3,6 +3,7 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from pydantic_extra_types.currency_code import ISO4217
 from requests import HTTPError
 
 from openadr3_client._vtn.http.events import EventsHttpInterface
@@ -11,6 +12,7 @@ from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilt
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
+from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.event.event import EventUpdate, ExistingEvent, NewEvent
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.program.program import NewProgram
@@ -123,7 +125,9 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -137,7 +141,7 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             priority=1,
             targets=(Target(type="test-target", values=("test-value",)),),
             payload_descriptor=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -179,7 +183,9 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -193,7 +199,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             priority=1,
             targets=(Target(type="test-target-1", values=("test-value-1",)),),
             payload_descriptor=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -214,7 +220,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             priority=2,
             targets=(Target(type="test-target-2", values=("test-value-2",)),),
             payload_descriptor=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -274,7 +280,9 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -288,7 +296,7 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             priority=1,
             targets=(Target(type="test-target", values=("test-value",)),),
             payload_descriptor=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -328,7 +336,9 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -342,7 +352,7 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             priority=1,
             targets=(Target(type="test-target", values=("test-value",)),),
             payload_descriptor=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),

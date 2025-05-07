@@ -80,7 +80,10 @@ def test_new_event_creation_guard() -> None:
     with event.with_creation_guard():
         pass  # simply pass through, without an exception.
 
-    with pytest.raises(ValueError, match="NewEvent has already been created."), event.with_creation_guard():
+    with (
+        pytest.raises(ValueError, match="CreationGuarded object has already been created."),
+        event.with_creation_guard(),
+    ):
         pass
 
 

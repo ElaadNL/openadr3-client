@@ -29,10 +29,10 @@ The BL client is designed for DSOs (Distribution System Operators) and VTN opera
 ### Example BL Usage
 
 ```python
-from openadr3_client.bl.factory import BusinessLogicClientFactory
+from openadr3_client.bl.http_factory import BusinessLogicHttpClientFactory
 
 # Initialize the client with the base URL of the VTN as input.
-bl_client = BusinessLogicClientFactory.create_http_bl_client(base_url=...)
+bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(base_url=...)
 
 # Create a new program (NewProgram allows for more properties, this is just a simple example).
 program = NewProgram(
@@ -44,7 +44,7 @@ program = NewProgram(
             duration=timedelta(minutes=5),
             randomize_start=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units="price", currency="EUR"),),
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units=Unit.KWH, currency="EUR"),),
         targets=(Target(type="test-target-1", values=("test-value-1",)),),
 )
 
@@ -58,7 +58,7 @@ event = NewEvent(
     priority=999,
     targets=(Target(type="test-target-1", values=("test-value-1",)),),
     payload_descriptor=(
-        EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units="price", currency="EUR"),
+        EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units=Unit.KWH, currency="EUR"),
     ),
     # Top Level interval definition, each interval specified with the None value will inherit this
     # value by default as its interval period. In this case, each interval will have an implicit
@@ -93,10 +93,10 @@ The VEN client is designed for end users and device operators to receive and pro
 ### Example VEN Client Usage
 
 ```python
-from openadr3_client.ven.factory import VirtualEndNodeClientFactory
+from openadr3_client.ven.http_factory import VirtualEndNodeHttpClientFactory
 
 # Initialize the client with the base URL of the VTN as input.
-ven_client = VirtualEndNodeClientFactory.create_http_ven_client(base_url=...)
+ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(base_url=...)
 
 # Search for events inside the VTN.
 events = ven_client.events.get_events(target=..., pagination=..., program_id=...)
@@ -199,6 +199,105 @@ When converting an event interval to a list of dictionaries, the output is check
 3. Choose the appropriate client interface (BL or VEN)
 4. Initialize the client with the required interfaces
 5. Start interacting with the OpenADR3 VTN system.
+
+## Model Immutability
+
+All domain models defined in the openadr3-client are immutable by design. This is enforced through Pydantic's `frozen = True` configuration. This means that once a model instance is created, its properties cannot be modified directly.
+
+To make changes to an existing resource (like a Program or VEN), you must use the `update` method provided by the corresponding `Existing{ResourceName}` class. This method takes an update object that contains only the properties that are valid to be altered.
+
+For example, to update a program:
+
+```python
+existing:program : ExistingProgram = ...
+
+# Create an update object with the properties you want to change
+program_update = ProgramUpdate(
+    program_name="Updated Program Name",
+    program_long_name="Updated Program Long Name"
+)
+
+# Apply the update to an existing program, this returns a new ExistingProgram object with the update changes applied.
+updated_program = existing_program.update(program_update)
+```
+
+This pattern ensures data consistency and makes it clear which properties can be modified after creation.
+
+## Custom Enumeration Cases
+
+The library supports both predefined and custom enumeration cases for various types like `Unit`, `EventPayloadType`, and `ReportPayloadType`. This flexibility allows for adherence to the OpenADR3 specification, which specifies both common default enumeration values, while also allowing for arbitrary custom values.
+
+To support this as best as possible, ensuring type safety and ease of use through the standard enum interface for these common cases, the choice was made to extend the enumeration classes and allow for dynamic case construction only when needed for custom values.
+
+### Predefined Cases
+
+Predefined enumeration cases are type-safe and can be used directly:
+
+```python
+from openadr3_client.models.common.unit import Unit
+from openadr3_client.models.event.event_payload import EventPayloadType
+
+# Using predefined cases
+unit = Unit.KWH
+payload_type = EventPayloadType.SIMPLE
+
+# These can be used in payload descriptors
+descriptor = EventPayloadDescriptor(
+    payload_type=unit,
+    units=payload_type
+)
+```
+
+### Custom Cases
+
+To use custom enumeration cases, you must use the functional constructor. The library will validate and create a new enumeration case dynamically:
+
+```python
+from openadr3_client.models.common.unit import Unit
+from openadr3_client.models.event.event_payload import EventPayloadType
+
+# Using custom cases
+custom_unit = Unit("CUSTOM_UNIT")
+custom_payload_type = EventPayloadType("CUSTOM_PAYLOAD")
+
+# These can be used in payload descriptors
+descriptor = EventPayloadDescriptor(
+    payload_type=custom_payload_type,
+    units=custom_unit
+)
+```
+
+Note that custom enumeration cases are validated according to the OpenADR3 specification:
+
+- For `EventPayloadType`, values must be strings between 1 and 128 characters
+- For `ReportPayloadType`, values must be strings between 1 and 128 characters
+- For `Unit`, any string value is accepted
+
+## Creation Guard Pattern
+
+All `New{Resource}` classes (such as `NewProgram`, `NewVen`, etc.) inherit from the `CreationGuarded` class. This implements a creation guard pattern that ensures each instance can only be used to create a resource in the VTN exactly once.
+
+This pattern prevents accidental reuse of creation objects, which could lead to duplicate resources or unintended side effects. If you attempt to use the same `New{Resource}` instance multiple times to create a resource, the library will raise a `ValueError`.
+
+For example:
+
+```python
+# Create a new program instance
+new_program = NewProgram(
+    program_name="Example Program",
+    program_long_name="Example Program Long Name",
+    # ... other required fields ...
+)
+
+# First creation - this will succeed
+created_program = bl_client.programs.create_program(new_program=new_program)
+
+# Second creation with the same instance - this will raise ValueError
+try:
+    duplicate_program = bl_client.programs.create_program(new_program=new_program)
+except ValueError as e:
+    print(f"Error: {e}")  # Will print: "Error: CreationGuarded object has already been created."
+```
 
 ## GAC compliance
 

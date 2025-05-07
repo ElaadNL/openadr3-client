@@ -3,22 +3,18 @@
 from __future__ import annotations
 
 from abc import ABC
-from contextlib import contextmanager
-from threading import Lock
-from typing import TYPE_CHECKING, final
+from typing import final
 
 import pycountry
-from pydantic import AnyUrl, AwareDatetime, Field, PrivateAttr, model_validator
+from pydantic import AnyUrl, AwareDatetime, Field, model_validator
 from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client.models._base_model import BaseModel
+from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator
 
 
 class Program[T](ABC, ValidatableModel):
@@ -77,7 +73,16 @@ class Program[T](ABC, ValidatableModel):
 
     @model_validator(mode="after")
     def validate_iso_3166_2(self) -> Program:
-        """Validates that principal_sub_division is iso-3166-2 compliant."""
+        """
+        Validates that principal_sub_division is iso-3166-2 compliant.
+
+        The principal_sub_division is typically part of the ISO-3166 country code.
+        However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
+        and ISO-3166-2 codes.
+
+        For example, the ISO-3166-1 code for the United States is "US".
+        The ISO-3166-2 code for the state of California is "CA".
+        """
         if self.principal_sub_division:
             if not self.country:
                 exc_msg = "principal sub division cannot be set if country is not set."
@@ -151,42 +156,8 @@ class ProgramUpdate(BaseModel):
 
 
 @final
-class NewProgram(Program[None]):
+class NewProgram(Program[None], CreationGuarded):
     """Class representing a new program not yet pushed to the VTN."""
-
-    """Private flag to track if NewProgram has been used to create an program in the VTN.
-
-    If this flag is set to true, calls to create a program inside the VTN with
-    this NewProgram object will be rejected."""
-    _created: bool = PrivateAttr(default=False)
-
-    """Lock object to synchronize access to with_creation_guard."""
-    _lock: Lock = PrivateAttr(default_factory=Lock)
-
-    @contextmanager
-    def with_creation_guard(self) -> Iterator[None]:
-        """
-        A guard which enforces that a NewProgram can only be used once.
-
-        A NewProgram can only be used to create a program inside a VTN exactly once.
-        Subsequent calls to create the program with the same object will raise an
-        exception.
-
-        Raises:
-            ValueError: Raised if the NewProgram has already been created inside the VTN.
-
-        """
-        with self._lock:
-            if self._created:
-                err_msg = "NewProgram has already been created."
-                raise ValueError(err_msg)
-
-            self._created = True
-            try:
-                yield
-            except Exception:
-                self._created = False
-                raise
 
 
 @final

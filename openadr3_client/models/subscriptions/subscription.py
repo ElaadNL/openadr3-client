@@ -1,13 +1,11 @@
 from abc import ABC
-from collections.abc import Iterator
-from contextlib import contextmanager
 from enum import Enum
-from threading import Lock
 from typing import final
 
-from pydantic import AwareDatetime, Field, HttpUrl, PrivateAttr, field_validator
+from pydantic import AwareDatetime, Field, HttpUrl, field_validator
 
 from openadr3_client.models._base_model import BaseModel
+from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.model import ValidatableModel
 
@@ -122,42 +120,8 @@ class Subscription[T](ABC, ValidatableModel):
 
 
 @final
-class NewSubscription(Subscription[None]):
+class NewSubscription(Subscription[None], CreationGuarded):
     """Class representing a new subscription not yet pushed to the VTN."""
-
-    """Private flag to track if NewSubscription has been used to create a subscription in the VTN.
-
-    If this flag is set to true, calls to create a subscription inside the VTN with
-    this NewSubscription object will be rejected."""
-    _created: bool = PrivateAttr(default=False)
-
-    """Lock object to synchronize access to with_creation_guard."""
-    _lock: Lock = PrivateAttr(default_factory=Lock)
-
-    @contextmanager
-    def with_creation_guard(self) -> Iterator[None]:
-        """
-        A guard which enforces that a NewSubscription can only be used once.
-
-        A NewSubscription can only be used to create a subscription inside a VTN exactly once.
-        Subsequent calls to create the NewSubscription with the same object will raise an
-        exception.
-
-        Raises:
-            ValueError: Raised if the NewSubscription has already been created inside the VTN.
-
-        """
-        with self._lock:
-            if self._created:
-                err_msg = "NewSubscription has already been created."
-                raise ValueError(err_msg)
-
-            self._created = True
-            try:
-                yield
-            except Exception:
-                self._created = False
-                raise
 
 
 @final

@@ -1,6 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
+from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.report.report_payload import (
     ReportPayload,
     ReportPayloadDescriptor,
@@ -21,7 +22,7 @@ def test_report_payload_descriptor_confidence_too_high() -> None:
         _ = ReportPayloadDescriptor(
             payload_type=ReportPayloadType.READING,
             reading_type=ReportReadingType.DIRECT_READ,
-            units="KWh",
+            units=Unit.KWH,
             accuracy=2.5,
             confidence=101,
         )
@@ -33,7 +34,7 @@ def test_report_payload_descriptor_confidence_toolow() -> None:
         _ = ReportPayloadDescriptor(
             payload_type=ReportPayloadType.READING,
             reading_type=ReportReadingType.DIRECT_READ,
-            units="KWh",
+            units=Unit.KWH,
             accuracy=2.5,
             confidence=-1,
         )
