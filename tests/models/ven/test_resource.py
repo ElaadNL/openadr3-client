@@ -14,7 +14,7 @@ def test_new_resource_creation_guard() -> None:
     The NewResource creation guard should only allow invocation inside the context manager
     exactly once if no exception is raised in the yield method.
     """
-    resource = NewResource(id=None, resource_name="TestResource", venID="ven123")
+    resource = NewResource(resource_name="TestResource", venID="ven123")
 
     with resource.with_creation_guard():
         pass  # simply pass through, without an exception.
@@ -32,13 +32,13 @@ def test_resource_ven_id_too_long() -> None:
     random_string = "".join(random.choices(string.ascii_letters + string.digits, k=length))
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
-        _ = NewResource(id=None, resource_name="TestResource", venID=random_string)
+        _ = NewResource(resource_name="TestResource", venID=random_string)
 
 
 def test_resource_ven_id_empty_string() -> None:
     """Test that validates that the ven id of a resource cannot be an empty string."""
     with pytest.raises(ValidationError, match="have at least 1 character"):
-        _ = NewResource(id=None, resource_name="TestResource", venID="")
+        _ = NewResource(resource_name="TestResource", venID="")
 
 
 def test_resource_name_too_long() -> None:
@@ -47,10 +47,10 @@ def test_resource_name_too_long() -> None:
     random_string = "".join(random.choices(string.ascii_letters + string.digits, k=length))
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
-        _ = NewResource(id=None, resource_name=random_string, venID="ven-id")
+        _ = NewResource(resource_name=random_string, venID="ven-id")
 
 
 def test_resource_name_empty_string() -> None:
     """Test that validates that the resource name of a resource cannot be an empty string."""
     with pytest.raises(ValidationError, match="have at least 1 character"):
-        _ = NewResource(id=None, resource_name="", venID="ven-id")
+        _ = NewResource(resource_name="", venID="ven-id")

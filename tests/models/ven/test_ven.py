@@ -14,7 +14,7 @@ def test_new_ven_creation_guard() -> None:
     The NewVen creation guard should only allow invocation inside the context manager
     exactly once if no exception is raised in the yield method.
     """
-    ven = NewVen(id=None, ven_name="test-ven")
+    ven = NewVen(ven_name="test-ven")
 
     with ven.with_creation_guard():
         pass  # simply pass through, without an exception.
@@ -29,10 +29,10 @@ def test_ven_name_too_long() -> None:
     random_string = "".join(random.choices(string.ascii_letters + string.digits, k=length))
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
-        _ = NewVen(id=None, ven_name=random_string)
+        _ = NewVen(ven_name=random_string)
 
 
 def test_ven_name_empty_string() -> None:
     """Test that validates that the ven name of a ven cannot be an empty string."""
     with pytest.raises(ValidationError, match="have at least 1 character"):
-        _ = NewVen(id=None, ven_name="")
+        _ = NewVen(ven_name="")

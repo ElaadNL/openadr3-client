@@ -23,7 +23,7 @@ def test_new_report_creation_guard() -> None:
     )
 
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
-    report = NewReport(id=None, programID="my-program", eventID="my-event", client_name="client", resources=(resource,))
+    report = NewReport(programID="my-program", eventID="my-event", client_name="client", resources=(resource,))
 
     with report.with_creation_guard():
         pass  # simply pass through, without an exception.
@@ -43,7 +43,7 @@ def test_new_report_no_resources() -> None:
     exactly once if no exception is raised in the yield method.
     """
     with pytest.raises(ValidationError, match="NewReport must contain at least one resource"):
-        _ = NewReport(id=None, programID="my-program", eventID="my-event", client_name="client", resources=())
+        _ = NewReport(programID="my-program", eventID="my-event", client_name="client", resources=())
 
 
 def test_report_program_id_too_long() -> None:
@@ -60,7 +60,7 @@ def test_report_program_id_too_long() -> None:
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
-        _ = NewReport(id=None, programID=random_string, eventID="my-event", client_name="client", resources=(resource,))
+        _ = NewReport(programID=random_string, eventID="my-event", client_name="client", resources=(resource,))
 
 
 def test_report_program_id_empty_string() -> None:
@@ -74,7 +74,7 @@ def test_report_program_id_empty_string() -> None:
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
 
     with pytest.raises(ValidationError, match="have at least 1 character"):
-        _ = NewReport(id=None, programID="", eventID="my-event", client_name="client", resources=(resource,))
+        _ = NewReport(programID="", eventID="my-event", client_name="client", resources=(resource,))
 
 
 def test_report_event_id_too_long() -> None:
@@ -91,9 +91,7 @@ def test_report_event_id_too_long() -> None:
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
-        _ = NewReport(
-            id=None, programID="my-program", eventID=random_string, client_name="client", resources=(resource,)
-        )
+        _ = NewReport(programID="my-program", eventID=random_string, client_name="client", resources=(resource,))
 
 
 def test_report_event_id_empty_string() -> None:
@@ -107,7 +105,7 @@ def test_report_event_id_empty_string() -> None:
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
 
     with pytest.raises(ValidationError, match="have at least 1 character"):
-        _ = NewReport(id=None, programID="my-program", eventID="", client_name="client", resources=(resource,))
+        _ = NewReport(programID="my-program", eventID="", client_name="client", resources=(resource,))
 
 
 def test_report_client_name_too_long() -> None:
@@ -124,9 +122,7 @@ def test_report_client_name_too_long() -> None:
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
-        _ = NewReport(
-            id=None, programID="my-program", eventID="my-event", client_name=random_string, resources=(resource,)
-        )
+        _ = NewReport(programID="my-program", eventID="my-event", client_name=random_string, resources=(resource,))
 
 
 def test_report_client_name_empty_string() -> None:
@@ -140,7 +136,7 @@ def test_report_client_name_empty_string() -> None:
     resource = ReportResource(resource_name="test-resource", interval_period=None, intervals=(interval,))
 
     with pytest.raises(ValidationError, match="have at least 1 character"):
-        _ = NewReport(id=None, programID="my-program", eventID="my-event", client_name="", resources=(resource,))
+        _ = NewReport(programID="my-program", eventID="my-event", client_name="", resources=(resource,))
 
 
 def test_report_resource_no_intervals() -> None:
