@@ -19,7 +19,7 @@ def test_new_resource_creation_guard() -> None:
     with resource.with_creation_guard():
         pass  # simply pass through, without an exception.
 
-    with pytest.raises(ValueError, match="NewResource has already been created."), resource.with_creation_guard():
+    with pytest.raises(ValueError, match="CreationGuarded object has already been created."), resource.with_creation_guard():
         pass
 
 

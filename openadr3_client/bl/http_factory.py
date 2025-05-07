@@ -9,8 +9,8 @@ from openadr3_client.bl._client import BusinessLogicClient
 
 
 @final
-class BusinessLogicClientFactory:
-    """Factory which can be used to create a business logic client."""
+class BusinessLogicHttpClientFactory:
+    """Factory which can be used to create a business logic http client."""
 
     @staticmethod
     def create_http_bl_client(vtn_base_url: str) -> BusinessLogicClient:

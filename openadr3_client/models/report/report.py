@@ -3,21 +3,17 @@
 from __future__ import annotations
 
 from abc import ABC
-from contextlib import contextmanager
-from threading import Lock
-from typing import TYPE_CHECKING, final
+from typing import final
 
-from pydantic import AwareDatetime, Field, PrivateAttr, field_validator
+from pydantic import AwareDatetime, Field, field_validator
 
 from openadr3_client.models._base_model import BaseModel
+from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
 from openadr3_client.models.report.report_payload import ReportPayload
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator
 
 
 @final
@@ -77,42 +73,8 @@ class Report[T](ABC, ValidatableModel):
 
 
 @final
-class NewReport(Report[None]):
+class NewReport(Report[None], CreationGuarded):
     """Class representing a new report not yet pushed to the VTN."""
-
-    """Private flag to track if Report has been used to create a report in the VTN.
-
-    If this flag is set to true, calls to create a report inside the VTN with
-    this NewReport object will be rejected."""
-    _created: bool = PrivateAttr(default=False)
-
-    """Lock object to synchronize access to with_creation_guard."""
-    _lock: Lock = PrivateAttr(default_factory=Lock)
-
-    @contextmanager
-    def with_creation_guard(self) -> Iterator[None]:
-        """
-        A guard which enforces that a NewReport can only be used once.
-
-        A NewReport can only be used to create a report inside a VTN exactly once.
-        Subsequent calls to create the NewReport with the same object will raise an
-        exception.
-
-        Raises:
-            ValueError: Raised if the NewReport has already been created inside the VTN.
-
-        """
-        with self._lock:
-            if self._created:
-                err_msg = "NewReport has already been created."
-                raise ValueError(err_msg)
-
-            self._created = True
-            try:
-                yield
-            except Exception:
-                self._created = False
-                raise
 
     @field_validator("resources", mode="after")
     @classmethod

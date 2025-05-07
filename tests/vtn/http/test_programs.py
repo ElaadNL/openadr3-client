@@ -9,6 +9,7 @@ from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
+from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.program.program import ExistingProgram, NewProgram, ProgramUpdate
 from tests.conftest import IntegrationTestVTNClient
@@ -57,7 +58,7 @@ def test_update_program_by_id_non_existent(integration_test_vtn_client: Integrat
                     duration=timedelta(minutes=5),
                 ),
                 payload_descriptor=(
-                    EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                    EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),
                 ),
             ),
         )
@@ -76,7 +77,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             duration=timedelta(minutes=5),
             randomize_start=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
     )
 
     response = interface.create_program(new_program=program)
@@ -101,7 +102,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
         targets=(Target(type="test-target-1", values=("test-value-1",)),),
     )
     program2 = NewProgram(
@@ -112,7 +113,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
         targets=(Target(type="test-target-2", values=("test-value-2",)),),
     )
     created_program1 = interface.create_program(new_program=program1)
@@ -151,7 +152,7 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
         targets=(Target(type="test-target", values=("test-value",)),),
     )
     created_program = interface.create_program(new_program=program)
@@ -178,7 +179,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),),
+        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
         targets=(Target(type="test-target", values=("test-value",)),),
     )
     created_program = interface.create_program(new_program=program)
@@ -194,7 +195,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
                 duration=timedelta(minutes=5),
             ),
             payload_descriptor=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units="kWh", currency="EUR"),
+                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),
             ),
             targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
         )

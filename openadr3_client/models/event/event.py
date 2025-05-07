@@ -3,21 +3,17 @@
 from __future__ import annotations
 
 from abc import ABC
-from contextlib import contextmanager
-from threading import Lock
-from typing import TYPE_CHECKING, final
+from typing import final
 
-from pydantic import AwareDatetime, Field, NonNegativeInt, PrivateAttr, field_validator
+from pydantic import AwareDatetime, Field, NonNegativeInt, field_validator
 
 from openadr3_client.models._base_model import BaseModel
+from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
-
-if TYPE_CHECKING:
-    from collections.abc import Iterator
 
 
 class Event[T](ABC, ValidatableModel):
@@ -75,42 +71,8 @@ class EventUpdate(BaseModel):
 
 
 @final
-class NewEvent(Event[None]):
+class NewEvent(Event[None], CreationGuarded):
     """Class representing a new event not yet pushed to the VTN."""
-
-    _created: bool = PrivateAttr(default=False)
-    """Private flag to track if NewEvent has been used to create an event in the VTN.
-
-    If this flag is set to true, calls to create an event inside the VTN with
-    this NewEvent object will be rejected."""
-
-    _lock: Lock = PrivateAttr(default_factory=Lock)
-    """Lock object to synchronize access to with_creation_guard."""
-
-    @contextmanager
-    def with_creation_guard(self) -> Iterator[None]:
-        """
-        A guard which enforces that a NewEvent can only be used once.
-
-        A NewEvent can only be used to create an event inside a VTN exactly once.
-        Subsequent calls to create the event with the same object will raise an
-        exception.
-
-        Raises:
-            ValueError: Raised if the NewEvent has already been created inside the VTN.
-
-        """
-        with self._lock:
-            if self._created:
-                err_msg = "NewEvent has already been created."
-                raise ValueError(err_msg)
-
-            self._created = True
-            try:
-                yield
-            except Exception:
-                self._created = False
-                raise
 
     @field_validator("intervals", mode="after")
     @classmethod
