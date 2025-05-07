@@ -3,6 +3,7 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from pydantic_extra_types.currency_code import ISO4217
 from requests import HTTPError
 
 from openadr3_client._vtn.http.events import EventsHttpInterface
@@ -96,7 +97,9 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = programs_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -192,7 +195,9 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     program2 = NewProgram(
         id=None,
@@ -201,7 +206,9 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program1 = programs_interface.create_program(new_program=program1)
     created_program2 = programs_interface.create_program(new_program=program2)
@@ -369,7 +376,9 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = programs_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -464,7 +473,9 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency="EUR"),),
+        payload_descriptor=(
+            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
+        ),
     )
     created_program = programs_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"

@@ -22,8 +22,9 @@ class ReportReadingType(str, Enum):
     AVERAGE = "AVERAGE"
 
     @classmethod
-    def _missing_(cls: type["ReportReadingType"], value: Any) -> "ReportReadingType":
-        """Add support for custom report reading type cases.
+    def _missing_(cls: type["ReportReadingType"], value: Any) -> "ReportReadingType":  # noqa: ANN401
+        """
+        Add support for custom report reading type cases.
 
         Args:
             cls (type[&quot;EventPayloadType&quot;]): The report reading type class.
@@ -31,6 +32,7 @@ class ReportReadingType(str, Enum):
 
         Returns:
             ReportReadingType: The new report reading type.
+
         """
         # Create a new enum member dynamically
         new_member = str.__new__(cls, value)
@@ -71,8 +73,9 @@ class ReportPayloadType(str, Enum):
     EXPORT_RESERVATION_FEE = "EXPORT_RESERVATION_FEE"
 
     @classmethod
-    def _missing_(cls: type["ReportPayloadType"], value: Any) -> "ReportPayloadType":
-        """Add support for custom report payload cases.
+    def _missing_(cls: type["ReportPayloadType"], value: Any) -> "ReportPayloadType":  # noqa: ANN401
+        """
+        Add support for custom report payload cases.
 
         Args:
             cls (type[&quot;EventPayloadType&quot;]): The report payload type class.
@@ -80,8 +83,11 @@ class ReportPayloadType(str, Enum):
 
         Returns:
             ReportPayloadType: The new report payload type.
+
         """
-        if isinstance(value, str) and len(value) > 1 and len(value) < 128:
+        min_length = 1
+        max_length = 128
+        if isinstance(value, str) and min_length <= len(value) <= max_length:
             # Create a new enum member dynamically
             new_member = str.__new__(cls, value)
             new_member._name_ = value
@@ -89,8 +95,9 @@ class ReportPayloadType(str, Enum):
             # Add it to the enum
             cls._member_map_[value] = new_member
             return new_member
-        else:
-            raise ValueError(f"Invalid report payload type: {value}")
+
+        exc_msg = f"Invalid report payload value: {value}"
+        raise ValueError(exc_msg)
 
 
 @final

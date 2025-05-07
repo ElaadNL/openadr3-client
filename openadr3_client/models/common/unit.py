@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import Any
 
+
 class Unit(str, Enum):
     """Enumeration of the units allowed by OpenADR 3."""
-    
+
     KWH = "KWH"
     GHG = "GHG"
     Volts = "VOLTS"
@@ -18,8 +19,9 @@ class Unit(str, Enum):
     KVAR = "KVAR"
 
     @classmethod
-    def _missing_(cls: type["Unit"], value: Any) -> "Unit":
-        """Add support for custom enum cases.
+    def _missing_(cls: type["Unit"], value: Any) -> "Unit":  # noqa: ANN401
+        """
+        Add support for custom enum cases.
 
         Args:
             cls (type[&quot;EventPayloadType&quot;]): The enum class.
@@ -27,6 +29,7 @@ class Unit(str, Enum):
 
         Returns:
             Unit: The new enum type.
+
         """
         # Create a new enum member dynamically
         new_member = str.__new__(cls, value)

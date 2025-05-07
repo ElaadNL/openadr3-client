@@ -28,7 +28,10 @@ def test_new_report_creation_guard() -> None:
     with report.with_creation_guard():
         pass  # simply pass through, without an exception.
 
-    with pytest.raises(ValueError, match="CreationGuarded object has already been created."), report.with_creation_guard():
+    with (
+        pytest.raises(ValueError, match="CreationGuarded object has already been created."),
+        report.with_creation_guard(),
+    ):
         pass
 
 

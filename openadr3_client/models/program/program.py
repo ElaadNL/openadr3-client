@@ -73,7 +73,8 @@ class Program[T](ABC, ValidatableModel):
 
     @model_validator(mode="after")
     def validate_iso_3166_2(self) -> Program:
-        """Validates that principal_sub_division is iso-3166-2 compliant.
+        """
+        Validates that principal_sub_division is iso-3166-2 compliant.
 
         The principal_sub_division is typically part of the ISO-3166 country code.
         However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1

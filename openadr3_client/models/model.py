@@ -25,6 +25,9 @@ ValidationTarget = Model | Field
 DefaultTarget = Model()
 
 
+# TODO(NICBUR): This is not the nicest way to do this, but it's good enough for now. # noqa: FIX002
+# Will look into a better solution as part of v1.1
+# https://github.com/ElaadNL/openadr3-client/issues/7
 @final
 class ValidatorRegistry:
     """
