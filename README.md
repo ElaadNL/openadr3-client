@@ -18,7 +18,7 @@ OAUTH_SCOPES         # Comma-delimited list of OAuth scope to request (optional)
 
 ## Business Logic (BL) Client
 
-The BL client is designed for DSOs (Distribution System Operators) and VTN operators to manage OpenADR3 programs and events. It provides full control over the following interfaces:
+The BL client is designed for VTN operators to manage OpenADR3 programs and events. It provides full control over the following interfaces:
 
 - **Events**: Create, read, update, and delete events
 - **Programs**: Create, read, update, and delete programs
