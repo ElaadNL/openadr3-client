@@ -223,6 +223,56 @@ updated_program = existing_program.update(program_update)
 
 This pattern ensures data consistency and makes it clear which properties can be modified after creation.
 
+## Custom Enumeration Cases
+
+The library supports both predefined and custom enumeration cases for various types like `Unit`, `EventPayloadType`, and `ReportPayloadType`. This flexibility allows for adherence to the OpenADR3 specification, which specifies both common default enumeration values, while also allowing for arbitrary custom values.
+
+To support this as best as possible, ensuring type safety and ease of use through the standard enum interface for these common cases, the choice was made to extend the enumeration classes and allow for dynamic case construction only when needed for custom values.
+
+### Predefined Cases
+
+Predefined enumeration cases are type-safe and can be used directly:
+
+```python
+from openadr3_client.models.common.unit import Unit
+from openadr3_client.models.event.event_payload import EventPayloadType
+
+# Using predefined cases
+unit = Unit.KWH
+payload_type = EventPayloadType.SIMPLE
+
+# These can be used in payload descriptors
+descriptor = EventPayloadDescriptor(
+    payload_type=unit,
+    units=payload_type
+)
+```
+
+### Custom Cases
+
+To use custom enumeration cases, you must use the functional constructor. The library will validate and create a new enumeration case dynamically:
+
+```python
+from openadr3_client.models.common.unit import Unit
+from openadr3_client.models.event.event_payload import EventPayloadType
+
+# Using custom cases
+custom_unit = Unit("CUSTOM_UNIT")
+custom_payload_type = EventPayloadType("CUSTOM_PAYLOAD")
+
+# These can be used in payload descriptors
+descriptor = EventPayloadDescriptor(
+    payload_type=custom_payload_type,
+    units=custom_unit
+)
+```
+
+Note that custom enumeration cases are validated according to the OpenADR3 specification:
+
+- For `EventPayloadType`, values must be strings between 1 and 128 characters
+- For `ReportPayloadType`, values must be strings between 1 and 128 characters
+- For `Unit`, any string value is accepted
+
 ## Creation Guard Pattern
 
 All `New{Resource}` classes (such as `NewProgram`, `NewVen`, etc.) inherit from the `CreationGuarded` class. This implements a creation guard pattern that ensures each instance can only be used to create a resource in the VTN exactly once.
