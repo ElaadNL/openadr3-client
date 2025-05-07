@@ -47,11 +47,8 @@ class ReportResource(ValidatableModel):
         return intervals
 
 
-class Report[T](ABC, ValidatableModel):
+class Report(ABC, ValidatableModel):
     """Base class for reports."""
-
-    id: T
-    """The identifier for the report."""
 
     program_id: str = Field(alias="programID", min_length=1, max_length=128)
     """The program this report is related to."""
@@ -73,14 +70,14 @@ class Report[T](ABC, ValidatableModel):
 
 
 @final
-class NewReport(Report[None], CreationGuarded):
+class NewReport(Report, CreationGuarded):
     """Class representing a new report not yet pushed to the VTN."""
 
     @field_validator("resources", mode="after")
     @classmethod
     def atleast_one_resource(cls, resources: tuple[ReportResource, ...]) -> tuple[ReportResource, ...]:
         """
-        Validatest that a report has atleast one resource defined.
+        Validates that a report has at least one resource defined.
 
         Args:
             resources (tuple[ReportResource, ...]): The resources of the report.
@@ -116,8 +113,11 @@ class ReportUpdate(BaseModel):
 
 
 @final
-class ExistingReport(Report[str]):
+class ExistingReport(Report):
     """Class representing an existing report retrieved from the VTN."""
+
+    id: str
+    """The identifier for the report."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime

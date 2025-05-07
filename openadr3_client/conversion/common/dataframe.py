@@ -10,7 +10,6 @@ class EventIntervalDataFrameSchema(pa.DataFrameModel):
     """Pandera schema for an event interval dataframe input."""
 
     # IntervalPeriod fields (flattened)
-    # time_zone_agnostic datetime available as of https://github.com/unionai-oss/pandera/pull/1902
     start: Series[DateTime(time_zone_agnostic=True)] | None = pa.Field(nullable=True)  # type: ignore[reportInvalidTypeForm, valid-type]
     duration: Series[Timedelta] | None = pa.Field(nullable=True)
     randomize_start: Series[Timedelta] | None = pa.Field(nullable=True)

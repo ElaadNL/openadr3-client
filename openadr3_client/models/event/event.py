@@ -16,11 +16,8 @@ from openadr3_client.models.event.event_payload import EventPayload, EventPayloa
 from openadr3_client.models.model import ValidatableModel
 
 
-class Event[T](ABC, ValidatableModel):
+class Event(ABC, ValidatableModel):
     """Base class for events."""
-
-    id: T
-    """The identifier for the event."""
 
     program_id: str = Field(alias="programID", min_length=1, max_length=128)
     """Identifier of the program this event belongs to."""
@@ -71,14 +68,14 @@ class EventUpdate(BaseModel):
 
 
 @final
-class NewEvent(Event[None], CreationGuarded):
+class NewEvent(Event, CreationGuarded):
     """Class representing a new event not yet pushed to the VTN."""
 
     @field_validator("intervals", mode="after")
     @classmethod
     def atleast_one_interval(cls, intervals: tuple[Interval, ...]) -> tuple[Interval, ...]:
         """
-        Validatest that an event has atleast one interval defined.
+        Validates that an event has at least one interval defined.
 
         Args:
             intervals (tuple[Interval, ...]): The intervals of the event.
@@ -91,8 +88,11 @@ class NewEvent(Event[None], CreationGuarded):
 
 
 @final
-class ExistingEvent(Event[str]):
+class ExistingEvent(Event):
     """Class representing an existing event retrieved from the VTN."""
+
+    id: str
+    """The identifier for the event."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime

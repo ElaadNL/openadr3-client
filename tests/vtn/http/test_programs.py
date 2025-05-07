@@ -72,7 +72,6 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
     interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
 
     program = NewProgram(
-        id=None,
         program_name="Test Program",
         program_long_name="Test Program Long Name",
         interval_period=IntervalPeriod(
@@ -100,7 +99,6 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
 
     # Create two programs with different names and targets
     program1 = NewProgram(
-        id=None,
         program_name="test-program-1",
         program_long_name="Test Program 1 Long Name",
         interval_period=IntervalPeriod(
@@ -113,7 +111,6 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
         targets=(Target(type="test-target-1", values=("test-value-1",)),),
     )
     program2 = NewProgram(
-        id=None,
         program_name="test-program-2",
         program_long_name="Test Program 2 Long Name",
         interval_period=IntervalPeriod(
@@ -154,7 +151,6 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
 
     # Create a program to delete
     program = NewProgram(
-        id=None,
         program_name="test-program-to-delete",
         program_long_name="Test Program To Delete Long Name",
         interval_period=IntervalPeriod(
@@ -183,7 +179,6 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
 
     # Create a program to update
     program = NewProgram(
-        id=None,
         program_name="test-program-to-update",
         program_long_name="Test Program To Update Long Name",
         interval_period=IntervalPeriod(

@@ -91,7 +91,6 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
     # First create a program
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -107,7 +106,6 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
     try:
         # Create an event that belongs to the program
         event = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event",
             priority=1,
@@ -131,7 +129,6 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
         try:
             # Create a VEN with the same name as the client_name
             ven = NewVen(
-                id=None,
                 ven_name="test-client",
                 targets=(),
             )
@@ -141,7 +138,6 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             try:
                 # Now create the report
                 report = NewReport(
-                    id=None,
                     programID=created_program.id,
                     eventID=created_event.id,
                     client_name="test-client",
@@ -189,7 +185,6 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
 
     # Create two programs
     program1 = NewProgram(
-        id=None,
         program_name="test-program-1",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -200,7 +195,6 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
         ),
     )
     program2 = NewProgram(
-        id=None,
         program_name="test-program-2",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -216,7 +210,6 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
     try:
         # Create two events
         event1 = NewEvent(
-            id=None,
             programID=created_program1.id,
             event_name="test-event-1",
             priority=1,
@@ -235,7 +228,6 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             ),
         )
         event2 = NewEvent(
-            id=None,
             programID=created_program2.id,
             event_name="test-event-2",
             priority=1,
@@ -259,12 +251,10 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
         try:
             # Create two VENs
             ven1 = NewVen(
-                id=None,
                 ven_name="test-client-1",
                 targets=(),
             )
             ven2 = NewVen(
-                id=None,
                 ven_name="test-client-2",
                 targets=(),
             )
@@ -274,7 +264,6 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             try:
                 # Create two reports with different parameters
                 report1 = NewReport(
-                    id=None,
                     programID=created_program1.id,
                     eventID=created_event1.id,
                     client_name=created_ven1.ven_name,
@@ -296,7 +285,6 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
                     ),
                 )
                 report2 = NewReport(
-                    id=None,
                     programID=created_program2.id,
                     eventID=created_event2.id,
                     client_name=created_ven2.ven_name,
@@ -370,7 +358,6 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
     # Create a program
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -386,7 +373,6 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
     try:
         # Create an event
         event = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event",
             priority=1,
@@ -410,7 +396,6 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
         try:
             # Create a VEN
             ven = NewVen(
-                id=None,
                 ven_name="test-client",
                 targets=(),
             )
@@ -420,7 +405,6 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             try:
                 # Create a report to delete
                 report = NewReport(
-                    id=None,
                     programID=created_program.id,
                     eventID=created_event.id,
                     client_name="test-client",
@@ -467,7 +451,6 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
     # Create a program
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -483,7 +466,6 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
     try:
         # Create an event
         event = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event",
             priority=1,
@@ -507,7 +489,6 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
         try:
             # Create a VEN
             ven = NewVen(
-                id=None,
                 ven_name="test-client",
                 targets=(),
             )
@@ -517,7 +498,6 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             try:
                 # Create a report to update
                 report = NewReport(
-                    id=None,
                     programID=created_program.id,
                     eventID=created_event.id,
                     client_name="test-client",

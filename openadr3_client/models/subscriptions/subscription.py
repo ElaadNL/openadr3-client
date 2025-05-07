@@ -83,11 +83,8 @@ class ObjectOperation(ValidatableModel):
         return operations
 
 
-class Subscription[T](ABC, ValidatableModel):
+class Subscription(ABC, ValidatableModel):
     """Base class for subscription objects."""
-
-    id: T
-    """The identifier of the subscription object."""
 
     client_name: str = Field(min_length=1, max_length=128)
     """The client name of the subscription object."""
@@ -120,7 +117,7 @@ class Subscription[T](ABC, ValidatableModel):
 
 
 @final
-class NewSubscription(Subscription[None], CreationGuarded):
+class NewSubscription(Subscription, CreationGuarded):
     """Class representing a new subscription not yet pushed to the VTN."""
 
 
@@ -142,8 +139,11 @@ class SubscriptionUpdate(BaseModel):
 
 
 @final
-class ExistingSubscription(Subscription[str]):
+class ExistingSubscription(Subscription):
     """Class representing an existing subscription retrieved from the VTN."""
+
+    id: str
+    """The identifier of the subscription object."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime

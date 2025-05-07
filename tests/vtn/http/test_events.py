@@ -82,7 +82,6 @@ def test_create_event_invalid_program(integration_test_vtn_client: IntegrationTe
     interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
 
     event = NewEvent(
-        id=None,
         programID="test-program",
         event_name=None,
         priority=None,
@@ -119,7 +118,6 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
 
     program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -135,7 +133,6 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
     try:
         # Now create the event
         event = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event",
             priority=1,
@@ -177,7 +174,6 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
     # First create a program since events require a program
     program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -193,7 +189,6 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
     try:
         # Create two events with different names and targets
         event1 = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event-1",
             priority=1,
@@ -214,7 +209,6 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             ),
         )
         event2 = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event-2",
             priority=2,
@@ -274,7 +268,6 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
     # First create a program since events require a program
     program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -290,7 +283,6 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
     try:
         # Create an event to delete
         event = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event-to-delete",
             priority=1,
@@ -330,7 +322,6 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
     # First create a program since events require a program
     program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
     program = NewProgram(
-        id=None,
         program_name="test-program",
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
@@ -346,7 +337,6 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
     try:
         # Create an event to update
         event = NewEvent(
-            id=None,
             programID=created_program.id,
             event_name="test-event-to-update",
             priority=1,

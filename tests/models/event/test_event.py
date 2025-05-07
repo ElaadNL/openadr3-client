@@ -15,7 +15,6 @@ def test_new_event_no_intervals() -> None:
     """Test that validates that intervals are required for new events."""
     with pytest.raises(ValidationError, match="NewEvent must contain at least one interval."):
         _ = NewEvent(
-            id=None,
             programID="test-program",
             event_name=None,
             priority=None,
@@ -30,7 +29,6 @@ def test_new_event_negative_priority() -> None:
     """Test that validates that a priority must be a positive number for events."""
     with pytest.raises(ValidationError, match="Input should be greater than or equal to 0"):
         NewEvent(
-            id=None,
             programID="test-program",
             event_name=None,
             priority=-1,
@@ -58,7 +56,6 @@ def test_new_event_creation_guard() -> None:
     exactly once if no exception is raised in the yield method.
     """
     event = NewEvent(
-        id=None,
         programID="test-program",
         event_name=None,
         priority=None,
@@ -94,7 +91,6 @@ def test_event_program_id_too_long() -> None:
 
     with pytest.raises(ValidationError, match="String should have at most 128 characters"):
         _ = NewEvent(
-            id=None,
             programID=random_string,
             event_name=None,
             priority=None,
@@ -118,7 +114,6 @@ def test_event_program_id_empty_string() -> None:
     """Test that validates that the program id of an event cannot be an empty string."""
     with pytest.raises(ValidationError, match="have at least 1 character"):
         _ = NewEvent(
-            id=None,
             programID="",
             event_name=None,
             priority=None,
