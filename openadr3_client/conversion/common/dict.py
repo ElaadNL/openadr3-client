@@ -31,7 +31,10 @@ class EventIntervalDictInput(_EventIntervalDictRequiredFields, total=False):
     duration: timedelta | None
     randomize_start: timedelta | None
 
+
 class EventIntervalDictPydanticValidator(BaseModel):
+    """Pydantic validator for the event interval dict."""
+
     start: datetime | None = None
     duration: timedelta | None = None
     randomize_start: timedelta | None = None

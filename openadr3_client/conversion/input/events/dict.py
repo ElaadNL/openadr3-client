@@ -35,10 +35,10 @@ class DictEventIntervalConverter(BaseEventIntervalConverter[Iterable[EventInterv
                 _ = EventIntervalDictPydanticValidator.model_validate(dict_input)
             except ValidationError as e:
                 validation_errors.append(e)
-        
+
         if validation_errors:
             return ERROR(exception=ExceptionGroup("Dict input validation errors occured", validation_errors))
-        
+
         return OK()
 
     def has_interval_period(self, row: EventIntervalDictInput) -> bool:
