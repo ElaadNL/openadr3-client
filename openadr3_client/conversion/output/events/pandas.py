@@ -5,6 +5,7 @@ from pandera.typing import DataFrame
 
 from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
 from openadr3_client.conversion.output._base_converter import BaseOutputConverter
+from openadr3_client.logging import logger
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.event.event_payload import EventPayload
 
@@ -76,6 +77,9 @@ class PandasEventIntervalConverter(
 
         """
         if series.dt.tz is None:
+            logger.warning(
+                "PANDAS CONVERSION - datetime series of event interval is not timezone aware, defaulting to UTC"
+            )
             # If all values are tz-naive, localize them
             return series.dt.tz_localize("UTC")
         # If any values are already tz-aware, convert to UTC

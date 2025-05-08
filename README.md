@@ -18,7 +18,7 @@ OAUTH_SCOPES         # Comma-delimited list of OAuth scope to request (optional)
 
 ## Business Logic (BL) Client
 
-The BL client is designed for VENs (Virtual End Nodes) and VTN (Virtual Top Nodes) operators to manage OpenADR3 programs and events. It provides full control over the following interfaces:
+The BL client is designed for VTN operators to manage OpenADR3 programs and events. It provides full control over the following interfaces:
 
 - **Events**: Create, read, update, and delete events
 - **Programs**: Create, read, update, and delete programs
@@ -312,11 +312,13 @@ import openadr3_client_gac_compliance
 ## Testing
 
 ### Prerequisites
+
 - Allow usage of the Docker Socket
     - MacOS: advanced settings ??
     - Linux: check if you are part of the Docker user group `groups $USER | grep docker`, otherwise add yourself to it `sudo usermod -aG docker $USER`
 
 ### Running the tests
+
 1. Have the Docker Deamon running
 2. (`poetry install`)
 3. `poetry run pytest`
