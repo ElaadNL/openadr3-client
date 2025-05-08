@@ -49,7 +49,7 @@ def test_non_configured_scope_for_client(integration_test_oauth_client: Integrat
     Test to verify that scopes are passed along to the OAUTH token request.
 
     In case of Keycloak, used in these tests, if a non configured scope is given, an error is returned.
-    Note that the behaviour for what happens when scopes are given to client credential requests
+    Note that the behavior for what happens when scopes are given to client credential requests
     is authorization server-specific, some servers may opt to ignore the scopes completely,
     as the client already has the "keys to the kingdom" to request all scopes configured for the client
     anyway. Therefore, this only really validates that the scopes are passed along with the request,

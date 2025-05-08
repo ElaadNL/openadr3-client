@@ -52,7 +52,6 @@ created_program = bl_client.programs.create_program(new_program=program)
 
 # Create an event inside the program
 event = NewEvent(
-    id=None, # ID cannot be set by the client, assigned by the VTN.
     programID=created_program.id, # ID of program is known after creation
     event_name="test-event",
     priority=999,
@@ -110,7 +109,7 @@ The library provides convenience methods to convert between OpenADR3 event inter
 
 ### Pandas DataFrame Format
 
-The library supports conversion between event intervals and pandas DataFrames. The DataFrame format is validated using a pandera schema to ensure data integrity.
+The library supports conversion between event intervals and pandas DataFrames. The DataFrame format is validated using a `pandera` schema to ensure data integrity.
 
 #### Pandas Input Format
 
@@ -301,7 +300,7 @@ except ValueError as e:
 
 ## GAC compliance
 
-An additional plugin package is available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the dutch GAC (Grid Aware Charging) specification.
+An additional plugin package is available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the Dutch GAC (Grid Aware Charging) specification.
 
 Integrating this plugin with the OpenADR3 client can be done by importing the gac compliance package once globally:
 
@@ -309,3 +308,17 @@ Integrating this plugin with the OpenADR3 client can be done by importing the ga
 # This could be done for example in the root __init__.py of your python project.
 import openadr3_client_gac_compliance 
 ```
+
+## Testing
+
+### Prerequisites
+
+- Allow usage of the Docker Socket
+    - MacOS: advanced settings ??
+    - Linux: check if you are part of the Docker user group `groups $USER | grep docker`, otherwise add yourself to it `sudo usermod -aG docker $USER`
+
+### Running the tests
+
+1. Have the Docker Deamon running
+2. (`poetry install`)
+3. `poetry run pytest`

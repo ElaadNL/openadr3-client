@@ -17,11 +17,8 @@ from openadr3_client.models.event.event_payload import EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
 
 
-class Program[T](ABC, ValidatableModel):
+class Program(ABC, ValidatableModel):
     """Base class for programs."""
-
-    id: T
-    """The identifier for the program."""
 
     program_name: str = Field(min_length=1, max_length=128)
     """The name of the program.
@@ -156,14 +153,16 @@ class ProgramUpdate(BaseModel):
 
 
 @final
-class NewProgram(Program[None], CreationGuarded):
+class NewProgram(Program, CreationGuarded):
     """Class representing a new program not yet pushed to the VTN."""
 
 
 @final
-class ExistingProgram(Program[str]):
+class ExistingProgram(Program):
     """Class representing an existing program retrieved from the VTN."""
 
+    id: str
+    """The identifier for the program."""
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 
