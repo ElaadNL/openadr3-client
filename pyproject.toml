@@ -20,6 +20,14 @@ dependencies = [
     "requests-oauthlib (>=2.0.0,<3.0.0)",
     "cachetools (>=5.5.2,<6.0.0)",
 ]
+license = { text = "Apache License (2.0)" }
+license-files = ["LICENSE.md"]
+
+[project.urls]
+Homepage = "https://github.com/ElaadNL/openadr3-client"
+Repository = "https://github.com/ElaadNL/openadr3-client"
+"Bug Tracker" = "https://github.com/ElaadNL/openadr3-client/issues"
+Changelog = "https://github.com/ElaadNL/openadr3-client/releases"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
