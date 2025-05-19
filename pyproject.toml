@@ -20,7 +20,7 @@ dependencies = [
     "requests-oauthlib (>=2.0.0,<3.0.0)",
     "cachetools (>=5.5.2,<6.0.0)",
 ]
-license = { text = "Apache License (2.0)" }
+license = { text = "Apache Software License 2.0" }
 license-files = ["LICENSE.md"]
 
 [project.urls]
