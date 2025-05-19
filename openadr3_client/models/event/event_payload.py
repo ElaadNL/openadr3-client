@@ -7,6 +7,7 @@ from pydantic import computed_field
 from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client.models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
+from openadr3_client.models.common.unit import Unit
 
 
 class EventPayloadType(str, Enum):
@@ -80,7 +81,7 @@ class EventPayloadDescriptor(BasePayloadDescriptor):
 
     payload_type: EventPayloadType
     """The type of payload being described."""
-    units: str | None = None
+    units: Unit | None = None
     """The units of the payload."""
     currency: ISO4217 | None = None
     """The currency of the payload."""
