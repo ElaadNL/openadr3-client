@@ -37,10 +37,21 @@ The BL client is designed for VTN operators to manage OpenADR3 programs and even
 ### Example BL Usage
 
 ```python
+from datetime import UTC, datetime, timedelta
+
 from openadr3_client.bl.http_factory import BusinessLogicHttpClientFactory
+from openadr3_client.models.common.unit import Unit
+from openadr3_client.models.event.event import EventPayload, Interval, NewEvent
+from openadr3_client.models.event.event_payload import EventPayloadType
+from openadr3_client.models.program.program import (
+    EventPayloadDescriptor,
+    IntervalPeriod,
+    NewProgram,
+    Target,
+)
 
 # Initialize the client with the base URL of the VTN as input.
-bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(base_url=...)
+bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(vtn_base_url=...)
 
 # Create a new program (NewProgram allows for more properties, this is just a simple example).
 program = NewProgram(
@@ -60,6 +71,7 @@ created_program = bl_client.programs.create_program(new_program=program)
 
 # Create an event inside the program
 event = NewEvent(
+    id=None,
     programID=created_program.id, # ID of program is known after creation
     event_name="test-event",
     priority=999,
@@ -83,7 +95,8 @@ event = NewEvent(
     ),
 )
 
-created_event = interface.create_event(new_event=event)
+created_event = bl_client.events.create_event(new_event=event)
+
 
 ```
 
@@ -103,7 +116,7 @@ The VEN client is designed for end users and device operators to receive and pro
 from openadr3_client.ven.http_factory import VirtualEndNodeHttpClientFactory
 
 # Initialize the client with the base URL of the VTN as input.
-ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(base_url=...)
+ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(vtn_base_url=...)
 
 # Search for events inside the VTN.
 events = ven_client.events.get_events(target=..., pagination=..., program_id=...)
@@ -242,7 +255,7 @@ Predefined enumeration cases are type-safe and can be used directly:
 
 ```python
 from openadr3_client.models.common.unit import Unit
-from openadr3_client.models.event.event_payload import EventPayloadType
+from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
 
 # Using predefined cases
 unit = Unit.KWH
@@ -261,7 +274,7 @@ To use custom enumeration cases, you must use the functional constructor. The li
 
 ```python
 from openadr3_client.models.common.unit import Unit
-from openadr3_client.models.event.event_payload import EventPayloadType
+from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
 
 # Using custom cases
 custom_unit = Unit("CUSTOM_UNIT")
