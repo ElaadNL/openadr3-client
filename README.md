@@ -1,3 +1,11 @@
+[![CodeQL](https://github.com/ElaadNL/openadr3-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/github-code-scanning/codeql)
+[![Python Default CI](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml)
+![PYPI-DL](https://img.shields.io/pypi/dm/openadr3-client?style=flat)
+[![image](https://img.shields.io/pypi/v/openadr3-client?label=pypi)](https://pypi.python.org/pypi/openadr3-client)
+[![Python Versions](https://img.shields.io/pypi/pyversions/openadr3-client)](https://pypi.python.org/pypi/openadr3-client)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+
 # OpenADR3 Client
 
 This library provides two main interfaces for interacting with OpenADR3 (Open Automated Demand Response) systems:
