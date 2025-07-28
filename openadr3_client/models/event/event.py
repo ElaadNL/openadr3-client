@@ -31,7 +31,7 @@ class Event(ABC, ValidatableModel):
     targets: tuple[Target, ...] | None = None
     """The targets of the event."""
 
-    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The payload descriptors of the event."""
 
     interval_period: IntervalPeriod | None = None
@@ -57,7 +57,7 @@ class EventUpdate(BaseModel):
     targets: tuple[Target, ...] | None = None
     """The targets of the event."""
 
-    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The payload descriptors of the event."""
 
     interval_period: IntervalPeriod | None = None
