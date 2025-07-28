@@ -19,7 +19,7 @@ def test_new_event_no_intervals() -> None:
             event_name=None,
             priority=None,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=None,
             intervals=(),
         )
@@ -33,7 +33,7 @@ def test_new_event_negative_priority() -> None:
             event_name=None,
             priority=-1,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -60,7 +60,7 @@ def test_new_event_creation_guard() -> None:
         event_name=None,
         priority=None,
         targets=(),
-        payload_descriptor=(),
+        payload_descriptors=(),
         interval_period=IntervalPeriod(
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
@@ -95,7 +95,7 @@ def test_event_program_id_too_long() -> None:
             event_name=None,
             priority=None,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -118,7 +118,7 @@ def test_event_program_id_empty_string() -> None:
             event_name=None,
             priority=None,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),

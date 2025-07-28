@@ -96,7 +96,7 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(
+        payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
     )
@@ -110,7 +110,7 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             event_name="test-event",
             priority=1,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -190,7 +190,7 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(
+        payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
     )
@@ -200,7 +200,7 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(
+        payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
     )
@@ -214,7 +214,7 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             event_name="test-event-1",
             priority=1,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -232,7 +232,7 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             event_name="test-event-2",
             priority=1,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -363,7 +363,7 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(
+        payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
     )
@@ -377,7 +377,7 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             event_name="test-event",
             priority=1,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -456,7 +456,7 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptor=(
+        payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
     )
@@ -470,7 +470,7 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             event_name="test-event",
             priority=1,
             targets=(),
-            payload_descriptor=(),
+            payload_descriptors=(),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
