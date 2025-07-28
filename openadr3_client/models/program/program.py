@@ -40,7 +40,7 @@ class Program(ABC, ValidatableModel):
     country: CountryAlpha2 | None = None
     """The optional alpha-2 country code for the program."""
 
-    principal_sub_division: str | None = None
+    principal_sub_division: str | None = Field(alias="principalSubdivision", default=None)
     """The optional ISO-3166-2 coding, for example state in the US."""
 
     interval_period: IntervalPeriod | None = None
@@ -62,7 +62,7 @@ class Program(ABC, ValidatableModel):
     Typically true if events have been adapted from a grid event.
     """
 
-    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The event payload descriptors of the program."""
 
     targets: tuple[Target, ...] | None = None
@@ -145,7 +145,7 @@ class ProgramUpdate(BaseModel):
     Typically true if events have been adapted from a grid event.
     """
 
-    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The event payload descriptors of the program."""
 
     targets: tuple[Target, ...] | None = None

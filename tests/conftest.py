@@ -143,6 +143,6 @@ def integration_test_vtn_client(
     with OpenLeadrVtnTestContainer(
         external_oauth_signing_key_pem_path=integration_test_oauth_client.public_signing_key_pem_path,
         oauth_valid_audiences="https://integration.test.elaad.nl,",
-        openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:1745824044-94160f7",
+        openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:latest",
     ) as vtn_container:
         yield IntegrationTestVTNClient(base_url=vtn_container.get_base_url())

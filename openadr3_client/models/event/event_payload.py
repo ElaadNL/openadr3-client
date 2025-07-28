@@ -1,9 +1,9 @@
 """Contains the domain models related to event payloads."""
 
 from enum import Enum
-from typing import Any, final
+from typing import Any, Literal, final
 
-from pydantic import computed_field
+from pydantic import Field
 from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client.models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
@@ -85,12 +85,8 @@ class EventPayloadDescriptor(BasePayloadDescriptor):
     """The units of the payload."""
     currency: ISO4217 | None = None
     """The currency of the payload."""
-
-    @property
-    @computed_field
-    def object_type(self) -> str:
-        """Returns the object type of the payload descriptor."""
-        return "EVENT_PAYLOAD_DESCRIPTOR"
+    object_type: Literal["EVENT_PAYLOAD_DESCRIPTOR"] = Field(default="EVENT_PAYLOAD_DESCRIPTOR")
+    """The object type of the payload descriptor."""
 
 
 @final

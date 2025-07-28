@@ -62,7 +62,7 @@ class Report(ABC, ValidatableModel):
     report_name: str | None = None
     """The optional name of the report for use in debugging or UI display."""
 
-    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The payload descriptors of the report."""
 
     resources: tuple[ReportResource, ...]
@@ -105,7 +105,7 @@ class ReportUpdate(BaseModel):
     report_name: str | None = None
     """The optional name of the report for use in debugging or UI display."""
 
-    payload_descriptor: tuple[EventPayloadDescriptor, ...] | None = None
+    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The payload descriptors of the report."""
 
     resources: tuple[ReportResource, ...] | None = None

@@ -1,9 +1,9 @@
 """Contains the domain models related to event payloads."""
 
 from enum import Enum
-from typing import Any, final
+from typing import Any, Literal, final
 
-from pydantic import Field, computed_field
+from pydantic import Field
 
 from openadr3_client.models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
 from openadr3_client.models.common.unit import Unit
@@ -113,12 +113,9 @@ class ReportPayloadDescriptor(BasePayloadDescriptor):
     accuracy: float | None = None
     """The accuracy of the payload values."""
     confidence: int | None = Field(default=None, ge=0, le=100)
-
-    @property
-    @computed_field
-    def object_type(self) -> str:
-        """Returns the object type of the payload descriptor."""
-        return "REPORT_PAYLOAD_DESCRIPTOR"
+    """The confidence of the descriptor"""
+    object_type: Literal["REPORT_PAYLOAD_DESCRIPTOR"] = Field(default="REPORT_PAYLOAD_DESCRIPTOR")
+    """The object type of the payload descriptor."""
 
 
 @final
