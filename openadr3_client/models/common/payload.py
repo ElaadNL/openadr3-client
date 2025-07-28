@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
-from pydantic import computed_field, field_validator
+from pydantic import field_validator
 
 from openadr3_client.models.common.value_map import ValueMap
 from openadr3_client.models.model import ValidatableModel
@@ -8,12 +8,6 @@ from openadr3_client.models.model import ValidatableModel
 
 class BasePayloadDescriptor(ABC, ValidatableModel):
     """Base class for a payload descriptor."""
-
-    @property
-    @abstractmethod
-    @computed_field
-    def object_type(self) -> str:
-        """Returns the object type of the payload descriptor."""
 
 
 class Point(ValidatableModel):
