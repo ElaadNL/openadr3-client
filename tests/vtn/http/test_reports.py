@@ -24,7 +24,10 @@ from tests.conftest import IntegrationTestVTNClient
 
 def test_get_reports_no_reports_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting reports in a VTN without any reports returns an empty list."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     response = interface.get_reports(pagination=None, program_id=None, event_id=None, client_name=None)
 
@@ -33,7 +36,10 @@ def test_get_reports_no_reports_in_vtn(integration_test_vtn_client: IntegrationT
 
 def test_get_report_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting a report by ID in a VTN with no such report raises an exception."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         _ = interface.get_report_by_id(report_id="fake-report-id")
@@ -41,7 +47,10 @@ def test_get_report_by_id_non_existent(integration_test_vtn_client: IntegrationT
 
 def test_delete_report_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that deleting a report by ID in a VTN with no such report raises a 404 error."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.delete_report_by_id(report_id="fake-report-id")
@@ -49,7 +58,10 @@ def test_delete_report_by_id_non_existent(integration_test_vtn_client: Integrati
 
 def test_update_report_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a report by ID in a VTN with no such report raises a 404 error."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -84,10 +96,22 @@ def test_update_report_by_id_non_existent(integration_test_vtn_client: Integrati
 
 def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating a report in a VTN works correctly."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    programs_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    events_interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    vens_interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    programs_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    events_interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    vens_interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a program
     program = NewProgram(
@@ -178,10 +202,22 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
 def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate getting reports with various parameter combinations."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    programs_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    events_interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    vens_interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    programs_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    events_interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    vens_interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create two programs
     program1 = NewProgram(
@@ -351,10 +387,22 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
 
 def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate deleting a report that exists."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    programs_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    events_interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    vens_interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    programs_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    events_interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    vens_interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create a program
     program = NewProgram(
@@ -444,10 +492,22 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
 def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate updating a report that exists."""
-    interface = ReportsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    programs_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    events_interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-    vens_interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ReportsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    programs_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    events_interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+    vens_interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create a program
     program = NewProgram(

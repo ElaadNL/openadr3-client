@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from threading import Lock
 
@@ -7,17 +8,32 @@ from requests_oauthlib import OAuth2Session
 from openadr3_client.logging import logger
 
 
+@dataclass
+class OAuthTokenManagerConfig:
+    client_id: str
+    client_secret: str
+    token_url: str
+    scopes: list[str] | None
+
+
 class OAuthTokenManager:
     """An OAuth token manager responsible for the retrieval and caching of access tokens."""
 
-    def __init__(self, client_id: str, client_secret: str, token_url: str, scopes: list[str] | None) -> None:
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.token_url = token_url
+    def __init__(self, config: OAuthTokenManagerConfig) -> None:
         self.client = BackendApplicationClient(
-            client_id=self.client_id, scope=" ".join(scopes) if scopes is not None else None
+            client_id=config.client_id, scope=" ".join(config.scopes) if config.scopes is not None else None
         )
         self.oauth = OAuth2Session(client=self.client)
+        self.token_url = config.token_url
+        self.client_secret = config.client_secret
+
+        if self.token_url is None:
+            msg = "token_url is required"
+            raise ValueError(msg)
+
+        if self.client_secret is None:
+            msg = "client_secret is required"
+            raise ValueError(msg)
 
         self._lock = Lock()
         self._cached_token: tuple[datetime, str] | None = None

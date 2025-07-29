@@ -18,7 +18,10 @@ from tests.conftest import IntegrationTestVTNClient
 
 def test_get_programs_no_programs_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting programs in a VTN without any programs returns an empty list."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     response = interface.get_programs(target=None, pagination=None)
 
@@ -27,7 +30,10 @@ def test_get_programs_no_programs_in_vtn(integration_test_vtn_client: Integratio
 
 def test_get_program_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting a program by ID in a VTN with no such program raises an exception."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         _ = interface.get_program_by_id(program_id="fake-program-id")
@@ -35,7 +41,10 @@ def test_get_program_by_id_non_existent(integration_test_vtn_client: Integration
 
 def test_delete_program_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that deleting a program by ID in a VTN with no such program raises a 404 error."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.delete_program_by_id(program_id="fake-program-id")
@@ -43,7 +52,10 @@ def test_delete_program_by_id_non_existent(integration_test_vtn_client: Integrat
 
 def test_update_program_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a program by ID in a VTN with no such program raises a 404 error."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -69,7 +81,10 @@ def test_update_program_by_id_non_existent(integration_test_vtn_client: Integrat
 
 def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating a program in a VTN works correctly."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     program = NewProgram(
         program_name="Test Program",
@@ -95,7 +110,10 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
 
 def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate getting programs with various parameter combinations."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create two programs with different names and targets
     program1 = NewProgram(
@@ -147,7 +165,10 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
 
 def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate deleting a program that exists."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create a program to delete
     program = NewProgram(
@@ -175,7 +196,10 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
 
 def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate updating a program that exists."""
-    interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create a program to update
     program = NewProgram(

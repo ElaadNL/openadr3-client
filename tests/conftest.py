@@ -13,11 +13,15 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from testcontainers.keycloak import KeycloakContainer
 
-from openadr3_client.config import OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from tests.openleadr_test_container import OpenLeadrVtnTestContainer
 
 # Set up logging for the testcontainers package
 logging.basicConfig(level=logging.DEBUG)
+
+OAUTH_TOKEN_ENDPOINT = os.getenv("OAUTH_TOKEN_ENDPOINT")
+OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
+OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
 
 
 class IntegrationTestVTNClient:
@@ -28,15 +32,17 @@ class IntegrationTestVTNClient:
     to exist for the duration of the integration tests.
     """
 
-    def __init__(self, base_url: str) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
         """
         Initializes the IntegrationTestOAuthClient.
 
         Args:
             base_url (str): The base URL of the VTN.
+            config (OAuthTokenManagerConfig): The OAuth token manager configuration.
 
         """
         self.vtn_base_url = base_url
+        self.config = config
 
 
 class IntegrationTestOAuthClient:
@@ -145,4 +151,12 @@ def integration_test_vtn_client(
         oauth_valid_audiences="https://integration.test.elaad.nl,",
         openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:latest",
     ) as vtn_container:
-        yield IntegrationTestVTNClient(base_url=vtn_container.get_base_url())
+        yield IntegrationTestVTNClient(
+            base_url=vtn_container.get_base_url(),
+            config=OAuthTokenManagerConfig(
+                client_id=OAUTH_CLIENT_ID,
+                client_secret=OAUTH_CLIENT_SECRET,
+                token_url=OAUTH_TOKEN_ENDPOINT,
+                scopes=None,
+            ),
+        )

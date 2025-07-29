@@ -4,7 +4,7 @@ from typing import final
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.events import (
     ReadOnlyEventsInterface,
@@ -21,8 +21,8 @@ base_prefix = "events"
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def get_events(
         self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None
@@ -49,7 +49,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
 
         logger.debug("Events - Performing get_events request with query params: %s", query_params)
 
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingEvent])
@@ -65,7 +65,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
             event_id (str): The event identifier to retrieve.
 
         """
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{event_id}")
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
 
         return ExistingEvent.model_validate(response.json())
@@ -74,8 +74,8 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
         """
@@ -88,7 +88,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
 
         """
         with new_event.with_creation_guard():
-            response = bearer_authenticated_session.post(
+            response = self.session.post(
                 f"{self.base_url}/{base_prefix}", json=new_event.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
@@ -115,7 +115,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         # No lock on the ExistingEvent type exists similar to the creation guard of a NewEvent.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(
+        response = self.session.put(
             f"{self.base_url}/{base_prefix}/{event_id}", json=updated_event.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
@@ -129,7 +129,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
             event_id (str): The identifier of the event to delete.
 
         """
-        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
+        response = self.session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
 
 
@@ -137,5 +137,5 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
