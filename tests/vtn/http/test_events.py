@@ -21,7 +21,10 @@ from tests.conftest import IntegrationTestVTNClient
 
 def test_get_events_non_existent_program_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting events in a VTN with an invalid program returns an empty list."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     response = interface.get_events(target=None, pagination=None, program_id="fake-program")
 
@@ -30,7 +33,10 @@ def test_get_events_non_existent_program_vtn(integration_test_vtn_client: Integr
 
 def test_get_events_no_events_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting events in a VTN without any events returns an empty list."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     response = interface.get_events(target=None, pagination=None, program_id=None)
 
@@ -39,7 +45,10 @@ def test_get_events_no_events_in_vtn(integration_test_vtn_client: IntegrationTes
 
 def test_get_event_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting an event by ID in a VTN with no such event raises an exception."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         _ = interface.get_event_by_id(event_id="fake-event-id")
@@ -47,7 +56,10 @@ def test_get_event_by_id_non_existent(integration_test_vtn_client: IntegrationTe
 
 def test_delete_event_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that deleting an event by ID in a VTN with no such event raises a 404 error."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.delete_event_by_id(event_id="fake-event-id")
@@ -55,7 +67,10 @@ def test_delete_event_by_id_non_existent(integration_test_vtn_client: Integratio
 
 def test_update_event_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating an event by ID in a VTN with no such event raises a 404 error."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -79,7 +94,10 @@ def test_update_event_by_id_non_existent(integration_test_vtn_client: Integratio
 
 def test_create_event_invalid_program(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating an event in a VTN with a non existent program fails."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     event = NewEvent(
         programID="test-program",
@@ -108,7 +126,10 @@ def test_create_event_invalid_program(integration_test_vtn_client: IntegrationTe
 
 def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating an event in a VTN works correctly."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a program since events require a program
     from openadr3_client._vtn.http.programs import ProgramsHttpInterface
@@ -116,7 +137,10 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
     from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
     from openadr3_client.models.program.program import NewProgram
 
-    program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    program_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
     program = NewProgram(
         program_name="test-program",
         interval_period=IntervalPeriod(
@@ -169,10 +193,16 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
 
 def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate getting events with various parameter combinations."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a program since events require a program
-    program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    program_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
     program = NewProgram(
         program_name="test-program",
         interval_period=IntervalPeriod(
@@ -263,10 +293,16 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
 
 def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate deleting an event that exists."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a program since events require a program
-    program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    program_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
     program = NewProgram(
         program_name="test-program",
         interval_period=IntervalPeriod(
@@ -317,10 +353,16 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
 
 def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate updating an event that exists."""
-    interface = EventsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = EventsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a program since events require a program
-    program_interface = ProgramsHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    program_interface = ProgramsHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
     program = NewProgram(
         program_name="test-program",
         interval_period=IntervalPeriod(

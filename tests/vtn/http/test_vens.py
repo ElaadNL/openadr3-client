@@ -16,7 +16,10 @@ from tests.conftest import IntegrationTestVTNClient
 
 def test_get_vens_no_vens_in_vtn(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting vens in a VTN without any vens returns an empty list."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     response = interface.get_vens(ven_name=None, target=None, pagination=None)
 
@@ -25,7 +28,10 @@ def test_get_vens_no_vens_in_vtn(integration_test_vtn_client: IntegrationTestVTN
 
 def test_get_ven_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting a ven by ID in a VTN with no such ven raises an exception."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         _ = interface.get_ven_by_id(ven_id="fake-ven-id")
@@ -33,7 +39,10 @@ def test_get_ven_by_id_non_existent(integration_test_vtn_client: IntegrationTest
 
 def test_delete_ven_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that deleting a ven by ID in a VTN with no such ven raises a 404 error."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.delete_ven_by_id(ven_id="fake-ven-id")
@@ -41,7 +50,10 @@ def test_delete_ven_by_id_non_existent(integration_test_vtn_client: IntegrationT
 
 def test_update_ven_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a ven by ID in a VTN with no such ven raises a 404 error."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -60,7 +72,10 @@ def test_update_ven_by_id_non_existent(integration_test_vtn_client: IntegrationT
 
 def test_create_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating a ven in a VTN works correctly."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     ven = NewVen(
         ven_name="test-ven",
@@ -80,7 +95,10 @@ def test_create_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
 
 def test_get_ven_resources_no_resources(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting resources for a ven without any resources returns an empty list."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     response = interface.get_ven_resources(
         ven_id="fake-ven-id",
@@ -94,15 +112,20 @@ def test_get_ven_resources_no_resources(integration_test_vtn_client: Integration
 
 def test_get_ven_resource_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that getting a resource by ID for a ven with no such resource raises an exception."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
-
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
     with pytest.raises(HTTPError, match="404 Client Error"):
         _ = interface.get_ven_resource_by_id(ven_id="fake-ven-id", resource_id="fake-resource-id")
 
 
 def test_delete_ven_resource_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that deleting a resource by ID for a ven with no such resource raises a 404 error."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.delete_ven_resource_by_id(ven_id="fake-ven-id", resource_id="fake-resource-id")
@@ -110,7 +133,10 @@ def test_delete_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
 
 def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a resource by ID for a ven with no such resource raises a 404 error."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a ven
     ven = NewVen(
@@ -150,7 +176,10 @@ def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
 
 def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a resource by ID for a ven works when the resource exists."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a ven
     ven = NewVen(
@@ -211,7 +240,10 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
 
 def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating a resource for a ven in a VTN works correctly."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a ven
     ven = NewVen(
@@ -244,7 +276,10 @@ def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClie
 
 def test_create_ven_duplicate_name(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that creating a ven with a duplicate name raises a conflict error."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # First create a ven
     ven = NewVen(
@@ -271,7 +306,10 @@ def test_create_ven_duplicate_name(integration_test_vtn_client: IntegrationTestV
 
 def test_get_vens_with_parameters(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate getting vens with various parameter combinations."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create two vens with different names and targets
     ven1 = NewVen(
@@ -314,7 +352,10 @@ def test_get_vens_with_parameters(integration_test_vtn_client: IntegrationTestVT
 
 def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate deleting a ven that exists."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create a ven to delete
     ven = NewVen(
@@ -335,7 +376,10 @@ def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
 
 def test_update_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate updating a ven that exists."""
-    interface = VensHttpInterface(base_url=integration_test_vtn_client.vtn_base_url)
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
 
     # Create a ven to update
     ven = NewVen(

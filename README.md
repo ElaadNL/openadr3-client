@@ -13,17 +13,6 @@ This library provides two main interfaces for interacting with OpenADR3 (Open Au
 1. Business Logic (BL) Client - For VTN operators (for example, DSOs).
 2. Virtual End Node (VEN) Client - For end users (for example, device operators).
 
-## Configuration
-
-Before using the library, you need to configure the following environment variables:
-
-```python
-OAUTH_TOKEN_ENDPOINT # The oauth token endpoint to provision access tokens from
-OAUTH_CLIENT_ID      # The client ID for OAuth client credential authentication
-OAUTH_CLIENT_SECRET  # The client secret for OAuth client credential authentication
-OAUTH_SCOPES         # Comma-delimited list of OAuth scope to request (optional)
-```
-
 ## Business Logic (BL) Client
 
 The BL client is designed for VTN operators to manage OpenADR3 programs and events. It provides full control over the following interfaces:

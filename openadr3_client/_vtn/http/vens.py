@@ -2,7 +2,7 @@
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
@@ -16,8 +16,8 @@ base_prefix = "vens"
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def get_vens(
         self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None
@@ -44,7 +44,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 
         logger.debug("Ven - Performing get_vens request with query params: %s", query_params)
 
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingVen])
@@ -60,7 +60,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
             ven_id (str): The ven identifier to retrieve.
 
         """
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{ven_id}")
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}")
         response.raise_for_status()
 
         return ExistingVen.model_validate(response.json())
@@ -95,9 +95,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 
         logger.debug("Ven - Performing get_ven_resources request with query params: %s", query_params)
 
-        response = bearer_authenticated_session.get(
-            f"{self.base_url}/{base_prefix}/{ven_id}/resources", params=query_params
-        )
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}/resources", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingResource])
@@ -112,7 +110,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
             resource_id (str): The identifier of the resource to retrieve.
 
         """
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
         response.raise_for_status()
 
         return ExistingResource.model_validate(response.json())
@@ -121,8 +119,8 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def create_ven(self, new_ven: NewVen) -> ExistingVen:
         """
@@ -135,7 +133,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
 
         """
         with new_ven.with_creation_guard():
-            response = bearer_authenticated_session.post(
+            response = self.session.post(
                 f"{self.base_url}/{base_prefix}", json=new_ven.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
@@ -162,7 +160,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # No lock on the ExistingVen type exists similar to the creation guard of a NewVen.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(
+        response = self.session.put(
             f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
@@ -176,7 +174,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
             ven_id (str): The identifier of the ven to delete.
 
         """
-        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{ven_id}")
+        response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}")
         response.raise_for_status()
 
     def update_ven_resource_by_id(
@@ -209,7 +207,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # No lock on the ExistingResource type exists similar to the creation guard of a NewResource.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(
+        response = self.session.put(
             f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}",
             json=updated_resource.model_dump(by_alias=True, mode="json"),
         )
@@ -225,9 +223,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
             resource_id (str): The identifier of the resource to delete.
 
         """
-        response = bearer_authenticated_session.delete(
-            f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}"
-        )
+        response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
         response.raise_for_status()
 
     def create_ven_resource(self, ven_id: str, new_resource: NewResource) -> ExistingResource:
@@ -242,7 +238,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
 
         """
         with new_resource.with_creation_guard():
-            response = bearer_authenticated_session.post(
+            response = self.session.post(
                 f"{self.base_url}/{base_prefix}/{ven_id}/resources",
                 json=new_resource.model_dump(by_alias=True, mode="json"),
             )
@@ -253,5 +249,5 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
 class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):
     """Implements the read and write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
