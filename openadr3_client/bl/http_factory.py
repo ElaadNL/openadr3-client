@@ -5,7 +5,7 @@ from openadr3_client._vtn.http.events import EventsHttpInterface
 from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.http.reports import ReportsReadOnlyHttpInterface
 from openadr3_client._vtn.http.subscriptions import SubscriptionsReadOnlyHttpInterface
-from openadr3_client._vtn.http.vens import VensReadOnlyHttpInterface
+from openadr3_client._vtn.http.vens import VensHttpInterface
 from openadr3_client.bl._client import BusinessLogicClient
 
 
@@ -52,7 +52,7 @@ class BusinessLogicHttpClientFactory:
                 base_url=vtn_base_url,
                 config=config,
             ),
-            vens=VensReadOnlyHttpInterface(
+            vens=VensHttpInterface(
                 base_url=vtn_base_url,
                 config=config,
             ),
