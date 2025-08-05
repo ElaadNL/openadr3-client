@@ -119,9 +119,9 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
                 temp_pem_file.close()
 
                 yield IntegrationTestOAuthClient(
-                    OAUTH_CLIENT_ID,
-                    OAUTH_CLIENT_SECRET,
-                    token_url=OAUTH_TOKEN_ENDPOINT,
+                    OAUTH_CLIENT_ID or "",
+                    OAUTH_CLIENT_SECRET or "",
+                    token_url=OAUTH_TOKEN_ENDPOINT or "",
                     public_signing_key_pem_path=temp_pem_file.name,
                 )
 
@@ -154,9 +154,9 @@ def integration_test_vtn_client(
         yield IntegrationTestVTNClient(
             base_url=vtn_container.get_base_url(),
             config=OAuthTokenManagerConfig(
-                client_id=OAUTH_CLIENT_ID,
-                client_secret=OAUTH_CLIENT_SECRET,
-                token_url=OAUTH_TOKEN_ENDPOINT,
+                client_id=OAUTH_CLIENT_ID or "",
+                client_secret=OAUTH_CLIENT_SECRET or "",
+                token_url=OAUTH_TOKEN_ENDPOINT or "",
                 scopes=None,
             ),
         )
