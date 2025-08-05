@@ -2,7 +2,7 @@
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter
 from openadr3_client._vtn.interfaces.reports import (
@@ -19,8 +19,8 @@ base_prefix = "reports"
 class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def get_reports(
         self,
@@ -58,7 +58,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
 
         logger.debug("Reports - Performing get_reports request with query params: %s", query_params)
 
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingReport])
@@ -74,7 +74,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
             report_id (str): The report identifier to retrieve.
 
         """
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{report_id}")
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{report_id}")
         response.raise_for_status()
 
         return ExistingReport.model_validate(response.json())
@@ -83,8 +83,8 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
 class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def create_report(self, new_report: NewReport) -> ExistingReport:
         """
@@ -97,7 +97,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
 
         """
         with new_report.with_creation_guard():
-            response = bearer_authenticated_session.post(
+            response = self.session.post(
                 f"{self.base_url}/{base_prefix}", json=new_report.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
@@ -124,7 +124,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
         # No lock on the ExistingReport type exists similar to the creation guard of a NewReport.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(
+        response = self.session.put(
             f"{self.base_url}/{base_prefix}/{report_id}", json=updated_report.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
@@ -138,12 +138,12 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
             report_id (str): The identifier of the report to delete.
 
         """
-        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{report_id}")
+        response = self.session.delete(f"{self.base_url}/{base_prefix}/{report_id}")
         response.raise_for_status()
 
 
 class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)

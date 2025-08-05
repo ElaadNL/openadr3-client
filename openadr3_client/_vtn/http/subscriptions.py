@@ -2,7 +2,7 @@
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.subscriptions import (
@@ -19,8 +19,8 @@ base_prefix = "subscriptions"
 class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInterface):
     """Implements the read communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def get_subscriptions(
         self,
@@ -63,7 +63,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
 
         logger.debug("Subscriptions - Performing get_subscriptions request with query params: %s", query_params)
 
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingSubscription])
@@ -79,7 +79,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
             subscription_id (str): The subscription identifier to retrieve.
 
         """
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{subscription_id}")
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{subscription_id}")
         response.raise_for_status()
 
         return ExistingSubscription.model_validate(response.json())
@@ -88,8 +88,8 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
 class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpInterface):
     """Implements the write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def create_subscription(self, new_subscription: NewSubscription) -> ExistingSubscription:
         """
@@ -102,7 +102,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
 
         """
         with new_subscription.with_creation_guard():
-            response = bearer_authenticated_session.post(
+            response = self.session.post(
                 f"{self.base_url}/{base_prefix}", json=new_subscription.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
@@ -131,7 +131,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         # No lock on the ExistingSubscription type exists similar to the creation guard of a NewSubscription.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(
+        response = self.session.put(
             f"{self.base_url}/{base_prefix}/{subscription_id}",
             json=updated_subscription.model_dump(by_alias=True, mode="json"),
         )
@@ -146,7 +146,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
             subscription_id (str): The identifier of the subscription to delete.
 
         """
-        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{subscription_id}")
+        response = self.session.delete(f"{self.base_url}/{base_prefix}/{subscription_id}")
         response.raise_for_status()
 
 
@@ -155,5 +155,5 @@ class SubscriptionsHttpInterface(
 ):
     """Implements the read and write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)

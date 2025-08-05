@@ -2,7 +2,7 @@
 
 from pydantic.type_adapter import TypeAdapter
 
-from openadr3_client._vtn.http.common._authenticated_session import bearer_authenticated_session
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.programs import (
@@ -19,8 +19,8 @@ base_prefix = "programs"
 class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def get_programs(
         self, target: TargetFilter | None, pagination: PaginationFilter | None
@@ -43,7 +43,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
 
         logger.debug("Programs - Performing get_programs request with query params: %s", query_params)
 
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingProgram])
@@ -59,7 +59,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
             program_id (str): The program identifier to retrieve.
 
         """
-        response = bearer_authenticated_session.get(f"{self.base_url}/{base_prefix}/{program_id}")
+        response = self.session.get(f"{self.base_url}/{base_prefix}/{program_id}")
         response.raise_for_status()
 
         return ExistingProgram.model_validate(response.json())
@@ -68,8 +68,8 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
 class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)
 
     def create_program(self, new_program: NewProgram) -> ExistingProgram:
         """
@@ -78,7 +78,7 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
         Returns the created program response from the VTN as an ExistingProgram.
         """
         with new_program.with_creation_guard():
-            response = bearer_authenticated_session.post(
+            response = self.session.post(
                 f"{self.base_url}/{base_prefix}", json=new_program.model_dump(by_alias=True, mode="json")
             )
             response.raise_for_status()
@@ -105,7 +105,7 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
         # No lock on the ExistingProgram type exists similar to the creation guard of a NewProgram
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = bearer_authenticated_session.put(
+        response = self.session.put(
             f"{self.base_url}/{base_prefix}/{program_id}", json=updated_program.model_dump(by_alias=True, mode="json")
         )
         response.raise_for_status()
@@ -119,12 +119,12 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
             program_id (str): The identifier of the program to delete.
 
         """
-        response = bearer_authenticated_session.delete(f"{self.base_url}/{base_prefix}/{program_id}")
+        response = self.session.delete(f"{self.base_url}/{base_prefix}/{program_id}")
         response.raise_for_status()
 
 
 class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str) -> None:
-        super().__init__(base_url)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+        super().__init__(base_url, config)

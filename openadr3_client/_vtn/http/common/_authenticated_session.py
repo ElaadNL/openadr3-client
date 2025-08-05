@@ -4,19 +4,13 @@ from requests import PreparedRequest, Session
 from requests.auth import AuthBase
 
 from openadr3_client._auth.token_manager import OAuthTokenManager
-from openadr3_client.config import OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_SCOPES, OAUTH_TOKEN_ENDPOINT
 
 
 class _BearerAuth(AuthBase):
     """AuthBase implementation that includes a bearer token in all requests."""
 
-    def __init__(self) -> None:
-        self._token_manager = OAuthTokenManager(
-            client_id=OAUTH_CLIENT_ID,
-            client_secret=OAUTH_CLIENT_SECRET,
-            token_url=OAUTH_TOKEN_ENDPOINT,
-            scopes=OAUTH_SCOPES,
-        )
+    def __init__(self, token_manager: OAuthTokenManager) -> None:
+        self._token_manager = token_manager
 
     def __call__(self, r: PreparedRequest) -> PreparedRequest:
         """
@@ -34,9 +28,6 @@ class _BearerAuth(AuthBase):
 class _BearerAuthenticatedSession(Session):
     """Session that includes a bearer token in all requests made through it."""
 
-    def __init__(self) -> None:
+    def __init__(self, token_manager: OAuthTokenManager) -> None:
         super().__init__()
-        self.auth = _BearerAuth()
-
-
-bearer_authenticated_session = _BearerAuthenticatedSession()
+        self.auth = _BearerAuth(token_manager)
