@@ -39,8 +39,14 @@ from openadr3_client.models.program.program import (
     Target,
 )
 
-# Initialize the client with the base URL of the VTN as input.
-bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(vtn_base_url=...)
+# Initialize the client with the required OAuth configuration.
+bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
+    vtn_base_url="https://vtn.example.com",
+    client_id="your_client_id",
+    client_secret="your_client_secret", 
+    token_url="https://auth.example.com/token",
+    scopes=["read_all", "write_events", "write_programs"]  # Optional: specify required scopes
+)
 
 # Create a new program (NewProgram allows for more properties, this is just a simple example).
 program = NewProgram(
@@ -104,8 +110,14 @@ The VEN client is designed for end users and device operators to receive and pro
 ```python
 from openadr3_client.ven.http_factory import VirtualEndNodeHttpClientFactory
 
-# Initialize the client with the base URL of the VTN as input.
-ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(vtn_base_url=...)
+# Initialize the client with the required OAuth configuration.
+ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(
+    vtn_base_url="https://vtn.example.com",
+    client_id="your_client_id",
+    client_secret="your_client_secret",
+    token_url="https://auth.example.com/token",
+    scopes=["read_all", "write_reports"]  # Optional: specify required scopes
+)
 
 # Search for events inside the VTN.
 events = ven_client.events.get_events(target=..., pagination=..., program_id=...)
