@@ -123,7 +123,7 @@ class ProgramUpdate(BaseModel):
     country: CountryAlpha2 | None = None
     """The optional alpha-2 country code for the program."""
 
-    principal_sub_division: str | None = None
+    principal_subdivision: str | None = None
     """The optional ISO-3166-2 coding, for example state in the US."""
 
     interval_period: IntervalPeriod | None = None
