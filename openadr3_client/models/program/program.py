@@ -17,6 +17,13 @@ from openadr3_client.models.event.event_payload import EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
 
 
+class ProgramDescription(BaseModel):  # type: ignore[call-arg]
+    """Class representing a URL object."""
+
+    url: AnyUrl = Field(validation_alias="URL", serialization_alias="URL")
+    """The URL."""
+
+
 class Program(ABC, ValidatableModel):
     """Base class for programs."""
 
@@ -46,7 +53,7 @@ class Program(ABC, ValidatableModel):
     interval_period: IntervalPeriod | None = None
     """The interval period of the program."""
 
-    program_descriptions: tuple[AnyUrl, ...] | None = None
+    program_descriptions: tuple[ProgramDescription, ...] | None = None
     """An optional list of program descriptions for the program.
 
     The specification of OpenADR 3.0.1. describes the following:
@@ -129,7 +136,7 @@ class ProgramUpdate(BaseModel):
     interval_period: IntervalPeriod | None = None
     """The interval period of the program."""
 
-    program_descriptions: tuple[AnyUrl, ...] | None = None
+    program_descriptions: tuple[ProgramDescription, ...] | None = None
     """An optional list of program descriptions for the program.
 
     The specification of OpenADR 3.0.1. describes the following:
