@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
+from openadr3_client.models.program.program import DeletedProgram, ExistingProgram, NewProgram
 
 
 class ReadOnlyProgramsInterface(ABC):
@@ -63,12 +63,15 @@ class WriteOnlyProgramsInterface(ABC):
         """
 
     @abstractmethod
-    def delete_program_by_id(self, program_id: str) -> None:
+    def delete_program_by_id(self, program_id: str) -> DeletedProgram:
         """
         Delete the program with the program identifier in the VTN.
 
         Args:
             program_id (str): The identifier of the program to delete.
+
+        Returns:
+            DeletedProgram: The deleted program.
 
         """
 

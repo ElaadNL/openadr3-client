@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.interfaces.filters import PaginationFilter
-from openadr3_client.models.report.report import ExistingReport, NewReport
+from openadr3_client.models.report.report import DeletedReport, ExistingReport, NewReport
 
 
 class ReadOnlyReportsInterface(ABC):
@@ -74,7 +74,7 @@ class WriteOnlyReportsInterface(ABC):
         """
 
     @abstractmethod
-    def delete_report_by_id(self, report_id: str) -> None:
+    def delete_report_by_id(self, report_id: str) -> DeletedReport:
         """
         Delete the report with the identifier in the VTN.
 

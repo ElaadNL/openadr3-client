@@ -3,8 +3,8 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.ven.resource import ExistingResource, NewResource
-from openadr3_client.models.ven.ven import ExistingVen, NewVen
+from openadr3_client.models.ven.resource import DeletedResource, ExistingResource, NewResource
+from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVen
 
 
 class ReadOnlyVensInterface(ABC):
@@ -99,9 +99,11 @@ class WriteOnlyVensInterface(ABC):
         """
 
     @abstractmethod
-    def delete_ven_by_id(self, ven_id: str) -> None:
+    def delete_ven_by_id(self, ven_id: str) -> DeletedVen:
         """
         Delete the ven with the identifier in the VTN.
+
+        Returns the deleted ven response from the VTN.
 
         Args:
             ven_id (str): The identifier of the ven to delete.
@@ -130,7 +132,7 @@ class WriteOnlyVensInterface(ABC):
         """
 
     @abstractmethod
-    def delete_ven_resource_by_id(self, ven_id: str, resource_id: str) -> None:
+    def delete_ven_resource_by_id(self, ven_id: str, resource_id: str) -> DeletedResource:
         """
         Delete the resource with the resource identifier in the VTN.
 

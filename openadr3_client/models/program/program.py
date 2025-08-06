@@ -17,6 +17,13 @@ from openadr3_client.models.event.event_payload import EventPayloadDescriptor
 from openadr3_client.models.model import ValidatableModel
 
 
+class ProgramDescription(BaseModel):  # type: ignore[call-arg]
+    """Class representing a URL object."""
+
+    url: AnyUrl = Field(validation_alias="URL", serialization_alias="URL")
+    """The URL."""
+
+
 class Program(ABC, ValidatableModel):
     """Base class for programs."""
 
@@ -40,13 +47,13 @@ class Program(ABC, ValidatableModel):
     country: CountryAlpha2 | None = None
     """The optional alpha-2 country code for the program."""
 
-    principal_sub_division: str | None = Field(alias="principalSubdivision", default=None)
+    principal_subdivision: str | None = None
     """The optional ISO-3166-2 coding, for example state in the US."""
 
     interval_period: IntervalPeriod | None = None
     """The interval period of the program."""
 
-    program_descriptions: tuple[AnyUrl, ...] | None = None
+    program_descriptions: tuple[ProgramDescription, ...] | None = None
     """An optional list of program descriptions for the program.
 
     The specification of OpenADR 3.0.1. describes the following:
@@ -71,16 +78,16 @@ class Program(ABC, ValidatableModel):
     @model_validator(mode="after")
     def validate_iso_3166_2(self) -> Program:
         """
-        Validates that principal_sub_division is iso-3166-2 compliant.
+        Validates that principal_subdivision is iso-3166-2 compliant.
 
-        The principal_sub_division is typically part of the ISO-3166 country code.
+        The principal_subdivision is typically part of the ISO-3166 country code.
         However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
         and ISO-3166-2 codes.
 
         For example, the ISO-3166-1 code for the United States is "US".
         The ISO-3166-2 code for the state of California is "CA".
         """
-        if self.principal_sub_division:
+        if self.principal_subdivision:
             if not self.country:
                 exc_msg = "principal sub division cannot be set if country is not set."
                 raise ValueError(exc_msg)
@@ -88,9 +95,9 @@ class Program(ABC, ValidatableModel):
 
             principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
 
-            if self.principal_sub_division not in principals_only:
+            if self.principal_subdivision not in principals_only:
                 exc_msg = (
-                    f"{self.principal_sub_division} is not a valid ISO 3166-2 "
+                    f"{self.principal_subdivision} is not a valid ISO 3166-2 "
                     "division code for the program country {self.country}."
                     ""
                 )
@@ -123,13 +130,13 @@ class ProgramUpdate(BaseModel):
     country: CountryAlpha2 | None = None
     """The optional alpha-2 country code for the program."""
 
-    principal_sub_division: str | None = None
+    principal_subdivision: str | None = None
     """The optional ISO-3166-2 coding, for example state in the US."""
 
     interval_period: IntervalPeriod | None = None
     """The interval period of the program."""
 
-    program_descriptions: tuple[AnyUrl, ...] | None = None
+    program_descriptions: tuple[ProgramDescription, ...] | None = None
     """An optional list of program descriptions for the program.
 
     The specification of OpenADR 3.0.1. describes the following:
@@ -157,14 +164,18 @@ class NewProgram(Program, CreationGuarded):
     """Class representing a new program not yet pushed to the VTN."""
 
 
-@final
-class ExistingProgram(Program):
-    """Class representing an existing program retrieved from the VTN."""
+class ServerProgram(Program):
+    """Class representing a program retrieved from the VTN."""
 
     id: str
     """The identifier for the program."""
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+@final
+class ExistingProgram(ServerProgram):
+    """Class representing an existing program retrieved from the VTN."""
 
     def update(self, update: ProgramUpdate) -> ExistingProgram:
         """
@@ -181,3 +192,8 @@ class ExistingProgram(Program):
         update_dict = update.model_dump(exclude_unset=True)
         updated_program = current_program | update_dict
         return ExistingProgram(**updated_program)
+
+
+@final
+class DeletedProgram(ServerProgram):
+    """Class representing a deleted program."""

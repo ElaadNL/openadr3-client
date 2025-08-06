@@ -4,7 +4,7 @@ from openadr3_client._vtn.interfaces.events import ReadWriteEventsInterface
 from openadr3_client._vtn.interfaces.programs import ReadWriteProgramsInterface
 from openadr3_client._vtn.interfaces.reports import ReadOnlyReportsInterface
 from openadr3_client._vtn.interfaces.subscriptions import ReadOnlySubscriptionsInterface
-from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface
+from openadr3_client._vtn.interfaces.vens import ReadWriteVensInterface
 
 
 @final
@@ -20,7 +20,7 @@ class BusinessLogicClient:
         events: ReadWriteEventsInterface,
         programs: ReadWriteProgramsInterface,
         reports: ReadOnlyReportsInterface,
-        vens: ReadOnlyVensInterface,
+        vens: ReadWriteVensInterface,
         subscriptions: ReadOnlySubscriptionsInterface,
     ) -> None:
         """
@@ -53,7 +53,7 @@ class BusinessLogicClient:
         return self._reports
 
     @property
-    def vens(self) -> ReadOnlyVensInterface:
+    def vens(self) -> ReadWriteVensInterface:
         return self._vens
 
     @property

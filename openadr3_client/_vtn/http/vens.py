@@ -7,8 +7,8 @@ from openadr3_client._vtn.http.http_interface import HttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
 from openadr3_client.logging import logger
-from openadr3_client.models.ven.resource import ExistingResource, NewResource
-from openadr3_client.models.ven.ven import ExistingVen, NewVen
+from openadr3_client.models.ven.resource import DeletedResource, ExistingResource, NewResource
+from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVen
 
 base_prefix = "vens"
 
@@ -166,7 +166,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         response.raise_for_status()
         return ExistingVen.model_validate(response.json())
 
-    def delete_ven_by_id(self, ven_id: str) -> None:
+    def delete_ven_by_id(self, ven_id: str) -> DeletedVen:
         """
         Delete the ven with the identifier in the VTN.
 
@@ -176,6 +176,8 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         """
         response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}")
         response.raise_for_status()
+
+        return DeletedVen.model_validate(response.json())
 
     def update_ven_resource_by_id(
         self, ven_id: str, resource_id: str, updated_resource: ExistingResource
@@ -214,7 +216,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         response.raise_for_status()
         return ExistingResource.model_validate(response.json())
 
-    def delete_ven_resource_by_id(self, ven_id: str, resource_id: str) -> None:
+    def delete_ven_resource_by_id(self, ven_id: str, resource_id: str) -> DeletedResource:
         """
         Delete the resource with the resource identifier in the VTN.
 
@@ -225,6 +227,8 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         """
         response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
         response.raise_for_status()
+
+        return DeletedResource.model_validate(response.json())
 
     def create_ven_resource(self, ven_id: str, new_resource: NewResource) -> ExistingResource:
         """

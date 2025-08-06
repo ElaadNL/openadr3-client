@@ -11,7 +11,12 @@ from openadr3_client._vtn.interfaces.subscriptions import (
     WriteOnlySubscriptionsInterface,
 )
 from openadr3_client.logging import logger
-from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
+from openadr3_client.models.subscriptions.subscription import (
+    DeletedSubscription,
+    ExistingSubscription,
+    NewSubscription,
+    Object,
+)
 
 base_prefix = "subscriptions"
 
@@ -138,7 +143,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         response.raise_for_status()
         return ExistingSubscription.model_validate(response.json())
 
-    def delete_subscription_by_id(self, subscription_id: str) -> None:
+    def delete_subscription_by_id(self, subscription_id: str) -> DeletedSubscription:
         """
         Delete the subscription with the identifier in the VTN.
 
@@ -148,6 +153,8 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         """
         response = self.session.delete(f"{self.base_url}/{base_prefix}/{subscription_id}")
         response.raise_for_status()
+
+        return DeletedSubscription.model_validate(response.json())
 
 
 class SubscriptionsHttpInterface(

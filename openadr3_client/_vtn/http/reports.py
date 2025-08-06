@@ -11,7 +11,7 @@ from openadr3_client._vtn.interfaces.reports import (
     WriteOnlyReportsInterface,
 )
 from openadr3_client.logging import logger
-from openadr3_client.models.report.report import ExistingReport, NewReport
+from openadr3_client.models.report.report import DeletedReport, ExistingReport, NewReport
 
 base_prefix = "reports"
 
@@ -130,7 +130,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
         response.raise_for_status()
         return ExistingReport.model_validate(response.json())
 
-    def delete_report_by_id(self, report_id: str) -> None:
+    def delete_report_by_id(self, report_id: str) -> DeletedReport:
         """
         Delete the report with the identifier in the VTN.
 
@@ -140,6 +140,8 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
         """
         response = self.session.delete(f"{self.base_url}/{base_prefix}/{report_id}")
         response.raise_for_status()
+
+        return DeletedReport.model_validate(response.json())
 
 
 class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):

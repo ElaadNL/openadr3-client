@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.event.event import ExistingEvent, NewEvent
+from openadr3_client.models.event.event import DeletedEvent, ExistingEvent, NewEvent
 
 
 class ReadOnlyEventsInterface(ABC):
@@ -68,7 +68,7 @@ class WriteOnlyEventsInterface(ABC):
         """
 
     @abstractmethod
-    def delete_event_by_id(self, event_id: str) -> None:
+    def delete_event_by_id(self, event_id: str) -> DeletedEvent:
         """
         Delete the event with the event identifier in the VTN.
 

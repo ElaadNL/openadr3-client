@@ -342,7 +342,18 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
         assert created_event.id is not None, "event should be created successfully"
 
         # Delete the event
-        interface.delete_event_by_id(event_id=created_event.id)
+        deleted_event = interface.delete_event_by_id(event_id=created_event.id)
+
+        assert deleted_event.event_name == "test-event-to-delete", "event name should match"
+        assert deleted_event.priority == 1, "priority should match"
+        assert deleted_event.created_date_time == created_event.created_date_time, "created date time should match"
+        assert deleted_event.modification_date_time == created_event.modification_date_time, (
+            "modification date time should match"
+        )
+        assert deleted_event.targets is not None, "targets should not be None"
+        assert len(deleted_event.targets) > 0, "targets should not be empty"
+        assert deleted_event.targets[0].type == "test-target", "target type should match"
+        assert deleted_event.targets[0].values == ("test-value",), "target values should match"
 
         # Verify the event is deleted
         with pytest.raises(HTTPError, match="404 Client Error"):
