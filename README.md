@@ -331,9 +331,26 @@ Integrating this plugin with the OpenADR3 client can be done by importing the ga
 import openadr3_client_gac_compliance 
 ```
 
-## Testing
+## Development
 
-### Prerequisites
+- To run all linters and formatters with automatic fixes applied
+```sh
+poetry run task fix
+```
+
+- To run tests
+```sh
+poetry run task test
+```
+
+- To dry run ci locally (no automatic fixes applied)
+```sh
+poetry run task local-ci
+```
+
+### Testing
+
+#### Prerequisites
 
 - Allow usage of the Docker Socket
     - MacOS: advanced settings ??
