@@ -8,7 +8,7 @@ from openadr3_client.models.common.attribute import Attribute
 from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.model import ValidatableModel
-from openadr3_client.models.ven.resource import ExistingResource
+from openadr3_client.models.ven.resource import ExistingResource, NewResource
 
 
 class Ven(ABC, ValidatableModel):
@@ -23,13 +23,13 @@ class Ven(ABC, ValidatableModel):
     targets: tuple[Target, ...] | None = None
     """The targets of the ven object."""
 
-    resources: tuple[ExistingResource, ...] | None = None
-    """The resources of the ven object."""
-
 
 @final
 class NewVen(Ven, CreationGuarded):
     """Class representing a new ven not yet pushed to the VTN."""
+
+    resources: tuple[NewResource, ...] | None = None
+    """The resources of the ven object."""
 
 
 @final
@@ -45,7 +45,7 @@ class VenUpdate(BaseModel):
     targets: tuple[Target, ...] | None = None
     """The targets of the ven object."""
 
-    resources: tuple[ExistingResource, ...] | None = None
+    resources: tuple[NewResource, ...] | None = None
     """The resources of the ven object."""
 
 
@@ -57,6 +57,9 @@ class ServerVen(Ven):
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+    resources: tuple[ExistingResource, ...] | None = None
+    """The resources of the ven object."""
 
 
 @final
