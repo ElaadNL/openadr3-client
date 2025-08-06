@@ -14,6 +14,7 @@ class OAuthTokenManagerConfig:
     client_secret: str
     token_url: str
     scopes: list[str] | None
+    audience: str | None
 
 
 class OAuthTokenManager:
@@ -26,7 +27,7 @@ class OAuthTokenManager:
         self.oauth = OAuth2Session(client=self.client)
         self.token_url = config.token_url
         self.client_secret = config.client_secret
-
+        self.audience = config.audience
         if self.token_url is None:
             msg = "token_url is required"
             raise ValueError(msg)
@@ -63,7 +64,9 @@ class OAuthTokenManager:
             return self._get_new_access_token()
 
     def _get_new_access_token(self) -> str:
-        token_response = self.oauth.fetch_token(token_url=self.token_url, client_secret=self.client_secret)
+        token_response = self.oauth.fetch_token(
+            token_url=self.token_url, client_secret=self.client_secret, audience=self.audience
+        )
 
         # Calculate expiration time (half of token lifetime)
         expires_in_seconds = token_response.get("expires_in", 3600)
