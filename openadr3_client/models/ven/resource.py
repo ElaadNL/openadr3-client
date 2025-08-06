@@ -48,7 +48,6 @@ class ResourceUpdate(BaseModel):
     """The targets of the resource."""
 
 
-@final
 class ServerResource(Resource):
     """Class representing an existing report retrieved from the VTN."""
 
@@ -59,6 +58,7 @@ class ServerResource(Resource):
     modification_date_time: AwareDatetime
 
 
+@final
 class ExistingResource(ServerResource):
     """Class representing an existing resource retrieved from the VTN."""
 
@@ -79,5 +79,6 @@ class ExistingResource(ServerResource):
         return ExistingResource(**updated_resource)
 
 
+@final
 class DeletedResource(ServerResource):
     """Class representing a deleted resource retrieved from the VTN."""

@@ -3,6 +3,7 @@ import string
 
 import pytest
 from pydantic import ValidationError
+from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client.models.program.program import NewProgram
 
@@ -69,7 +70,7 @@ def test_new_program_division_invalid() -> None:
     This test tries to use an invalid alpha-2 country code.
     """
     with pytest.raises(ValidationError, match="is not a valid ISO 3166-2 division code for the program country"):
-        _ = NewProgram(program_name="test-program", country="NL", principalSubdivision="NL-UI")  # type: ignore[arg-type]
+        _ = NewProgram(program_name="test-program", country=CountryAlpha2("NL"), principal_subdivision="NL-UI")
 
 
 def test_new_program_division_valid() -> None:
@@ -78,4 +79,4 @@ def test_new_program_division_valid() -> None:
 
     This test tries to use a valid ISO-3166-2 province.
     """
-    _ = NewProgram(program_name="test-program", country="NL", principalSubdivision="NB")  # type: ignore[arg-type]
+    _ = NewProgram(program_name="test-program", country=CountryAlpha2("NL"), principal_subdivision="NB")

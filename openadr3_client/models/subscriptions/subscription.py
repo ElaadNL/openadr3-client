@@ -138,7 +138,6 @@ class SubscriptionUpdate(BaseModel):
     """The targets of the subscription update."""
 
 
-@final
 class ServerSubscription(Subscription):
     """Class representing a subscription retrieved from the VTN."""
 
@@ -149,6 +148,7 @@ class ServerSubscription(Subscription):
     modification_date_time: AwareDatetime
 
 
+@final
 class ExistingSubscription(ServerSubscription):
     """Class representing an existing subscription retrieved from the VTN."""
 
@@ -169,5 +169,6 @@ class ExistingSubscription(ServerSubscription):
         return ExistingSubscription(**updated_subscription)
 
 
+@final
 class DeletedSubscription(ServerSubscription):
     """Class representing a deleted subscription."""

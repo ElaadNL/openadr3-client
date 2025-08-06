@@ -49,7 +49,6 @@ class VenUpdate(BaseModel):
     """The resources of the ven object."""
 
 
-@final
 class ServerVen(Ven):
     """Class representing a ven retrieved from the VTN."""
 
@@ -60,6 +59,7 @@ class ServerVen(Ven):
     modification_date_time: AwareDatetime
 
 
+@final
 class ExistingVen(ServerVen):
     """Class representing an existing ven retrieved from the VTN."""
 
@@ -80,5 +80,6 @@ class ExistingVen(ServerVen):
         return ExistingVen(**updated_ven)
 
 
+@final
 class DeletedVen(ServerVen):
     """Class representing a deleted ven."""

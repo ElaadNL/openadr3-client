@@ -112,7 +112,6 @@ class ReportUpdate(BaseModel):
     """The resources of the report."""
 
 
-@final
 class ServerReport(Report):
     """Class representing a report retrieved from the VTN."""
 
@@ -123,6 +122,7 @@ class ServerReport(Report):
     modification_date_time: AwareDatetime
 
 
+@final
 class ExistingReport(ServerReport):
     """Class representing an existing report retrieved from the VTN."""
 
@@ -143,5 +143,6 @@ class ExistingReport(ServerReport):
         return ExistingReport(**updated_report)
 
 
+@final
 class DeletedReport(ServerReport):
     """Class representing a deleted report."""

@@ -164,7 +164,6 @@ class NewProgram(Program, CreationGuarded):
     """Class representing a new program not yet pushed to the VTN."""
 
 
-@final
 class ServerProgram(Program):
     """Class representing a program retrieved from the VTN."""
 
@@ -174,6 +173,7 @@ class ServerProgram(Program):
     modification_date_time: AwareDatetime
 
 
+@final
 class ExistingProgram(ServerProgram):
     """Class representing an existing program retrieved from the VTN."""
 
@@ -194,5 +194,6 @@ class ExistingProgram(ServerProgram):
         return ExistingProgram(**updated_program)
 
 
-class DeletedProgram(ExistingProgram):
+@final
+class DeletedProgram(ServerProgram):
     """Class representing a deleted program."""

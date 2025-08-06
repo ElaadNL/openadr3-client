@@ -87,7 +87,6 @@ class NewEvent(Event, CreationGuarded):
         return intervals
 
 
-@final
 class ServerEvent(Event):
     """Class representing an event retrieved from the VTN."""
 
@@ -98,6 +97,7 @@ class ServerEvent(Event):
     modification_date_time: AwareDatetime
 
 
+@final
 class ExistingEvent(ServerEvent):
     """Class representing an existing event retrieved from the VTN."""
 
@@ -118,5 +118,6 @@ class ExistingEvent(ServerEvent):
         return ExistingEvent(**updated_data)
 
 
-class DeletedEvent(ExistingEvent):
+@final
+class DeletedEvent(ServerEvent):
     """Class representing a deleted event."""
