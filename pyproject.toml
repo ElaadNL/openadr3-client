@@ -46,6 +46,17 @@ types-oauthlib = "^3.2.0.20250408"
 types-requests-oauthlib = "^2.0.0.20250306"
 types-requests = "^2.32.0.20250328"
 pyjwt = "^2.10.1"
+taskipy = "^1.14.1"
+
+[tool.taskipy.tasks]
+local-ci = "task check && task format && task mypy && task test"
+fix = "task check-fix && task format-fix && task mypy"
+check = "ruff check ."
+check-fix = "ruff check --fix ."
+mypy = "mypy ."
+format = "ruff format . --check"
+format-fix = "ruff format ."
+test = "pytest --cov"
 
 [tool.ruff]
 line-length = 120
