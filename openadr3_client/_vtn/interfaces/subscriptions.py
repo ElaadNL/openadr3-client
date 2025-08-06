@@ -3,7 +3,12 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.subscriptions.subscription import ExistingSubscription, NewSubscription, Object
+from openadr3_client.models.subscriptions.subscription import (
+    DeletedSubscription,
+    ExistingSubscription,
+    NewSubscription,
+    Object,
+)
 
 
 class ReadOnlySubscriptionsInterface(ABC):
@@ -78,7 +83,7 @@ class WriteOnlySubscriptionsInterface(ABC):
         """
 
     @abstractmethod
-    def delete_subscription_by_id(self, subscription_id: str) -> None:
+    def delete_subscription_by_id(self, subscription_id: str) -> DeletedSubscription:
         """
         Delete the subscription with the identifier in the VTN.
 

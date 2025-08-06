@@ -13,7 +13,7 @@ from openadr3_client._vtn.interfaces.events import (
 )
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.logging import logger
-from openadr3_client.models.event.event import ExistingEvent, NewEvent
+from openadr3_client.models.event.event import DeletedEvent, ExistingEvent, NewEvent
 
 base_prefix = "events"
 
@@ -121,7 +121,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         response.raise_for_status()
         return ExistingEvent.model_validate(response.json())
 
-    def delete_event_by_id(self, event_id: str) -> None:
+    def delete_event_by_id(self, event_id: str) -> DeletedEvent:
         """
         Delete the event with the event identifier in the VTN.
 
@@ -131,6 +131,8 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         """
         response = self.session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
         response.raise_for_status()
+
+        return DeletedEvent.model_validate(response.json())
 
 
 @final

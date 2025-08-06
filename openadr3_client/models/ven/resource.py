@@ -49,7 +49,7 @@ class ResourceUpdate(BaseModel):
 
 
 @final
-class ExistingResource(Resource):
+class ServerResource(Resource):
     """Class representing an existing report retrieved from the VTN."""
 
     id: str
@@ -57,6 +57,10 @@ class ExistingResource(Resource):
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+class ExistingResource(ServerResource):
+    """Class representing an existing resource retrieved from the VTN."""
 
     def update(self, update: ResourceUpdate) -> "ExistingResource":
         """
@@ -73,3 +77,7 @@ class ExistingResource(Resource):
         update_dict = update.model_dump(exclude_unset=True)
         updated_resource = current_resource | update_dict
         return ExistingResource(**updated_resource)
+
+
+class DeletedResource(ServerResource):
+    """Class representing a deleted resource retrieved from the VTN."""

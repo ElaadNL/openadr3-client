@@ -50,14 +50,18 @@ class VenUpdate(BaseModel):
 
 
 @final
-class ExistingVen(Ven):
-    """Class representing an existing ven retrieved from the VTN."""
+class ServerVen(Ven):
+    """Class representing a ven retrieved from the VTN."""
 
     id: str
     """The identifier of the ven object."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+class ExistingVen(ServerVen):
+    """Class representing an existing ven retrieved from the VTN."""
 
     def update(self, update: VenUpdate) -> "ExistingVen":
         """
@@ -74,3 +78,7 @@ class ExistingVen(Ven):
         update_dict = update.model_dump(exclude_unset=True)
         updated_ven = current_ven | update_dict
         return ExistingVen(**updated_ven)
+
+
+class DeletedVen(ServerVen):
+    """Class representing a deleted ven."""

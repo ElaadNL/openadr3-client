@@ -158,13 +158,17 @@ class NewProgram(Program, CreationGuarded):
 
 
 @final
-class ExistingProgram(Program):
-    """Class representing an existing program retrieved from the VTN."""
+class ServerProgram(Program):
+    """Class representing a program retrieved from the VTN."""
 
     id: str
     """The identifier for the program."""
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+class ExistingProgram(ServerProgram):
+    """Class representing an existing program retrieved from the VTN."""
 
     def update(self, update: ProgramUpdate) -> ExistingProgram:
         """
@@ -181,3 +185,7 @@ class ExistingProgram(Program):
         update_dict = update.model_dump(exclude_unset=True)
         updated_program = current_program | update_dict
         return ExistingProgram(**updated_program)
+
+
+class DeletedProgram(ExistingProgram):
+    """Class representing a deleted program."""

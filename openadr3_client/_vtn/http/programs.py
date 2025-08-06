@@ -11,7 +11,7 @@ from openadr3_client._vtn.interfaces.programs import (
     WriteOnlyProgramsInterface,
 )
 from openadr3_client.logging import logger
-from openadr3_client.models.program.program import ExistingProgram, NewProgram
+from openadr3_client.models.program.program import DeletedProgram, ExistingProgram, NewProgram
 
 base_prefix = "programs"
 
@@ -111,7 +111,7 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
         response.raise_for_status()
         return ExistingProgram.model_validate(response.json())
 
-    def delete_program_by_id(self, program_id: str) -> None:
+    def delete_program_by_id(self, program_id: str) -> DeletedProgram:
         """
         Delete the program with the program identifier in the VTN.
 
@@ -121,6 +121,8 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
         """
         response = self.session.delete(f"{self.base_url}/{base_prefix}/{program_id}")
         response.raise_for_status()
+
+        return DeletedProgram.model_validate(response.json())
 
 
 class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):

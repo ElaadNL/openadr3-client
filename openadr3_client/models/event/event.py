@@ -88,14 +88,18 @@ class NewEvent(Event, CreationGuarded):
 
 
 @final
-class ExistingEvent(Event):
-    """Class representing an existing event retrieved from the VTN."""
+class ServerEvent(Event):
+    """Class representing an event retrieved from the VTN."""
 
     id: str
     """The identifier for the event."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+class ExistingEvent(ServerEvent):
+    """Class representing an existing event retrieved from the VTN."""
 
     def update(self, update: EventUpdate) -> ExistingEvent:
         """
@@ -112,3 +116,7 @@ class ExistingEvent(Event):
         update_data = update.model_dump(exclude_unset=True)
         updated_data = current_data | update_data
         return ExistingEvent(**updated_data)
+
+
+class DeletedEvent(ExistingEvent):
+    """Class representing a deleted event."""

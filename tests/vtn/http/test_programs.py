@@ -187,7 +187,20 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
     assert created_program.id is not None, "program should be created successfully"
 
     # Delete the program
-    interface.delete_program_by_id(program_id=created_program.id)
+    deleted_program = interface.delete_program_by_id(program_id=created_program.id)
+
+    assert deleted_program.id == created_program.id, "program ID should match"
+    assert deleted_program.program_name == "test-program-to-delete", "program name should match"
+    assert deleted_program.program_long_name == "Test Program To Delete Long Name", "program long name should match"
+    assert deleted_program.created_date_time == created_program.created_date_time, "created date time should match"
+    assert deleted_program.modification_date_time == created_program.modification_date_time, (
+        "modification date time should match"
+    )
+    assert deleted_program.interval_period == created_program.interval_period, "interval period should match"
+    assert deleted_program.payload_descriptors == created_program.payload_descriptors, (
+        "payload descriptors should match"
+    )
+    assert deleted_program.targets == created_program.targets, "targets should match"
 
     # Verify the program is deleted
     with pytest.raises(HTTPError, match="404 Client Error"):

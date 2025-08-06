@@ -113,14 +113,18 @@ class ReportUpdate(BaseModel):
 
 
 @final
-class ExistingReport(Report):
-    """Class representing an existing report retrieved from the VTN."""
+class ServerReport(Report):
+    """Class representing a report retrieved from the VTN."""
 
     id: str
     """The identifier for the report."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+class ExistingReport(ServerReport):
+    """Class representing an existing report retrieved from the VTN."""
 
     def update(self, update: ReportUpdate) -> ExistingReport:
         """
@@ -137,3 +141,7 @@ class ExistingReport(Report):
         update_dict = update.model_dump(exclude_unset=True)
         updated_report = current_report | update_dict
         return ExistingReport(**updated_report)
+
+
+class DeletedReport(ServerReport):
+    """Class representing a deleted report."""

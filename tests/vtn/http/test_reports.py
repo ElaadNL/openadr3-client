@@ -477,7 +477,19 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
                 assert created_report.id is not None, "report should be created successfully"
 
                 # Delete the report
-                interface.delete_report_by_id(report_id=created_report.id)
+                deleted_report = interface.delete_report_by_id(report_id=created_report.id)
+                assert deleted_report.program_id == created_program.id, "program ID should match"
+                assert deleted_report.event_id == created_event.id, "event ID should match"
+                assert deleted_report.client_name == "test-client", "client name should match"
+                assert deleted_report.created_date_time == created_report.created_date_time, (
+                    "created date time should match"
+                )
+                assert deleted_report.modification_date_time == created_report.modification_date_time, (
+                    "modification date time should match"
+                )
+                assert deleted_report.resources is not None, "resources should not be None"
+                assert len(deleted_report.resources) > 0, "resources should not be empty"
+                assert deleted_report.resources[0].resource_name == "test-resource", "resource name should match"
 
                 # Verify the report is deleted
                 with pytest.raises(HTTPError, match="404 Client Error"):

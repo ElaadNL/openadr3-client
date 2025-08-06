@@ -131,6 +131,65 @@ def test_delete_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
         interface.delete_ven_resource_by_id(ven_id="fake-ven-id", resource_id="fake-resource-id")
 
 
+def test_delete_ven_resource_by_id(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
+    """Test to validate that deleting a resource by ID for a ven works when the resource exists."""
+    interface = VensHttpInterface(
+        base_url=integration_test_vtn_client.vtn_base_url,
+        config=integration_test_vtn_client.config,
+    )
+
+    # First create a ven
+    ven = NewVen(
+        ven_name="test-ven-with-resource-to-delete",
+        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+        targets=(Target(type="test-target", values=("test-value",)),),
+    )
+    created_ven = interface.create_ven(new_ven=ven)
+    assert created_ven.id is not None, "ven should be created successfully"
+    assert created_ven.ven_name == "test-ven-with-resource-to-delete", "ven name should match"
+    assert created_ven.attributes is not None and len(created_ven.attributes) == 1, "attribute count should match"
+    assert created_ven.attributes[0].type == "test-attribute", "attribute type should match"
+    assert created_ven.attributes[0].values == ("test-value",), "attribute values should match"
+    assert created_ven.targets is not None and len(created_ven.targets) == 1, "target count should match"
+    assert created_ven.targets[0].type == "test-target", "target type should match"
+    assert created_ven.targets[0].values == ("test-value",), "target values should match"
+
+    try:
+        resource = NewResource(
+            resource_name="test-resource",
+            venID=created_ven.id,
+            attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+            targets=(Target(type="test-target", values=("test-value",)),),
+        )
+        created_resource = interface.create_ven_resource(ven_id=created_ven.id, new_resource=resource)
+        assert created_resource.id is not None, "resource should be created successfully"
+
+        deleted_resource = interface.delete_ven_resource_by_id(ven_id=created_ven.id, resource_id=created_resource.id)
+        assert deleted_resource.id == created_resource.id, "resource id should match"
+        assert deleted_resource.resource_name == "test-resource", "resource name should match"
+        assert deleted_resource.ven_id == created_resource.ven_id, "ven id should match"
+        assert deleted_resource.created_date_time == created_resource.created_date_time, (
+            "created date time should match"
+        )
+        assert deleted_resource.modification_date_time == created_resource.modification_date_time, (
+            "modification date time should match"
+        )
+        assert deleted_resource.attributes is not None and len(deleted_resource.attributes) == 1, (
+            "attribute count should match"
+        )
+        assert deleted_resource.attributes[0].type == "test-attribute", "attribute type should match"
+        assert deleted_resource.attributes[0].values == ("test-value",), "attribute values should match"
+        assert deleted_resource.targets is not None and len(deleted_resource.targets) == 1, "target count should match"
+        assert deleted_resource.targets[0].type == "test-target", "target type should match"
+        assert deleted_resource.targets[0].values == ("test-value",), "target values should match"
+
+        # Verify the resource is deleted
+        with pytest.raises(HTTPError, match="404 Client Error"):
+            _ = interface.get_ven_resource_by_id(ven_id=created_ven.id, resource_id=created_resource.id)
+    finally:
+        interface.delete_ven_by_id(ven_id=created_ven.id)
+
+
 def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: IntegrationTestVTNClient) -> None:
     """Test to validate that updating a resource by ID for a ven with no such resource raises a 404 error."""
     interface = VensHttpInterface(
@@ -367,7 +426,23 @@ def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     assert created_ven.id is not None, "ven should be created successfully"
 
     # Delete the ven
-    interface.delete_ven_by_id(ven_id=created_ven.id)
+    deleted_ven = interface.delete_ven_by_id(ven_id=created_ven.id)
+
+    # Verify returned ven
+    assert deleted_ven.id == created_ven.id, "ven id should match"
+    assert deleted_ven.ven_name == created_ven.ven_name, "ven name should match"
+    assert deleted_ven.created_date_time == created_ven.created_date_time, "created date time should match"
+    assert deleted_ven.modification_date_time == created_ven.modification_date_time, (
+        "modification date time should match"
+    )
+    assert deleted_ven.attributes is not None, "attributes should not be None"
+    assert deleted_ven.targets is not None, "targets should not be None"
+    assert len(deleted_ven.attributes) == 1, "attributes should have one attribute"
+    assert len(deleted_ven.targets) == 1, "targets should have one target"
+    assert deleted_ven.attributes[0].type == "test-attribute", "attribute type should match"
+    assert deleted_ven.attributes[0].values == ("test-value",), "attribute values should match"
+    assert deleted_ven.targets[0].type == "test-target", "target type should match"
+    assert deleted_ven.targets[0].values == ("test-value",), "target values should match"
 
     # Verify the ven is deleted
     with pytest.raises(HTTPError, match="404 Client Error"):

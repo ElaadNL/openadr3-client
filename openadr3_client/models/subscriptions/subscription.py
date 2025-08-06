@@ -139,14 +139,18 @@ class SubscriptionUpdate(BaseModel):
 
 
 @final
-class ExistingSubscription(Subscription):
-    """Class representing an existing subscription retrieved from the VTN."""
+class ServerSubscription(Subscription):
+    """Class representing a subscription retrieved from the VTN."""
 
     id: str
     """The identifier of the subscription object."""
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+
+class ExistingSubscription(ServerSubscription):
+    """Class representing an existing subscription retrieved from the VTN."""
 
     def update(self, update: SubscriptionUpdate) -> "ExistingSubscription":
         """
@@ -163,3 +167,7 @@ class ExistingSubscription(Subscription):
         update_dict = update.model_dump(exclude_unset=True)
         updated_subscription = current_subscription | update_dict
         return ExistingSubscription(**updated_subscription)
+
+
+class DeletedSubscription(ServerSubscription):
+    """Class representing a deleted subscription."""
