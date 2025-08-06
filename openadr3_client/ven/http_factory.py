@@ -37,6 +37,7 @@ class VirtualEndNodeHttpClientFactory:
             client_secret=client_secret,
             token_url=token_url,
             scopes=scopes,
+            audience=None,
         )
         return VirtualEndNodeClient(
             events=EventsReadOnlyHttpInterface(

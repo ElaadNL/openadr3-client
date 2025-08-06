@@ -158,5 +158,6 @@ def integration_test_vtn_client(
                 client_secret=OAUTH_CLIENT_SECRET or "",
                 token_url=OAUTH_TOKEN_ENDPOINT or "",
                 scopes=None,
+                audience=None,
             ),
         )

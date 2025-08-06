@@ -20,6 +20,7 @@ class BusinessLogicHttpClientFactory:
         client_secret: str,
         token_url: str,
         scopes: list[str] | None = None,
+        audience: str | None = None,
     ) -> BusinessLogicClient:
         """
         Creates a business logic client which uses the HTTP interface of a VTN.
@@ -30,6 +31,7 @@ class BusinessLogicHttpClientFactory:
             client_secret (str): The client secret to use to provision an access token from the OAuth authorization server.
             token_url (str): The endpoint to provision access tokens from.
             scopes (list[str]): The scopes to request with the token. If empty, no scopes are requested.
+            audience (str): The audience to request with the token. If empty, no audience is requested.
 
         """  # noqa: E501
         config = OAuthTokenManagerConfig(
@@ -37,6 +39,7 @@ class BusinessLogicHttpClientFactory:
             client_secret=client_secret,
             token_url=token_url,
             scopes=scopes,
+            audience=audience,
         )
 
         return BusinessLogicClient(

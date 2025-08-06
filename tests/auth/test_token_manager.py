@@ -16,6 +16,7 @@ def test_url_not_listening() -> None:
             client_secret="test",
             token_url="https://localhost:5555/token",
             scopes=None,
+            audience=None,
         )
     )
 
@@ -31,6 +32,7 @@ def test_client_id_not_found(integration_test_oauth_client: IntegrationTestOAuth
             client_secret=integration_test_oauth_client.client_secret,
             token_url=integration_test_oauth_client.token_url,
             scopes=None,
+            audience=None,
         )
     )
 
@@ -46,6 +48,7 @@ def test_client_secret_wrong(integration_test_oauth_client: IntegrationTestOAuth
             client_secret="wrong-test-secret",
             token_url=integration_test_oauth_client.token_url,
             scopes=None,
+            audience=None,
         )
     )
 
@@ -70,6 +73,7 @@ def test_non_configured_scope_for_client(integration_test_oauth_client: Integrat
             client_secret=integration_test_oauth_client.client_secret,
             token_url=integration_test_oauth_client.token_url,
             scopes=["test-scope"],
+            audience=None,
         )
     )
 
@@ -89,6 +93,7 @@ def test_new_token_retrieval(integration_test_oauth_client: IntegrationTestOAuth
             client_secret=integration_test_oauth_client.client_secret,
             token_url=integration_test_oauth_client.token_url,
             scopes=None,
+            audience=None,
         )
     )
 
@@ -108,6 +113,7 @@ def test_cached_token_retrieval(integration_test_oauth_client: IntegrationTestOA
             client_secret=integration_test_oauth_client.client_secret,
             token_url=integration_test_oauth_client.token_url,
             scopes=None,
+            audience=None,
         )
     )
 
