@@ -47,15 +47,19 @@ types-requests-oauthlib = "^2.0.0.20250306"
 types-requests = "^2.32.0.20250328"
 pyjwt = "^2.10.1"
 taskipy = "^1.14.1"
+bandit = "^1.8.6"
 
 [tool.taskipy.tasks]
-local-ci = "task check && task format && task mypy && task test"
-fix = "task check-fix && task format-fix && task mypy"
+local-ci = "task check && task format && task mypy && task bandit && task test"
+fix = "task check-fix && task format-fix && task mypy && task bandit"
 check = "ruff check ."
 check-fix = "ruff check --fix ."
+check-ci = "ruff check --output-format=github --no-cache ."
 mypy = "mypy ."
-format = "ruff format . --check"
+format = "ruff format . --diff"
 format-fix = "ruff format ."
+format-ci = "ruff format --diff --no-cache ."
+bandit = "bandit -c pyproject.toml -r ."
 test = "pytest --cov"
 
 [tool.ruff]
