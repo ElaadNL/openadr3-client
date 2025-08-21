@@ -14,7 +14,7 @@ from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor
-from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models.model import OpenADRResource
 
 
 class ProgramDescription(BaseModel):  # type: ignore[call-arg]
@@ -24,7 +24,7 @@ class ProgramDescription(BaseModel):  # type: ignore[call-arg]
     """The URL."""
 
 
-class Program(ABC, ValidatableModel):
+class Program(ABC, OpenADRResource):
     """Base class for programs."""
 
     program_name: str = Field(min_length=1, max_length=128)
@@ -74,6 +74,11 @@ class Program(ABC, ValidatableModel):
 
     targets: tuple[Target, ...] | None = None
     """The targets of the program."""
+
+    @property
+    def name(self) -> str:
+        """Helper method to get the name field of the model."""
+        return self.program_name
 
     @model_validator(mode="after")
     def validate_iso_3166_2(self) -> Program:

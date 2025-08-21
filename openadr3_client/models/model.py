@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from collections.abc import Callable
 from typing import ClassVar, final
 
@@ -108,3 +109,12 @@ class ValidatableModel(BaseModel):
                         setattr(self, f_name, validator(current_field_value))
 
         return current_value
+
+
+class OpenADRResource(ValidatableModel):
+    """Base model for all OpenADR resources."""
+
+    @property
+    @abstractmethod
+    def name(self) -> str | None:
+        """Helper method to get the name field of the model."""
