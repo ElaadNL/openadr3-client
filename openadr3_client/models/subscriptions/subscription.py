@@ -7,7 +7,7 @@ from pydantic import AwareDatetime, Field, HttpUrl, field_validator
 from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.target import Target
-from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models.model import OpenADRResource, ValidatableModel
 
 
 @final
@@ -83,7 +83,7 @@ class ObjectOperation(ValidatableModel):
         return operations
 
 
-class Subscription(ABC, ValidatableModel):
+class Subscription(ABC, OpenADRResource):
     """Base class for subscription objects."""
 
     client_name: str = Field(min_length=1, max_length=128)
@@ -97,6 +97,11 @@ class Subscription(ABC, ValidatableModel):
 
     targets: tuple[Target, ...] | None = None
     """The targets of the subscription object."""
+
+    @property
+    def name(self) -> str:
+        """Helper method to get the name field of the model."""
+        return self.client_name
 
     @field_validator("object_operations", mode="after")
     @classmethod

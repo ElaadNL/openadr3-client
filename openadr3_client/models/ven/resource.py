@@ -7,10 +7,10 @@ from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.attribute import Attribute
 from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.target import Target
-from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models.model import OpenADRResource
 
 
-class Resource(ABC, ValidatableModel):
+class Resource(ABC, OpenADRResource):
     """Class representing a resource, which is subject to control by a ven."""
 
     resource_name: str = Field(min_length=1, max_length=128)
@@ -24,6 +24,11 @@ class Resource(ABC, ValidatableModel):
 
     targets: tuple[Target, ...] | None = None
     """The targets of the resource."""
+
+    @property
+    def name(self) -> str:
+        """Helper method to get the name field of the model."""
+        return self.resource_name
 
 
 @final

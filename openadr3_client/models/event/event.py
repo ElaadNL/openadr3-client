@@ -13,10 +13,10 @@ from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor
-from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models.model import OpenADRResource
 
 
-class Event(ABC, ValidatableModel):
+class Event(ABC, OpenADRResource):
     """Base class for events."""
 
     program_id: str = Field(alias="programID", min_length=1, max_length=128)
@@ -39,6 +39,11 @@ class Event(ABC, ValidatableModel):
 
     intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
+
+    @property
+    def name(self) -> str | None:
+        """Helper method to get the name field of the model."""
+        return self.event_name
 
 
 @final
