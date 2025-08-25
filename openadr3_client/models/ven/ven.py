@@ -7,11 +7,11 @@ from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.attribute import Attribute
 from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.target import Target
-from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models.model import OpenADRResource
 from openadr3_client.models.ven.resource import ExistingResource
 
 
-class Ven(ABC, ValidatableModel):
+class Ven(ABC, OpenADRResource):
     """Base class for vens."""
 
     ven_name: str = Field(min_length=1, max_length=128)
@@ -25,6 +25,11 @@ class Ven(ABC, ValidatableModel):
 
     resources: tuple[ExistingResource, ...] | None = None
     """The resources of the ven object."""
+
+    @property
+    def name(self) -> str | None:
+        """Helper method to get the name field of the model."""
+        return self.ven_name
 
 
 @final
