@@ -320,15 +320,39 @@ except ValueError as e:
     print(f"Error: {e}")  # Will print: "Error: CreationGuarded object has already been created."
 ```
 
-## GAC compliance
+## Validator Plugins
 
-An additional plugin package is available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the Dutch GAC (Grid Aware Charging) specification.
+openadr3-client supports the use of validator plugins. The plugins are created using the ValidatorPlugin class, which contains a set of validators for a model.
 
-Integrating this plugin with the OpenADR3 client can be done by importing the gac compliance package once globally:
+### Registering a plugin
+
+Registering a plugin is done using the global ValidatorPluginRegistry class:
 
 ```python
-# This could be done for example in the root __init__.py of your python project.
-import openadr3_client_gac_compliance 
+    from openadr3_client.plugin import ValidatorPluginRegistry, ValidatorPlugin
+    from openadr3_client.models.event.event import Event
+
+    ValidatorPluginRegistry.register_plugin(
+        MyFirstPlugin().setup()
+    ).register_plugin(
+        MySecondPlugin().setup()
+    )
+```
+
+Since the ValidatorPluginRegistry class is a singleton, all validators will run after the registration.
+
+### Creating a plugin
+
+To see how to create a plugin, see the doc-comment on the ValidatorPlugin class.
+
+### GAC compliance plugin
+
+The GAC compliance plugin is a first-party plugin available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the Dutch GAC (Grid Aware Charging) specification.
+
+Integrating this plugin with the OpenADR3 client can be done by importing it and registering it:
+
+```python
+##TODO: add example
 ```
 
 ## Development
