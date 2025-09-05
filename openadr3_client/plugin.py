@@ -140,7 +140,7 @@ class ValidatorPlugin(ABC):
 
     def get_model_validators(self, model: type[T]) -> tuple[Validator[T], ...]:
         """Get all validators for a specific model."""
-        return tuple(validator for validator in self.validators if model == validator.model)
+        return tuple(validator for validator in self.validators if validator.model in model.__mro__)
 
     def register_validator(self, validator: Validator) -> Self:
         """Add a validator to this plugin."""

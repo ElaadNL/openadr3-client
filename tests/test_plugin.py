@@ -5,22 +5,16 @@ from typing import TypedDict, Unpack
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.model import ValidatableModel
+from openadr3_client.models.ven.ven import NewVen, Ven
 from openadr3_client.plugin import Validator, ValidatorPlugin, ValidatorPluginRegistry
-
-
-class SampleModel(ValidatableModel):
-    """Test model for plugin validation."""
-
-    name: str
 
 
 class NameValidator(Validator):
     """Test validator that checks name length."""
 
-    def validate(self, model: SampleModel) -> None:
+    def validate(self, model: Ven) -> None:
         """Validate the model."""
-        if len(model.name) < 3:
+        if len(model.ven_name) < 3:
             msg = "Name too short"
             raise ValueError(msg)
 
@@ -35,7 +29,7 @@ class SamplePlugin(ValidatorPlugin):
     def setup(*_args, **_kwargs) -> "SamplePlugin":
         """Setup the plugin."""
         plugin = SamplePlugin()
-        validator = NameValidator(model=SampleModel, validator_name="name_length_validator")
+        validator = NameValidator(model=Ven, validator_name="ven_name_length_validator")
         plugin.register_validator(validator)
         return plugin
 
@@ -54,12 +48,47 @@ def test_registry_with_plugins_validates():
 
     # Test that validation fails for short names
     with pytest.raises(ValidationError) as exc_info:
-        SampleModel(name="Hi")
-    assert (
-        "Validation error from plugin validator test_plugin.SampleModel.name_length_validator: Name too short"
-        in str(exc_info.value)
+        NewVen(ven_name="Hi")
+    assert "Validation error from plugin validator test_plugin.Ven.ven_name_length_validator: Name too short" in str(
+        exc_info.value
     )
 
+
+def test_registry_with_plugins_validates_new_ven():
+    """Test that class with plugins performs validation for the same class instead of a parent class."""
+    class NewVenNameValidator(Validator):
+        """Test validator that checks name length."""
+
+        def validate(self, model: NewVen) -> None:
+            """Validate the model."""
+            if len(model.ven_name) < 3:
+                msg = "Name too short"
+                raise ValueError(msg)
+
+
+    class NewVenSamplePlugin(ValidatorPlugin):
+        """Test plugin that provides name validation."""
+
+        def __init__(self) -> None:
+            super().__init__("test_plugin")
+
+        @staticmethod
+        def setup(*_args, **_kwargs) -> "NewVenSamplePlugin":
+            """Setup the plugin."""
+            plugin = NewVenSamplePlugin()
+            validator = NewVenNameValidator(model=NewVen, validator_name="ven_name_length_validator")
+            plugin.register_validator(validator)
+            return plugin
+
+    plugin = NewVenSamplePlugin.setup()
+    ValidatorPluginRegistry.register_plugin(plugin)
+
+    # Test that validation fails for short names
+    with pytest.raises(ValidationError) as exc_info:
+        NewVen(ven_name="Hi")
+    assert "Validation error from plugin validator test_plugin.NewVen.ven_name_length_validator: Name too short" in str(
+        exc_info.value
+    )
 
 def test_registry_with_plugins_allows_valid_data():
     """Test that class with plugins allows valid data."""
@@ -67,13 +96,13 @@ def test_registry_with_plugins_allows_valid_data():
     ValidatorPluginRegistry.register_plugin(plugin)
 
     # Test that validation passes for valid names
-    valid_instance = SampleModel(name="Valid Name")
+    valid_instance = NewVen(ven_name="Valid Name")
     assert valid_instance.name == "Valid Name"
 
 
 def test_original_class_without_plugins():
     """Test that original class works without any plugins."""
-    original = SampleModel(name="Hi")
+    original = NewVen(ven_name="Hi")
     assert original.name == "Hi"
 
 
@@ -81,8 +110,8 @@ def test_multiple_validators_in_plugin():
     """Test that multiple validators in a plugin all run."""
 
     class NoNumbersValidator(Validator):
-        def validate(self, model: SampleModel) -> None:
-            if any(char.isdigit() for char in model.name):
+        def validate(self, model: Ven) -> None:
+            if any(char.isdigit() for char in model.ven_name):
                 msg = "Name cannot contain numbers"
                 raise ValueError(msg)
 
@@ -94,8 +123,8 @@ def test_multiple_validators_in_plugin():
         def setup(*_args, **_kwargs) -> "MultiValidatorPlugin":
             plugin = MultiValidatorPlugin()
 
-            name_validator = NameValidator(model=SampleModel, validator_name="name_validator")
-            no_numbers_validator = NoNumbersValidator(model=SampleModel, validator_name="no_numbers_validator")
+            name_validator = NameValidator(model=NewVen, validator_name="ven_name_length_validator")
+            no_numbers_validator = NoNumbersValidator(model=NewVen, validator_name="no_numbers_validator")
 
             plugin.register_validator(name_validator).register_validator(no_numbers_validator)
             return plugin
@@ -105,15 +134,15 @@ def test_multiple_validators_in_plugin():
 
     # Test both validators run
     with pytest.raises(ValidationError) as exc_info:
-        SampleModel(name="Hi")
+        NewVen(ven_name="Hi")
     assert "Name too short" in str(exc_info.value)
 
     with pytest.raises(ValidationError) as exc_info:
-        SampleModel(name="Test123")
+        NewVen(ven_name="Test123")
     assert "Name cannot contain numbers" in str(exc_info.value)
 
     # Valid data should pass
-    valid_instance = SampleModel(name="ValidName")
+    valid_instance = NewVen(ven_name="ValidName")
     assert valid_instance.name == "ValidName"
 
 
