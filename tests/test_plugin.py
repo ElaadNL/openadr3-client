@@ -12,6 +12,16 @@ from openadr3_client.plugin import Validator, ValidatorPlugin, ValidatorPluginRe
 class NameValidator(Validator):
     """Test validator that checks name length."""
 
+    @property
+    def model(self) -> type[Ven]:
+        """The model type this validator validates."""
+        return Ven
+
+    @property
+    def validator_name(self) -> str:
+        """The name of this validator."""
+        return "ven_name_length_validator"
+
     def validate(self, model: Ven) -> None:
         """Validate the model."""
         if len(model.ven_name) < 3:
@@ -22,14 +32,16 @@ class NameValidator(Validator):
 class SamplePlugin(ValidatorPlugin):
     """Test plugin that provides name validation."""
 
-    def __init__(self) -> None:
-        super().__init__("test_plugin")
+    @property
+    def name(self) -> str:
+        """The name of this plugin."""
+        return "test_plugin"
 
     @staticmethod
     def setup(*_args, **_kwargs) -> "SamplePlugin":
         """Setup the plugin."""
         plugin = SamplePlugin()
-        validator = NameValidator(model=Ven, validator_name="ven_name_length_validator")
+        validator = NameValidator()
         plugin.register_validator(validator)
         return plugin
 
@@ -56,8 +68,19 @@ def test_registry_with_plugins_validates():
 
 def test_registry_with_plugins_validates_new_ven():
     """Test that class with plugins performs validation for the same class instead of a parent class."""
+
     class NewVenNameValidator(Validator):
         """Test validator that checks name length."""
+
+        @property
+        def model(self) -> type[NewVen]:
+            """The model type this validator validates."""
+            return NewVen
+
+        @property
+        def validator_name(self) -> str:
+            """The name of this validator."""
+            return "ven_name_length_validator"
 
         def validate(self, model: NewVen) -> None:
             """Validate the model."""
@@ -65,18 +88,19 @@ def test_registry_with_plugins_validates_new_ven():
                 msg = "Name too short"
                 raise ValueError(msg)
 
-
     class NewVenSamplePlugin(ValidatorPlugin):
         """Test plugin that provides name validation."""
 
-        def __init__(self) -> None:
-            super().__init__("test_plugin")
+        @property
+        def name(self) -> str:
+            """The name of this plugin."""
+            return "test_plugin"
 
         @staticmethod
         def setup(*_args, **_kwargs) -> "NewVenSamplePlugin":
             """Setup the plugin."""
             plugin = NewVenSamplePlugin()
-            validator = NewVenNameValidator(model=NewVen, validator_name="ven_name_length_validator")
+            validator = NewVenNameValidator()
             plugin.register_validator(validator)
             return plugin
 
@@ -89,6 +113,7 @@ def test_registry_with_plugins_validates_new_ven():
     assert "Validation error from plugin validator test_plugin.NewVen.ven_name_length_validator: Name too short" in str(
         exc_info.value
     )
+
 
 def test_registry_with_plugins_allows_valid_data():
     """Test that class with plugins allows valid data."""
@@ -110,21 +135,37 @@ def test_multiple_validators_in_plugin():
     """Test that multiple validators in a plugin all run."""
 
     class NoNumbersValidator(Validator):
+        """Test validator that checks name length."""
+
+        @property
+        def model(self) -> type[Ven]:
+            """The model type this validator validates."""
+            return Ven
+
+        @property
+        def validator_name(self) -> str:
+            """The name of this validator."""
+            return "no_numbers_validator"
+
         def validate(self, model: Ven) -> None:
             if any(char.isdigit() for char in model.ven_name):
                 msg = "Name cannot contain numbers"
                 raise ValueError(msg)
 
     class MultiValidatorPlugin(ValidatorPlugin):
-        def __init__(self) -> None:
-            super().__init__("multi_validator")
+        """Test plugin that provides name validation."""
+
+        @property
+        def name(self) -> str:
+            """The name of this plugin."""
+            return "multi_validator"
 
         @staticmethod
         def setup(*_args, **_kwargs) -> "MultiValidatorPlugin":
             plugin = MultiValidatorPlugin()
 
-            name_validator = NameValidator(model=NewVen, validator_name="ven_name_length_validator")
-            no_numbers_validator = NoNumbersValidator(model=NewVen, validator_name="no_numbers_validator")
+            name_validator = NameValidator()
+            no_numbers_validator = NoNumbersValidator()
 
             plugin.register_validator(name_validator).register_validator(no_numbers_validator)
             return plugin
@@ -156,8 +197,13 @@ def test_plugin_with_setup_kwargs():
         version: str
 
         def __init__(self, version: str) -> None:
-            super().__init__("test_plugin_with_setup_kwargs")
+            super().__init__()
             self.version = version
+
+        @property
+        def name(self) -> str:
+            """The name of this plugin."""
+            return "test_plugin_with_setup_kwargs"
 
         @staticmethod
         def setup(**kwargs: Unpack[SamplePluginKwargs]) -> "SamplePluginWithSetupKwargs":

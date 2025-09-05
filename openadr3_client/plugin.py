@@ -7,17 +7,15 @@ T = TypeVar("T")
 class Validator(ABC, Generic[T]):
     """Validator for a specific model."""
 
-    model: type[T]
-    validator_name: str
+    @property
+    @abstractmethod
+    def model(self) -> type[T]:
+        """The model type this validator validates. Must be implemented by subclasses."""
 
-    def __init__(
-        self,
-        model: type[T],
-        validator_name: str,
-    ) -> None:
-        """Initialize the validator."""
-        self.model = model
-        self.validator_name = validator_name
+    @property
+    @abstractmethod
+    def validator_name(self) -> str:
+        """The name of this validator. Must be implemented by subclasses."""
 
     @abstractmethod
     def validate(self, value: T) -> None:
@@ -60,12 +58,28 @@ class ValidatorPlugin(ABC):
         from openadr3_client.models.event.event import Event
 
         class LegacyEventValidator(Validator[Event]):
+            @property
+            def model(self) -> type[Event]:
+                return Event
+
+            @property
+            def validator_name(self) -> str:
+                return "legacy_validator"
+
             def validate(self, model: Event) -> None:
                 # Legacy validation - simple name check
                 if model.event_name and len(model.event_name) < 3:
                     raise ValueError("Event name must be at least 3 characters")
 
         class ModernEventValidator(Validator[Event]):
+            @property
+            def model(self) -> type[Event]:
+                return Event
+
+            @property
+            def validator_name(self) -> str:
+                return "modern_validator"
+
             def validate(self, model: Event) -> None:
                 # Modern validation - stricter rules
                 if not model.event_name:
@@ -93,19 +107,11 @@ class ValidatorPlugin(ABC):
                 # Add different validators based on the profile version
                 if profile_version.startswith("1."):
                     # Legacy profile - basic validation
-                    validator = LegacyEventValidator(
-                        plugin=plugin,
-                        model=Event,
-                        validator_name="legacy_validator"
-                    )
+                    validator = LegacyEventValidator()
                     plugin.register_validator(validator)
                 elif profile_version.startswith("2."):
                     # Modern profile - stricter validation
-                    validator = ModernEventValidator(
-                        plugin=plugin,
-                        model=Event,
-                        validator_name="modern_validator"
-                    )
+                    validator = ModernEventValidator()
                     plugin.register_validator(validator)
                 else:
                     raise ValueError(f"Unsupported profile version: {profile_version}")
@@ -126,12 +132,15 @@ class ValidatorPlugin(ABC):
     """
 
     validators: list[Validator]
-    name: str
 
-    def __init__(self, name: str) -> None:
+    def __init__(self) -> None:
         """Initialize the plugin."""
-        self.name = name
         self.validators = []
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """The name of the plugin."""
 
     @staticmethod
     @abstractmethod
