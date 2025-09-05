@@ -56,7 +56,7 @@ def test_registry_with_plugins_validates():
     )
 
 
-def test_registry_with_plugins_validates_new_ven():
+def test_validator_runs_for_class():
     """Test that class with plugins performs validation for the same class instead of a parent class."""
 
     class NewVenNameValidator(Validator):
@@ -94,6 +94,39 @@ def test_registry_with_plugins_validates_new_ven():
         "Validation error from plugin validator NewVenSamplePlugin.NewVen.NewVenNameValidator: Name too short"
         in str(exc_info.value)
     )
+
+
+def test_base_class_validator_runs_for_subclass():
+    """Test that base class validator runs for subclass."""
+
+    class NoNumbersValidator(Validator):
+        @property
+        def model(self) -> type[Ven]:
+            """The model type this validator validates."""
+            return Ven
+
+        def validate(self, model: Ven) -> None:
+            if any(char.isdigit() for char in model.ven_name):
+                msg = "Name cannot contain numbers"
+                raise ValueError(msg)
+
+    class VenValidatorPlugin(ValidatorPlugin):
+        @staticmethod
+        def setup(*_args, **_kwargs) -> "VenValidatorPlugin":
+            plugin = VenValidatorPlugin()
+
+            no_numbers_validator = NoNumbersValidator()
+
+            plugin.register_validator(no_numbers_validator)
+            return plugin
+
+    plugin = VenValidatorPlugin.setup()
+    ValidatorPluginRegistry.register_plugin(plugin)
+
+    # Test both validators run
+    with pytest.raises(ValidationError) as exc_info:
+        NewVen(ven_name="Test123")
+    assert "Name cannot contain numbers" in str(exc_info.value)
 
 
 def test_registry_with_plugins_allows_valid_data():
