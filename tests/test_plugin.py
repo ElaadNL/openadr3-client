@@ -17,11 +17,6 @@ class NameValidator(Validator):
         """The model type this validator validates."""
         return Ven
 
-    @property
-    def validator_name(self) -> str:
-        """The name of this validator."""
-        return "ven_name_length_validator"
-
     def validate(self, model: Ven) -> None:
         """Validate the model."""
         if len(model.ven_name) < 3:
@@ -31,11 +26,6 @@ class NameValidator(Validator):
 
 class SamplePlugin(ValidatorPlugin):
     """Test plugin that provides name validation."""
-
-    @property
-    def name(self) -> str:
-        """The name of this plugin."""
-        return "test_plugin"
 
     @staticmethod
     def setup(*_args, **_kwargs) -> "SamplePlugin":
@@ -61,7 +51,7 @@ def test_registry_with_plugins_validates():
     # Test that validation fails for short names
     with pytest.raises(ValidationError) as exc_info:
         NewVen(ven_name="Hi")
-    assert "Validation error from plugin validator test_plugin.Ven.ven_name_length_validator: Name too short" in str(
+    assert "Validation error from plugin validator SamplePlugin.Ven.NameValidator: Name too short" in str(
         exc_info.value
     )
 
@@ -77,11 +67,6 @@ def test_registry_with_plugins_validates_new_ven():
             """The model type this validator validates."""
             return NewVen
 
-        @property
-        def validator_name(self) -> str:
-            """The name of this validator."""
-            return "ven_name_length_validator"
-
         def validate(self, model: NewVen) -> None:
             """Validate the model."""
             if len(model.ven_name) < 3:
@@ -90,11 +75,6 @@ def test_registry_with_plugins_validates_new_ven():
 
     class NewVenSamplePlugin(ValidatorPlugin):
         """Test plugin that provides name validation."""
-
-        @property
-        def name(self) -> str:
-            """The name of this plugin."""
-            return "test_plugin"
 
         @staticmethod
         def setup(*_args, **_kwargs) -> "NewVenSamplePlugin":
@@ -110,8 +90,9 @@ def test_registry_with_plugins_validates_new_ven():
     # Test that validation fails for short names
     with pytest.raises(ValidationError) as exc_info:
         NewVen(ven_name="Hi")
-    assert "Validation error from plugin validator test_plugin.NewVen.ven_name_length_validator: Name too short" in str(
-        exc_info.value
+    assert (
+        "Validation error from plugin validator NewVenSamplePlugin.NewVen.NewVenNameValidator: Name too short"
+        in str(exc_info.value)
     )
 
 
@@ -142,11 +123,6 @@ def test_multiple_validators_in_plugin():
             """The model type this validator validates."""
             return Ven
 
-        @property
-        def validator_name(self) -> str:
-            """The name of this validator."""
-            return "no_numbers_validator"
-
         def validate(self, model: Ven) -> None:
             if any(char.isdigit() for char in model.ven_name):
                 msg = "Name cannot contain numbers"
@@ -154,11 +130,6 @@ def test_multiple_validators_in_plugin():
 
     class MultiValidatorPlugin(ValidatorPlugin):
         """Test plugin that provides name validation."""
-
-        @property
-        def name(self) -> str:
-            """The name of this plugin."""
-            return "multi_validator"
 
         @staticmethod
         def setup(*_args, **_kwargs) -> "MultiValidatorPlugin":
@@ -199,11 +170,6 @@ def test_plugin_with_setup_kwargs():
         def __init__(self, version: str) -> None:
             super().__init__()
             self.version = version
-
-        @property
-        def name(self) -> str:
-            """The name of this plugin."""
-            return "test_plugin_with_setup_kwargs"
 
         @staticmethod
         def setup(**kwargs: Unpack[SamplePluginKwargs]) -> "SamplePluginWithSetupKwargs":

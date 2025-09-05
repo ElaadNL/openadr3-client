@@ -12,11 +12,6 @@ class Validator(ABC, Generic[T]):
     def model(self) -> type[T]:
         """The model type this validator validates. Must be implemented by subclasses."""
 
-    @property
-    @abstractmethod
-    def validator_name(self) -> str:
-        """The name of this validator. Must be implemented by subclasses."""
-
     @abstractmethod
     def validate(self, value: T) -> None:
         """
@@ -39,7 +34,7 @@ class Validator(ABC, Generic[T]):
 
     def get_validator_id(self) -> str:
         """Get the validator id."""
-        return f"{self.plugin.name}.{self.model.__name__}.{self.validator_name}"
+        return f"{self.plugin.__class__.__name__}.{self.model.__name__}.{self.__class__.__name__}"
 
 
 class ValidatorPlugin(ABC):
@@ -54,47 +49,40 @@ class ValidatorPlugin(ABC):
         Creating a custom validation plugin:
 
         ```python
-        from openadr3_client.plugin import ValidatorPlugin, Validator
+        from typing import Any
         from openadr3_client.models.event.event import Event
+        from openadr3_client.plugin import Validator, ValidatorPlugin
+
 
         class LegacyEventValidator(Validator[Event]):
             @property
             def model(self) -> type[Event]:
                 return Event
 
-            @property
-            def validator_name(self) -> str:
-                return "legacy_validator"
-
             def validate(self, model: Event) -> None:
                 # Legacy validation - simple name check
                 if model.event_name and len(model.event_name) < 3:
-                    raise ValueError("Event name must be at least 3 characters")
+                    msg = "Event name must be at least 3 characters"
+                    raise ValueError(msg)
 
         class ModernEventValidator(Validator[Event]):
             @property
             def model(self) -> type[Event]:
                 return Event
 
-            @property
-            def validator_name(self) -> str:
-                return "modern_validator"
-
             def validate(self, model: Event) -> None:
                 # Modern validation - stricter rules
                 if not model.event_name:
-                    raise ValueError("Event name is required in v2.0+")
+                    msg = "Event name is required in v2.0+"
+                    raise ValueError(msg)
                 if len(model.event_name) < 5:
-                    raise ValueError("Event name must be at least 5 characters in v2.0+")
+                    msg = "Event name must be at least 5 characters in v2.0+"
+                    raise ValueError(msg)
 
         class ProfileValidationPlugin(ValidatorPlugin):
             def __init__(self, profile_version: str) -> None:
                 super().__init__()
                 self.profile_version = profile_version
-
-            @property
-            def name(self) -> str:
-                return f"profile_validator_{self.profile_version}"
 
             @staticmethod
             def setup(*args: Any, **kwargs: Any) -> "ProfileValidationPlugin":
@@ -114,7 +102,8 @@ class ValidatorPlugin(ABC):
                     validator = ModernEventValidator()
                     plugin.register_validator(validator)
                 else:
-                    raise ValueError(f"Unsupported profile version: {profile_version}")
+                    msg = f"Unsupported profile version: {profile_version}"
+                    raise ValueError(msg)
 
                 return plugin
 
@@ -122,11 +111,11 @@ class ValidatorPlugin(ABC):
 
         # Legacy profile validation
         legacy_plugin = ProfileValidationPlugin.setup(profile_version="1.2")
-        print(f"Legacy plugin: {legacy_plugin.name}")  # profile_validator_1.2
+        print(f"Legacy plugin: {legacy_plugin.profile_version}")  # 1.2
 
         # Modern profile validation
         modern_plugin = ProfileValidationPlugin.setup(profile_version="2.1")
-        print(f"Modern plugin: {modern_plugin.name}")  # profile_validator_2.1
+        print(f"Modern plugin: {modern_plugin.profile_version}")  # 2.1
         ```
 
     """
@@ -136,11 +125,6 @@ class ValidatorPlugin(ABC):
     def __init__(self) -> None:
         """Initialize the plugin."""
         self.validators = []
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """The name of the plugin."""
 
     @staticmethod
     @abstractmethod
