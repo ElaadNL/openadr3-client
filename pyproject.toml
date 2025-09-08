@@ -60,7 +60,7 @@ format = "ruff format . --diff"
 format-fix = "ruff format ."
 format-ci = "ruff format --diff --no-cache ."
 bandit = "bandit -c pyproject.toml -r ."
-test = "pytest --cov"
+test = "pytest --cov --doctest-modules openadr3_client/ tests/"
 
 [tool.ruff]
 line-length = 120

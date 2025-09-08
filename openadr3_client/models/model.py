@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from pydantic import ValidationError, model_validator
+from pydantic_core import InitErrorDetails
 
 from openadr3_client.models._base_model import BaseModel
 from openadr3_client.plugin import ValidatorPluginRegistry
@@ -13,19 +14,17 @@ class ValidatableModel(BaseModel):
     def run_dynamic_validators(self) -> "ValidatableModel":
         """Runs validators from plugins registered in the ValidatorPluginRegistry class."""
         current_value = self
+        validation_errors: list[InitErrorDetails] = []
 
-        # Run plugin-based validators
-        for validator in ValidatorPluginRegistry.get_model_validators(self.__class__):
-            try:
-                validator.validate(current_value)
-            except (ValueError, ValidationError) as e:
-                # Create a custom ValueError that preserves the original error
-                # but includes validator metadata
-                validator_id = validator.get_validator_id()
+        # Run plugin-based validators and collect all errors
+        for validator_info in ValidatorPluginRegistry.get_model_validators(self.__class__):
+            validator_errors = validator_info.validate(current_value)
+            if validator_errors:
+                validation_errors.extend(validator_errors)
 
-                # Create a new error with the same message but add validator info
-                error = ValueError(f"Validation error from plugin validator {validator_id}: {e!s}")
-                raise error from e
+        # If any errors were collected, raise a single Pydantic ValidationError
+        if validation_errors:
+            raise ValidationError.from_exception_data(title=self.__class__.__name__, line_errors=validation_errors)
 
         return self
 
