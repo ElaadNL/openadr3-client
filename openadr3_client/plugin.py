@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Any, ClassVar, Self, TypeVar, final
+from typing import Any, ClassVar, Self, TypeVar, cast, final
 
 from pydantic_core import InitErrorDetails, PydanticCustomError
 
@@ -8,7 +8,7 @@ T = TypeVar("T")
 
 # Type definitions for validators
 ModelValidatorFunc = Callable[[T], list[InitErrorDetails] | None]
-FieldValidatorFunc = Callable[[Any], None]  # Field validators take only field_value and raise ValueError on failure
+FieldValidatorFunc = Callable[[T], None]  # Field validators take only field_value and raise ValueError on failure
 ValidatorFunc = ModelValidatorFunc[T] | FieldValidatorFunc
 
 
@@ -37,23 +37,12 @@ class ValidatorInfo:
         self.field_name = field_name
         self.plugin_name = plugin_name
 
-    @property
-    def is_field_validator(self) -> bool:
-        """Check if this is a field-level validator."""
-        return self.field_name is not None
-
-    @property
-    def is_model_validator(self) -> bool:
-        """Check if this is a model-level validator."""
-        return self.field_name is None
-
     def validate(self, value: T) -> list[InitErrorDetails] | None:
         """Run the validator function."""
-        if self.is_model_validator:
+        # If no field name is defined, the validator must be a model validator
+        if self.field_name is None:
             try:
-                # Cast to ModelValidatorFunc since we know this is a model validator
-                from typing import cast
-
+                # Cast to ModelValidatorFunc so mypy knows this is a model validator
                 model_func = cast("ModelValidatorFunc[T]", self.func)
                 errors = model_func(value)
             # Option 1: return a single error
@@ -75,14 +64,11 @@ class ValidatorInfo:
                 return modified_errors
             return None
 
+        # If a field name is defined, the validator must be a field validator
         field_name = self.field_name
-        if field_name is None:
-            return None
         field_value = getattr(value, field_name, None)
         try:
-            # Cast to FieldValidatorFunc since we know this is a field validator
-            from typing import cast
-
+            # Cast to FieldValidatorFunc so mypy knows this is a field validator
             field_func = cast("FieldValidatorFunc", self.func)
             field_func(field_value)
         except ValueError as e:

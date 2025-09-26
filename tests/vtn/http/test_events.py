@@ -131,12 +131,6 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
         config=integration_test_vtn_client.config,
     )
 
-    # First create a program since events require a program
-    from openadr3_client._vtn.http.programs import ProgramsHttpInterface
-    from openadr3_client.models.common.interval_period import IntervalPeriod
-    from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
-    from openadr3_client.models.program.program import NewProgram
-
     program_interface = ProgramsHttpInterface(
         base_url=integration_test_vtn_client.vtn_base_url,
         config=integration_test_vtn_client.config,
