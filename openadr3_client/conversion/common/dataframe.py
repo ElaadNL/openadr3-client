@@ -1,6 +1,6 @@
 from typing import final
 
-import pandera as pa
+import pandera.pandas as pa
 from pandera.engines.pandas_engine import DateTime
 from pandera.typing import Series, Timedelta
 

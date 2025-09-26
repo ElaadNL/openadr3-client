@@ -10,14 +10,13 @@ requires-python = ">=3.12, <4"
 dependencies = [
     "pandas (>=2.2.3,<3.0.0)",
     "pydantic (>=2.11.2,<3.0.0)",
-    "pandera[mypy] (>=0.23.1,<0.24.0)",
+    "pandera[mypy,pandas] (>=0.26.1,<0.27.0)",
     "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
     "pydantic-extra-types (>=2.10.3,<3.0.0)",
     "pycountry (>=24.6.1,<25.0.0)",
     "oauthlib[signedtoken] (>=3.2.2,<4.0.0)",
     "requests (>=2.32.3,<3.0.0)",
     "requests-oauthlib (>=2.0.0,<3.0.0)",
-    "cachetools (>=5.5.2,<6.0.0)",
 ]
 license = "Apache Software License 2.0"
 license-files = ["LICENSE.md"]
@@ -37,9 +36,9 @@ packages = [{include = "openadr3_client"}]
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
-ruff = "^0.11.4"
+ruff = "^0.13.2"
 pytest = "^8.3.5"
-pytest-cov = "^6.1.1"
+pytest-cov = "^7.0.0"
 testcontainers = {extras = ["keycloak"], version = "^4.10.0"}
 pytest-env = "^1.1.5"
 types-oauthlib = "^3.2.0.20250408"
@@ -110,6 +109,12 @@ env = [
     "OAUTH_CLIENT_ID=test-client-id",
     "OAUTH_CLIENT_SECRET=my-client-secret",
     "DOCKER_DEFAULT_PLATFORM=linux/amd64",
+]
+# Warnings are raised because some parts of the testcontainers package use these functions. We have already migrated.
+# TODO: remove when these issues are fixed, a few months after 09-2025.
+filterwarnings = [
+    "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
+    "ignore:The wait_for_logs function with string or callable predicates is deprecated:DeprecationWarning",
 ]
 
 [[tool.mypy.overrides]]

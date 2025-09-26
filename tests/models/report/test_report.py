@@ -1,4 +1,5 @@
 import random
+import re
 import string
 
 import pytest
@@ -29,7 +30,7 @@ def test_new_report_creation_guard() -> None:
         pass  # simply pass through, without an exception.
 
     with (
-        pytest.raises(ValueError, match="CreationGuarded object has already been created."),
+        pytest.raises(ValueError, match=re.escape("CreationGuarded object has already been created.")),
         report.with_creation_guard(),
     ):
         pass
@@ -141,7 +142,7 @@ def test_report_client_name_empty_string() -> None:
 
 def test_report_resource_no_intervals() -> None:
     """Test that valides that a resource with no intervals raises a validation error."""
-    with pytest.raises(ValueError, match="ReportResource must contain at least one interval."):
+    with pytest.raises(ValueError, match=re.escape("ReportResource must contain at least one interval.")):
         _ = ReportResource(resource_name="test-resource", interval_period=None, intervals=())
 
 
