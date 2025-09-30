@@ -133,6 +133,12 @@ The library provides convenience methods to convert between OpenADR3 event inter
 
 The library supports conversion between event intervals and pandas DataFrames. The DataFrame format is validated using a `pandera` schema to ensure data integrity.
 
+> **Note:** DataFrame conversion functionality requires the optional `pandas` extra. Install it with:
+> ```bash
+> pip install 'openadr3-client[pandas]'
+> ```
+> or the equivalent in your package manager
+
 #### Pandas Input Format
 
 When creating an event interval from a DataFrame, the input must match the following schema:

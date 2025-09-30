@@ -6,20 +6,24 @@ authors = [
     {name = "Nick van der Burgt",email = "nick.van.der.burgt@elaad.nl"}
 ]
 readme = "README.md"
+license = "Apache-2.0"
 requires-python = ">=3.12, <4"
 dependencies = [
-    "pandas (>=2.2.3,<3.0.0)",
     "pydantic (>=2.11.2,<3.0.0)",
-    "pandera[mypy,pandas] (>=0.26.1,<0.27.0)",
-    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
     "pydantic-extra-types (>=2.10.3,<3.0.0)",
     "pycountry (>=24.6.1,<25.0.0)",
     "oauthlib[signedtoken] (>=3.2.2,<4.0.0)",
     "requests (>=2.32.3,<3.0.0)",
     "requests-oauthlib (>=2.0.0,<3.0.0)",
 ]
-license = "Apache Software License 2.0"
-license-files = ["LICENSE.md"]
+
+[project.optional-dependencies]
+# When updating, don't forget to also update the test dependencies.
+pandas = [
+    "pandas (>=2.2.3,<3.0.0)",
+    "pandera[mypy,pandas] (>=0.26.1,<0.27.0)",
+    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
+]
 
 [project.urls]
 Homepage = "https://github.com/ElaadNL/openadr3-client"
@@ -47,6 +51,10 @@ types-requests = "^2.32.0.20250328"
 pyjwt = "^2.10.1"
 taskipy = "^1.14.1"
 bandit = "^1.8.6"
+# Pandas dependencies for testing (duplicated from optional-dependencies, don't forget to update when updating the optional-dependencies)
+pandas = "^2.2.3"
+pandera = {extras = ["mypy", "pandas"], version = "^0.26.1"}
+pandas-stubs = "^2.2.3.250308"
 
 [tool.taskipy.tasks]
 local-ci = "task check && task format && task mypy && task bandit && task test"
