@@ -1,4 +1,5 @@
 import random
+import re
 import string
 from datetime import UTC, datetime, timedelta
 
@@ -13,7 +14,7 @@ from openadr3_client.models.event.event_payload import EventPayload, EventPayloa
 
 def test_new_event_no_intervals() -> None:
     """Test that validates that intervals are required for new events."""
-    with pytest.raises(ValidationError, match="NewEvent must contain at least one interval."):
+    with pytest.raises(ValidationError, match=re.escape("NewEvent must contain at least one interval.")):
         _ = NewEvent(
             programID="test-program",
             event_name=None,
@@ -78,7 +79,7 @@ def test_new_event_creation_guard() -> None:
         pass  # simply pass through, without an exception.
 
     with (
-        pytest.raises(ValueError, match="CreationGuarded object has already been created."),
+        pytest.raises(ValueError, match=re.escape("CreationGuarded object has already been created.")),
         event.with_creation_guard(),
     ):
         pass

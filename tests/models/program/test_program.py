@@ -1,4 +1,5 @@
 import random
+import re
 import string
 
 import pytest
@@ -21,7 +22,7 @@ def test_new_program_creation_guard() -> None:
         pass  # simply pass through, without an exception.
 
     with (
-        pytest.raises(ValueError, match="CreationGuarded object has already been created."),
+        pytest.raises(ValueError, match=re.escape("CreationGuarded object has already been created.")),
         program.with_creation_guard(),
     ):
         pass

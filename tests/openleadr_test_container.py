@@ -1,12 +1,9 @@
 from types import TracebackType
 from typing import Any, Self
 
-from testcontainers.core.container import DockerContainer
+from testcontainers.core.container import DockerContainer, LogMessageWaitStrategy
 from testcontainers.core.network import Network
-from testcontainers.core.waiting_utils import wait_for_logs
 from testcontainers.postgres import PostgresContainer
-
-from openadr3_client.logging import logger
 
 
 class OpenLeadrVtnTestContainer:
@@ -62,6 +59,7 @@ class OpenLeadrVtnTestContainer:
             )
             .with_network(self._network)
             .with_network_aliases("vtndb")
+            .waiting_for(LogMessageWaitStrategy("database system is ready to accept connections"))
         )
 
         # Initialize VTN container with the static environment variables.
@@ -95,35 +93,14 @@ class OpenLeadrVtnTestContainer:
             self._postgres.get_connection_url(driver=None)
             .replace("postgresql", "postgres")
             .replace("localhost", "vtndb")
-            .replace(self._postgres.get_exposed_port(self._postgres_port), "5432")
+            .replace(str(self._postgres.get_exposed_port(self._postgres_port)), "5432")
         )
 
         # Configure the VTN with the database URL prior to starting it.
-        self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).start()
-        self._wait_for_ready()
+        self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(
+            LogMessageWaitStrategy("pg_advisory_unlock")
+        ).start()
         return self
-
-    def _wait_for_ready(self) -> None:
-        """Wait for the VTN to be ready to accept connections."""
-        try:
-            wait_for_logs(self._vtn, "pg_advisory_unlock", timeout=30, raise_on_exit=True)
-        finally:
-            stdout, stderr = self._vtn.get_logs()
-            stdout = stdout.decode()
-            stderr = stderr.decode()
-            logger.debug("VTN: stdout: %s, stderr: %s", stdout, stderr)
-
-    def _wait_for_postgres_ready(self) -> None:
-        """Wait for the PostgreSQL container to be ready."""
-        try:
-            wait_for_logs(
-                self._postgres, "database system is ready to accept connections", timeout=30, raise_on_exit=True
-            )
-        finally:
-            stdout, stderr = self._postgres.get_logs()
-            stdout = stdout.decode()
-            stderr = stderr.decode()
-            logger.debug("PostgreSQL: stdout: %s, stderr: %s", stdout, stderr)
 
     def get_base_url(self) -> str:
         """Get the base URL for the VTN."""

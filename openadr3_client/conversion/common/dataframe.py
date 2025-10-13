@@ -1,8 +1,15 @@
 from typing import final
 
-import pandera as pa
-from pandera.engines.pandas_engine import DateTime
-from pandera.typing import Series, Timedelta
+try:
+    import pandera.pandas as pa
+    from pandera.engines.pandas_engine import DateTime
+    from pandera.typing import Series, Timedelta
+except ImportError as e:
+    msg = (
+        "DataFrame conversion functionality requires the 'pandas' extra. "
+        "Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
+    )
+    raise ImportError(msg) from e
 
 
 @final
