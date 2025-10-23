@@ -355,12 +355,6 @@ To see how to create a plugin, see the doc-comment on the ValidatorPlugin class.
 
 The GAC compliance plugin is a first-party plugin available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the Dutch GAC (Grid Aware Charging) specification.
 
-Integrating this plugin with the OpenADR3 client can be done by importing it and registering it:
-
-```python
-##TODO: add example
-```
-
 ## Development
 
 - To run all linters and formatters with automatic fixes applied
