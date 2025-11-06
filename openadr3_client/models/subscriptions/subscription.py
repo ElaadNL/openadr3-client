@@ -95,7 +95,7 @@ class Subscription(ABC, OpenADRResource):
     object_operations: tuple[ObjectOperation, ...]
     """The object operations of the subscription object."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the subscription object."""
 
     @property
@@ -139,7 +139,7 @@ class SubscriptionUpdate(BaseModel):
     object_operations: tuple[ObjectOperation, ...] | None = None
     """The object operations of the subscription update."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the subscription update."""
 
 

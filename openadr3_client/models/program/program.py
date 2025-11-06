@@ -72,7 +72,7 @@ class Program(ABC, OpenADRResource):
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The event payload descriptors of the program."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the program."""
 
     @property
@@ -160,7 +160,7 @@ class ProgramUpdate(BaseModel):
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The event payload descriptors of the program."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the program."""
 
 

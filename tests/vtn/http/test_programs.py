@@ -107,7 +107,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
-        targets=(Target(type="test-target", values=("test-value",)),),
+        targets=("test-value",),
     )
 
     try:
@@ -134,7 +134,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         )
         assert response.binding_events is True, "binding events should match"
         assert response.local_price is True, "local price should match"
-        assert response.targets == (Target(type="test-target", values=("test-value",)),), "targets should match"
+        assert response.targets == ("test-value",), "targets should match"
     finally:
         interface.delete_program_by_id(program_id=response.id)
 
@@ -157,7 +157,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
         payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
-        targets=(Target(type="test-target-1", values=("test-value-1",)),),
+        targets=("test-value-1",),
     )
     program2 = NewProgram(
         program_name="test-program-2",
@@ -169,7 +169,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
         payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
-        targets=(Target(type="test-target-2", values=("test-value-2",)),),
+        targets=("test-value-2",),
     )
     created_program1 = interface.create_program(new_program=program1)
     created_program2 = interface.create_program(new_program=program2)
@@ -217,7 +217,7 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        targets=("test-value",),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
@@ -274,7 +274,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         payload_descriptors=(
             EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
         ),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        targets=("test-value",),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
@@ -302,7 +302,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
             binding_events=True,
             local_price=True,
-            targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
+            targets=("test-value-updated",),
         )
 
         updated_program = interface.update_program_by_id(
@@ -326,7 +326,6 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         )
         assert updated_program.targets is not None, "targets should not be None"
         assert len(updated_program.targets) > 0, "targets should not be empty"
-        assert updated_program.targets[0].type == "test-target-updated", "target type should be updated"
-        assert updated_program.targets[0].values == ("test-value-updated",), "target values should be updated"
+        assert updated_program.targets[0] == ("test-value-updated",), "targets should be updated"
     finally:
         interface.delete_program_by_id(program_id=created_program.id)

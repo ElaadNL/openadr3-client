@@ -20,7 +20,7 @@ class Ven(ABC, OpenADRResource):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the ven."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the ven object."""
 
     resources: tuple[ExistingResource, ...] | None = None
@@ -47,7 +47,7 @@ class VenUpdate(BaseModel):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the ven."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the ven object."""
 
     resources: tuple[ExistingResource, ...] | None = None

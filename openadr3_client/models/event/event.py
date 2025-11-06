@@ -28,7 +28,7 @@ class Event(ABC, OpenADRResource):
     priority: NonNegativeInt | None = None
     """The priority of the event, less is higher priority."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the event."""
 
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
@@ -59,7 +59,7 @@ class EventUpdate(BaseModel):
     priority: NonNegativeInt | None = None
     """The priority of the event, less is higher priority."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the event."""
 
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None

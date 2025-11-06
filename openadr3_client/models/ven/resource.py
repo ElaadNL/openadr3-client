@@ -22,7 +22,7 @@ class Resource(ABC, OpenADRResource):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the resource."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the resource."""
 
     @property
@@ -49,7 +49,7 @@ class ResourceUpdate(BaseModel):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the resource."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: tuple[str, ...] | None = None
     """The targets of the resource."""
 
 

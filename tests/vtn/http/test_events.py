@@ -154,7 +154,7 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             programID=created_program.id,
             event_name="test-event",
             priority=1,
-            targets=(Target(type="test-target", values=("test-value",)),),
+            targets=("test-value",),
             payload_descriptors=(
                 EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
@@ -216,7 +216,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             programID=created_program.id,
             event_name="test-event-1",
             priority=1,
-            targets=(Target(type="test-target-1", values=("test-value-1",)),),
+            targets=("test-value-1",),
             payload_descriptors=(
                 EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
@@ -236,7 +236,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             programID=created_program.id,
             event_name="test-event-2",
             priority=2,
-            targets=(Target(type="test-target-2", values=("test-value-2",)),),
+            targets=("test-value-2",),
             payload_descriptors=(
                 EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
@@ -316,7 +316,7 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             programID=created_program.id,
             event_name="test-event-to-delete",
             priority=1,
-            targets=(Target(type="test-target", values=("test-value",)),),
+            targets=("test-value",),
             payload_descriptors=(
                 EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
@@ -346,8 +346,7 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
         )
         assert deleted_event.targets is not None, "targets should not be None"
         assert len(deleted_event.targets) > 0, "targets should not be empty"
-        assert deleted_event.targets[0].type == "test-target", "target type should match"
-        assert deleted_event.targets[0].values == ("test-value",), "target values should match"
+        assert deleted_event.targets[0] == ("test-value",), "targets should match"
 
         # Verify the event is deleted
         with pytest.raises(HTTPError, match="404 Client Error"):
@@ -387,7 +386,7 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             programID=created_program.id,
             event_name="test-event-to-update",
             priority=1,
-            targets=(Target(type="test-target", values=("test-value",)),),
+            targets=("test-value",),
             payload_descriptors=(
                 EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
             ),
@@ -411,7 +410,7 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             event_update = EventUpdate(
                 event_name="test-event-updated",
                 priority=2,
-                targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
+                targets=("test-value-updated",),
             )
 
             updated_event = interface.update_event_by_id(
@@ -427,8 +426,7 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             )
             assert updated_event.targets is not None, "targets should not be None"
             assert len(updated_event.targets) > 0, "targets should not be empty"
-            assert updated_event.targets[0].type == "test-target-updated", "target type should be updated"
-            assert updated_event.targets[0].values == ("test-value-updated",), "target values should be updated"
+            assert updated_event.targets[0] == ("test-value-updated",), "target values should be updated"
         finally:
             interface.delete_event_by_id(event_id=created_event.id)
     finally:
