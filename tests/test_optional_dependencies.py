@@ -13,7 +13,7 @@ def test_main_package_imports_without_pandas() -> None:
     """Test that the main package can be imported without pandas installed."""
     # Note: this test is not bulletproof, some submodules might still import pandas.
     try:
-        import openadr3_client  # noqa: F401, PLC0415
+        import openadr3_client  # noqa: F401
     except ImportError:
         pytest.fail("Main package should import successfully without pandas")
 
@@ -22,11 +22,11 @@ def test_pandas_classes_import_successfully_with_pandas() -> None:
     """Test that pandas-dependent classes can be imported successfully when pandas is available."""
     # Test importing the classes as a user would do
     try:
-        from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema  # noqa: PLC0415, F401
-        from openadr3_client.conversion.input.events.pandas import (  # noqa: PLC0415
+        from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema  # noqa: F401
+        from openadr3_client.conversion.input.events.pandas import (
             PandasEventIntervalConverter,  # noqa: F401
         )
-        from openadr3_client.conversion.output.events.pandas import (  # noqa: PLC0415
+        from openadr3_client.conversion.output.events.pandas import (
             PandasEventIntervalConverter as OutputConverter,  # noqa: F401
         )
     except ImportError as e:
@@ -85,14 +85,14 @@ def test_pandas_functionality_works_when_available() -> None:
     """Test that pandas functionality works correctly when dependencies are available."""
     # Import at function level to test actual functionality
     try:
-        import pandas as pd  # noqa: PLC0415
+        import pandas as pd
 
-        from openadr3_client.conversion.input.events.pandas import PandasEventIntervalConverter  # noqa: PLC0415
+        from openadr3_client.conversion.input.events.pandas import PandasEventIntervalConverter
     except ImportError:
         pytest.fail("Pandas should be available for this test")
 
     # Create a simple test DataFrame
-    df = pd.DataFrame(
+    pandas_dataframe = pd.DataFrame(
         {
             "start": [pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns")],
             "duration": [pd.Timedelta(hours=1)],
@@ -103,6 +103,6 @@ def test_pandas_functionality_works_when_available() -> None:
 
     # Test that the converter can be instantiated and validate the DataFrame
     converter = PandasEventIntervalConverter()
-    validation_result = converter.validate_input(df)
+    validation_result = converter.validate_input(pandas_dataframe)
 
     assert isinstance(validation_result, OK)

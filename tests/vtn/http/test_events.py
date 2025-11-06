@@ -11,7 +11,6 @@ from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.common.target import Target
 from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.event.event import EventUpdate, ExistingEvent, NewEvent
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
@@ -265,7 +264,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             assert len(program_events) == 2, "Should return both events"
 
             # Test getting events by target
-            target_filter = TargetFilter(target_type="test-target-1", target_values=["test-value-1"])
+            target_filter = TargetFilter(targets=["test-value-1"])
             event1_by_target = interface.get_events(
                 target=target_filter, pagination=None, program_id=created_program.id
             )

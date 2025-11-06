@@ -6,7 +6,6 @@ from pydantic import AwareDatetime, Field, HttpUrl, field_validator
 
 from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.creation_guarded import CreationGuarded
-from openadr3_client.models.common.target import Target
 from openadr3_client.models.model import OpenADRResource, ValidatableModel
 
 

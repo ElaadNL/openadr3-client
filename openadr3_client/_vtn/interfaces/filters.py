@@ -6,10 +6,12 @@ from openadr3_client.models._base_model import BaseModel
 class TargetFilter(BaseModel):
     """Represents a single target filter on a request to the VTN."""
 
-    target_type: str
-    """The target type to filter on."""
-    target_values: list[str]
-    """The target values to filter on, treated as a logical OR as per the OpenADR3 specification."""
+    targets: list[str]
+    """The targets to filter on.
+
+    targets being filtered on are treated as a logical AND as per the OpenADR3 specification.
+    Meaning that all the targets being filtered on MUST be present in the targets array of the OpenADR object being
+    returned."""
 
 
 class PaginationFilter(BaseModel):

@@ -8,7 +8,6 @@ from requests import HTTPError
 from openadr3_client._vtn.http.vens import VensHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.common.attribute import Attribute
-from openadr3_client.models.common.target import Target
 from openadr3_client.models.ven.resource import ExistingResource, NewResource, ResourceUpdate
 from openadr3_client.models.ven.ven import ExistingVen, NewVen, VenUpdate
 from tests.conftest import IntegrationTestVTNClient
@@ -261,7 +260,7 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
         resource_update = ResourceUpdate(
             resource_name="test-resource-updated-name",
             attributes=(Attribute(type="test-attribute-updated", values=("test-value-updated",)),),
-            targets=(values=("test-value-updated",),
+            targets=("test-value-updated",),
         )
 
         updated_resource = interface.update_ven_resource_by_id(
@@ -391,7 +390,7 @@ def test_get_vens_with_parameters(integration_test_vtn_client: IntegrationTestVT
         assert ven1_by_name[0].ven_name == "test-ven-1", "Should return the correct ven"
 
         # Test getting vens by target
-        target_filter = TargetFilter(target_type="test-target-1", target_values=["test-value-1"])
+        target_filter = TargetFilter(targets=["test-value-1"])
         ven1_by_target = interface.get_vens(ven_name=None, target=target_filter, pagination=None)
         assert len(ven1_by_target) == 1, "Should return one ven"
         assert ven1_by_target[0].ven_name == "test-ven-1", "Should return the correct ven"

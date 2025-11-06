@@ -11,7 +11,6 @@ from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.interval import Interval
 from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.common.target import Target
 from openadr3_client.models.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.models.model import OpenADRResource
 

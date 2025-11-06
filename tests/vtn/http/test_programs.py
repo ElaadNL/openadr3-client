@@ -11,7 +11,6 @@ from requests.exceptions import HTTPError
 from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.common.target import Target
 from openadr3_client.models.common.unit import Unit
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.program.program import ExistingProgram, NewProgram, ProgramDescription, ProgramUpdate
@@ -180,7 +179,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
         assert len(all_programs) == 2, "Should return both programs"
 
         # Test getting programs by target
-        target_filter = TargetFilter(target_type="test-target-1", target_values=["test-value-1"])
+        target_filter = TargetFilter(targets=["test-value-1"])
         program1_by_target = interface.get_programs(target=target_filter, pagination=None)
         assert len(program1_by_target) == 1, "Should return one program"
         assert program1_by_target[0].program_name == "test-program-1", "Should return the correct program"
