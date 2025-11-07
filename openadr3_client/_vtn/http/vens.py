@@ -3,7 +3,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.http_interface import HttpInterface
+from openadr3_client._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
 from openadr3_client.logging import logger
@@ -13,7 +13,7 @@ from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVen
 base_prefix = "vens"
 
 
-class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
+class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
@@ -116,7 +116,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         return ExistingResource.model_validate(response.json())
 
 
-class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
+class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:

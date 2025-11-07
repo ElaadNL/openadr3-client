@@ -3,7 +3,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.http_interface import HttpInterface
+from openadr3_client._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.programs import (
     ReadOnlyProgramsInterface,
@@ -16,7 +16,7 @@ from openadr3_client.models.program.program import DeletedProgram, ExistingProgr
 base_prefix = "programs"
 
 
-class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
+class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
@@ -65,7 +65,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
         return ExistingProgram.model_validate(response.json())
 
 
-class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
+class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:

@@ -3,7 +3,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.http_interface import HttpInterface
+from openadr3_client._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter
 from openadr3_client._vtn.interfaces.reports import (
     ReadOnlyReportsInterface,
@@ -16,7 +16,7 @@ from openadr3_client.models.report.report import DeletedReport, ExistingReport, 
 base_prefix = "reports"
 
 
-class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
+class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
@@ -80,7 +80,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
         return ExistingReport.model_validate(response.json())
 
 
-class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
+class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:

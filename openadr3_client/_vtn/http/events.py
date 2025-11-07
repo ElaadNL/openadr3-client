@@ -5,7 +5,7 @@ from typing import final
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.http_interface import HttpInterface
+from openadr3_client._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client._vtn.interfaces.events import (
     ReadOnlyEventsInterface,
     ReadWriteEventsInterface,
@@ -18,7 +18,7 @@ from openadr3_client.models.event.event import DeletedEvent, ExistingEvent, NewE
 base_prefix = "events"
 
 
-class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
+class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
@@ -71,7 +71,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
         return ExistingEvent.model_validate(response.json())
 
 
-class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
+class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:

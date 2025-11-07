@@ -3,7 +3,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.http_interface import HttpInterface
+from openadr3_client._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.interfaces.subscriptions import (
     ReadOnlySubscriptionsInterface,
@@ -21,7 +21,7 @@ from openadr3_client.models.subscriptions.subscription import (
 base_prefix = "subscriptions"
 
 
-class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInterface):
+class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
@@ -90,7 +90,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         return ExistingSubscription.model_validate(response.json())
 
 
-class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpInterface):
+class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
