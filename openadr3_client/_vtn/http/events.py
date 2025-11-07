@@ -139,5 +139,5 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url, config, verify_tls_certificate)
