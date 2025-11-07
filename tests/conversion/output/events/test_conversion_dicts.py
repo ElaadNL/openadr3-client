@@ -121,9 +121,7 @@ test_cases = list(zip(get_inputs(), get_expected_outputs(), strict=False))
 
 
 @pytest.mark.parametrize(("interval_input", "expected_dict_output"), test_cases)
-def test_conversion_iterable(
-    interval_input: list[Interval[EventPayload]], expected_dict_output: list[EventIntervalDictInput]
-) -> None:
+def test_conversion_iterable(interval_input: list[Interval[EventPayload]], expected_dict_output: list[EventIntervalDictInput]) -> None:
     """Tests the conversion of event intervals to iterables of dictionaries."""
     converter = DictEventIntervalConverter()
     intervals_dict = converter.convert(interval_input)

@@ -31,9 +31,7 @@ class ReportResource(ValidatableModel):
 
     @field_validator("intervals", mode="after")
     @classmethod
-    def atleast_one_interval(
-        cls, intervals: tuple[Interval[ReportPayload], ...]
-    ) -> tuple[Interval[ReportPayload], ...]:
+    def atleast_one_interval(cls, intervals: tuple[Interval[ReportPayload], ...]) -> tuple[Interval[ReportPayload], ...]:
         """
         Validatest that a resource has atleast one interval defined.
 

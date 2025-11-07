@@ -1,5 +1,5 @@
-
 from pydantic import Field
+
 from openadr3_client.models._base_model import BaseModel
 
 

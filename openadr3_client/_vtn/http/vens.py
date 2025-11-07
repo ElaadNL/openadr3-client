@@ -16,12 +16,10 @@ base_prefix = "vens"
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
-    def get_vens(
-        self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None
-    ) -> tuple[ExistingVen, ...]:
+    def get_vens(self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingVen, ...]:
         """
         Retrieve vens from the VTN.
 
@@ -119,8 +117,8 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterfac
 class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def create_ven(self, new_ven: NewVen) -> ExistingVen:
         """
@@ -133,9 +131,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 
         """
         with new_ven.with_creation_guard():
-            response = self.session.post(
-                f"{self.base_url}/{base_prefix}", json=new_ven.model_dump(by_alias=True, mode="json")
-            )
+            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_ven.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingVen.model_validate(response.json())
 
@@ -160,9 +156,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
         # No lock on the ExistingVen type exists similar to the creation guard of a NewVen.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json")
-        )
+        response = self.session.put(f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingVen.model_validate(response.json())
 
@@ -179,9 +173,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 
         return DeletedVen.model_validate(response.json())
 
-    def update_ven_resource_by_id(
-        self, ven_id: str, resource_id: str, updated_resource: ExistingResource
-    ) -> ExistingResource:
+    def update_ven_resource_by_id(self, ven_id: str, resource_id: str, updated_resource: ExistingResource) -> ExistingResource:
         """
         Update the resource with the resource identifier in the VTN.
 
@@ -253,5 +245,5 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):
     """Implements the read and write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)

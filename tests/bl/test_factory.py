@@ -13,7 +13,5 @@ OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET", "dummy")
 def test_http_bl_client_creates_business_logic_client():
     """Test to validate that the client factory can create a (HTTP) BusinessLogic client."""
     vtn_base_url = "https://elaad.nl/vtn"
-    client = BusinessLogicHttpClientFactory.create_http_bl_client(
-        vtn_base_url, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT
-    )
+    client = BusinessLogicHttpClientFactory.create_http_bl_client(vtn_base_url, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_TOKEN_ENDPOINT)
     assert isinstance(client, BusinessLogicClient)

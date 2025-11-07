@@ -7,11 +7,12 @@ from openadr3_client.models.auth.auth_server import AuthServerInfo
 
 base_prefix = "auth"
 
+
 class AuthReadOnlyInterface(ReadOnlyAuthInterface, AnonymousHttpInterface):
     """Implements the read communication with the auth HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, verify_tls_certificate)
+    def __init__(self, base_url: str, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, verify_tls_certificate=verify_tls_certificate)
 
     def get_auth_server(self) -> AuthServerInfo:
         """
@@ -19,6 +20,7 @@ class AuthReadOnlyInterface(ReadOnlyAuthInterface, AnonymousHttpInterface):
 
         Returns:
             AuthServerInfo: Information related to the authorization service used by the VTN.
+
         """
         logger.debug("Auth - Performing get_auth_server request")
 

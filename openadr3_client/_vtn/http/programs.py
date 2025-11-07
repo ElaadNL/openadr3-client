@@ -19,12 +19,10 @@ base_prefix = "programs"
 class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
-    def get_programs(
-        self, target: TargetFilter | None, pagination: PaginationFilter | None
-    ) -> tuple[ExistingProgram, ...]:
+    def get_programs(self, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingProgram, ...]:
         """
         Retrieve programs from the VTN.
 
@@ -68,8 +66,8 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, AuthenticatedHttp
 class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def create_program(self, new_program: NewProgram) -> ExistingProgram:
         """
@@ -78,9 +76,7 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHt
         Returns the created program response from the VTN as an ExistingProgram.
         """
         with new_program.with_creation_guard():
-            response = self.session.post(
-                f"{self.base_url}/{base_prefix}", json=new_program.model_dump(by_alias=True, mode="json")
-            )
+            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_program.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingProgram.model_validate(response.json())
 
@@ -105,9 +101,7 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHt
         # No lock on the ExistingProgram type exists similar to the creation guard of a NewProgram
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{program_id}", json=updated_program.model_dump(by_alias=True, mode="json")
-        )
+        response = self.session.put(f"{self.base_url}/{base_prefix}/{program_id}", json=updated_program.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingProgram.model_validate(response.json())
 
@@ -128,5 +122,5 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHt
 class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)

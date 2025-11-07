@@ -5,10 +5,7 @@ try:
     from pandera.engines.pandas_engine import DateTime
     from pandera.typing import Series, Timedelta
 except ImportError as e:
-    msg = (
-        "DataFrame conversion functionality requires the 'pandas' extra. "
-        "Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
-    )
+    msg = "DataFrame conversion functionality requires the 'pandas' extra. Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
     raise ImportError(msg) from e
 
 

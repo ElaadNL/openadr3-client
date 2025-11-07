@@ -7,10 +7,7 @@ try:
     import numpy as np
     import pandas as pd
 except ImportError as e:
-    msg = (
-        "DataFrame conversion functionality requires the 'pandas' extra. "
-        "Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
-    )
+    msg = "DataFrame conversion functionality requires the 'pandas' extra. Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
     raise ImportError(msg) from e
 
 from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema

@@ -15,4 +15,5 @@ class ReadOnlyAuthInterface(ABC):
 
         Returns:
             AuthServerInfo: Information related to the authorization service used by the VTN.
+
         """

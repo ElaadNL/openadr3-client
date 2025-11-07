@@ -104,9 +104,7 @@ class Subscription(ABC, OpenADRResource):
 
     @field_validator("object_operations", mode="after")
     @classmethod
-    def atleast_one_object_operation(
-        cls, object_operations: tuple[ObjectOperation, ...]
-    ) -> tuple[ObjectOperation, ...]:
+    def atleast_one_object_operation(cls, object_operations: tuple[ObjectOperation, ...]) -> tuple[ObjectOperation, ...]:
         """
         Validates that a subscription has atleast one object operation defined.
 

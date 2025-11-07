@@ -100,11 +100,7 @@ class Program(ABC, OpenADRResource):
             principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
 
             if self.principal_subdivision not in principals_only:
-                exc_msg = (
-                    f"{self.principal_subdivision} is not a valid ISO 3166-2 "
-                    "division code for the program country {self.country}."
-                    ""
-                )
+                exc_msg = f"{self.principal_subdivision} is not a valid ISO 3166-2 division code for the program country {{self.country}}."
                 raise ValueError(exc_msg)
 
         return self

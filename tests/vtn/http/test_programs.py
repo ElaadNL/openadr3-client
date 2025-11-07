@@ -71,11 +71,7 @@ def test_update_program_by_id_non_existent(integration_test_vtn_client: Integrat
                     start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(minutes=5),
                 ),
-                payload_descriptors=(
-                    EventPayloadDescriptor(
-                        payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")
-                    ),
-                ),
+                payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             ),
         )
 
@@ -100,9 +96,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             duration=timedelta(minutes=5),
             randomize_start=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
@@ -125,12 +119,10 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             duration=timedelta(minutes=5),
             randomize_start=timedelta(minutes=5),
         ), "interval period should match"
-        assert response.payload_descriptors == (
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ), "payload descriptors should match"
-        assert response.program_descriptions == (ProgramDescription(url=AnyUrl("https://example.com")),), (
-            "program descriptions should match"
+        assert response.payload_descriptors == (EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),), (
+            "payload descriptors should match"
         )
+        assert response.program_descriptions == (ProgramDescription(url=AnyUrl("https://example.com")),), "program descriptions should match"
         assert response.binding_events is True, "binding events should match"
         assert response.local_price is True, "local price should match"
         assert response.targets == ("test-value",), "targets should match"
@@ -153,9 +145,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         targets=("test-value-1",),
     )
     program2 = NewProgram(
@@ -165,9 +155,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         targets=("test-value-2",),
     )
     created_program1 = interface.create_program(new_program=program1)
@@ -213,9 +201,7 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         targets=("test-value",),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
@@ -236,13 +222,9 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
     assert deleted_program.country == "NL", "country should match"
     assert deleted_program.principal_subdivision == "NB", "principal subdivision should match"
     assert deleted_program.created_date_time == created_program.created_date_time, "created date time should match"
-    assert deleted_program.modification_date_time == created_program.modification_date_time, (
-        "modification date time should match"
-    )
+    assert deleted_program.modification_date_time == created_program.modification_date_time, "modification date time should match"
     assert deleted_program.interval_period == created_program.interval_period, "interval period should match"
-    assert deleted_program.payload_descriptors == created_program.payload_descriptors, (
-        "payload descriptors should match"
-    )
+    assert deleted_program.payload_descriptors == created_program.payload_descriptors, "payload descriptors should match"
     assert deleted_program.targets == created_program.targets, "targets should match"
 
     # Verify the program is deleted
@@ -270,9 +252,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         targets=("test-value",),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
@@ -295,34 +275,24 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
             ),
-            payload_descriptors=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-            ),
+            payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
             binding_events=True,
             local_price=True,
             targets=("test-value-updated",),
         )
 
-        updated_program = interface.update_program_by_id(
-            program_id=created_program.id, updated_program=created_program.update(program_update)
-        )
+        updated_program = interface.update_program_by_id(program_id=created_program.id, updated_program=created_program.update(program_update))
 
         # Verify the update
         assert updated_program.program_name == "test-program-updated", "program name should be updated"
-        assert updated_program.program_long_name == "Test Program Updated Long Name", (
-            "program long name should be updated"
-        )
+        assert updated_program.program_long_name == "Test Program Updated Long Name", "program long name should be updated"
         assert updated_program.retailer_name == "Test Retailer Name Updated", "retailer name should be updated"
-        assert updated_program.retailer_long_name == "Test Retailer Long Name Updated", (
-            "retailer long name should be updated"
-        )
+        assert updated_program.retailer_long_name == "Test Retailer Long Name Updated", "retailer long name should be updated"
         assert updated_program.program_type == "Test Program Type Updated", "program type should be updated"
         assert updated_program.country == CountryAlpha2("NL"), "country should be updated"
         assert updated_program.created_date_time == created_program.created_date_time, "created date time should match"
-        assert updated_program.modification_date_time != created_program.modification_date_time, (
-            "modification date time should not match"
-        )
+        assert updated_program.modification_date_time != created_program.modification_date_time, "modification date time should not match"
         assert updated_program.targets is not None, "targets should not be None"
         assert len(updated_program.targets) > 0, "targets should not be empty"
         assert updated_program.targets[0] == ("test-value-updated",), "targets should be updated"

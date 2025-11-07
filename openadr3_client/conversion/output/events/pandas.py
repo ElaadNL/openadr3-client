@@ -4,10 +4,7 @@ try:
     import pandas as pd
     from pandera.typing import DataFrame
 except ImportError as e:
-    msg = (
-        "DataFrame conversion functionality requires the 'pandas' extra. "
-        "Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
-    )
+    msg = "DataFrame conversion functionality requires the 'pandas' extra. Install it with: pip install 'openadr3-client[pandas]' or the equivalent in your package manager."
     raise ImportError(msg) from e
 
 from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
@@ -18,9 +15,7 @@ from openadr3_client.models.event.event_payload import EventPayload
 
 
 @final
-class PandasEventIntervalConverter(
-    BaseOutputConverter[list[Interval[EventPayload]], DataFrame[EventIntervalDataFrameSchema]]
-):
+class PandasEventIntervalConverter(BaseOutputConverter[list[Interval[EventPayload]], DataFrame[EventIntervalDataFrameSchema]]):
     """Class which can convert a list of event intervals to a pandas DataFrame."""
 
     def convert(self, given_input: list[Interval[EventPayload]]) -> DataFrame[EventIntervalDataFrameSchema]:
@@ -84,9 +79,7 @@ class PandasEventIntervalConverter(
 
         """
         if series.dt.tz is None:
-            logger.warning(
-                "PANDAS CONVERSION - datetime series of event interval is not timezone aware, defaulting to UTC"
-            )
+            logger.warning("PANDAS CONVERSION - datetime series of event interval is not timezone aware, defaulting to UTC")
             # If all values are tz-naive, localize them
             return series.dt.tz_localize("UTC")
         # If any values are already tz-aware, convert to UTC

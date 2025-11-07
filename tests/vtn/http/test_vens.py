@@ -166,15 +166,9 @@ def test_delete_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
         assert deleted_resource.id == created_resource.id, "resource id should match"
         assert deleted_resource.resource_name == "test-resource", "resource name should match"
         assert deleted_resource.ven_id == created_resource.ven_id, "ven id should match"
-        assert deleted_resource.created_date_time == created_resource.created_date_time, (
-            "created date time should match"
-        )
-        assert deleted_resource.modification_date_time == created_resource.modification_date_time, (
-            "modification date time should match"
-        )
-        assert deleted_resource.attributes is not None and len(deleted_resource.attributes) == 1, (
-            "attribute count should match"
-        )
+        assert deleted_resource.created_date_time == created_resource.created_date_time, "created date time should match"
+        assert deleted_resource.modification_date_time == created_resource.modification_date_time, "modification date time should match"
+        assert deleted_resource.attributes is not None and len(deleted_resource.attributes) == 1, "attribute count should match"
         assert deleted_resource.attributes[0].type == "test-attribute", "attribute type should match"
         assert deleted_resource.attributes[0].values == ("test-value",), "attribute values should match"
         assert deleted_resource.targets is not None and len(deleted_resource.targets) == 1, "target count should match"
@@ -274,15 +268,9 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
         assert updated_resource.id == created_resource.id, "resource id should match"
         assert updated_resource.resource_name == "test-resource-updated-name", "resource name should match"
         assert updated_resource.ven_id == created_resource.ven_id, "ven id should match"
-        assert updated_resource.created_date_time == created_resource.created_date_time, (
-            "created date time should match"
-        )
-        assert updated_resource.modification_date_time != created_resource.modification_date_time, (
-            "modification date time should not match"
-        )
-        assert updated_resource.attributes is not None and len(updated_resource.attributes) == 1, (
-            "attribute count should match"
-        )
+        assert updated_resource.created_date_time == created_resource.created_date_time, "created date time should match"
+        assert updated_resource.modification_date_time != created_resource.modification_date_time, "modification date time should not match"
+        assert updated_resource.attributes is not None and len(updated_resource.attributes) == 1, "attribute count should match"
         assert updated_resource.attributes[0].type == "test-attribute-updated", "attribute type should match"
         assert updated_resource.attributes[0].values == ("test-value-updated",), "attribute values should match"
         assert updated_resource.targets is not None and len(updated_resource.targets) == 1, "target count should match"
@@ -427,9 +415,7 @@ def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     assert deleted_ven.id == created_ven.id, "ven id should match"
     assert deleted_ven.ven_name == created_ven.ven_name, "ven name should match"
     assert deleted_ven.created_date_time == created_ven.created_date_time, "created date time should match"
-    assert deleted_ven.modification_date_time == created_ven.modification_date_time, (
-        "modification date time should match"
-    )
+    assert deleted_ven.modification_date_time == created_ven.modification_date_time, "modification date time should match"
     assert deleted_ven.attributes is not None, "attributes should not be None"
     assert deleted_ven.targets is not None, "targets should not be None"
     assert len(deleted_ven.attributes) == 1, "attributes should have one attribute"
@@ -473,9 +459,7 @@ def test_update_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
         assert updated_ven.ven_name == "test-ven-updated", "ven name should be updated"
         assert updated_ven.attributes is not None, "attributes should not be None"
         assert updated_ven.created_date_time == created_ven.created_date_time, "created date time should match"
-        assert updated_ven.modification_date_time != created_ven.modification_date_time, (
-            "modification date time should not match"
-        )
+        assert updated_ven.modification_date_time != created_ven.modification_date_time, "modification date time should not match"
         assert len(updated_ven.attributes) > 0, "attributes should not be empty"
         assert updated_ven.attributes[0].type == "test-attribute-updated", "attribute type should be updated"
         assert updated_ven.attributes[0].values == ("test-value-updated",), "attribute values should be updated"

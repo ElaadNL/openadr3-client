@@ -24,8 +24,8 @@ base_prefix = "subscriptions"
 class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def get_subscriptions(
         self,
@@ -93,8 +93,8 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, Authent
 class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def create_subscription(self, new_subscription: NewSubscription) -> ExistingSubscription:
         """
@@ -107,15 +107,11 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, Authe
 
         """
         with new_subscription.with_creation_guard():
-            response = self.session.post(
-                f"{self.base_url}/{base_prefix}", json=new_subscription.model_dump(by_alias=True, mode="json")
-            )
+            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_subscription.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingSubscription.model_validate(response.json())
 
-    def update_subscription_by_id(
-        self, subscription_id: str, updated_subscription: ExistingSubscription
-    ) -> ExistingSubscription:
+    def update_subscription_by_id(self, subscription_id: str, updated_subscription: ExistingSubscription) -> ExistingSubscription:
         """
         Update the subscription with the subscription identifier in the VTN.
 
@@ -157,10 +153,8 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, Authe
         return DeletedSubscription.model_validate(response.json())
 
 
-class SubscriptionsHttpInterface(
-    ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface
-):
+class SubscriptionsHttpInterface(ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface):
     """Implements the read and write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)

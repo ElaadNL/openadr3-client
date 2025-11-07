@@ -19,8 +19,8 @@ base_prefix = "reports"
 class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def get_reports(
         self,
@@ -83,8 +83,8 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, AuthenticatedHttpIn
 class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def create_report(self, new_report: NewReport) -> ExistingReport:
         """
@@ -97,9 +97,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttp
 
         """
         with new_report.with_creation_guard():
-            response = self.session.post(
-                f"{self.base_url}/{base_prefix}", json=new_report.model_dump(by_alias=True, mode="json")
-            )
+            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_report.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingReport.model_validate(response.json())
 
@@ -124,9 +122,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttp
         # No lock on the ExistingReport type exists similar to the creation guard of a NewReport.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{report_id}", json=updated_report.model_dump(by_alias=True, mode="json")
-        )
+        response = self.session.put(f"{self.base_url}/{base_prefix}/{report_id}", json=updated_report.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingReport.model_validate(response.json())
 
@@ -147,5 +143,5 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttp
 class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)

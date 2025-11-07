@@ -21,9 +21,7 @@ class OAuthTokenManager:
     """An OAuth token manager responsible for the retrieval and caching of access tokens."""
 
     def __init__(self, config: OAuthTokenManagerConfig) -> None:
-        self.client = BackendApplicationClient(
-            client_id=config.client_id, scope=" ".join(config.scopes) if config.scopes is not None else None
-        )
+        self.client = BackendApplicationClient(client_id=config.client_id, scope=" ".join(config.scopes) if config.scopes is not None else None)
         self.oauth = OAuth2Session(client=self.client)
         self.token_url = config.token_url
         self.client_secret = config.client_secret
@@ -64,9 +62,7 @@ class OAuthTokenManager:
             return self._get_new_access_token()
 
     def _get_new_access_token(self) -> str:
-        token_response = self.oauth.fetch_token(
-            token_url=self.token_url, client_secret=self.client_secret, audience=self.audience
-        )
+        token_response = self.oauth.fetch_token(token_url=self.token_url, client_secret=self.client_secret, audience=self.audience)
 
         # Calculate expiration time (half of token lifetime)
         expires_in_seconds = token_response.get("expires_in", 3600)

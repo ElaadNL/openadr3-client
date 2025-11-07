@@ -10,9 +10,7 @@ class ReadOnlyEventsInterface(ABC):
     """Abstract class which contains the interface for read only methods of events."""
 
     @abstractmethod
-    def get_events(
-        self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None
-    ) -> tuple[ExistingEvent, ...]:
+    def get_events(self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None) -> tuple[ExistingEvent, ...]:
         """
         Retrieve events from the VTN.
 

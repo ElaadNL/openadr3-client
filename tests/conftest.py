@@ -84,11 +84,7 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
     """
     # Hardcoded to a port so we dont have to deal with runtime environment value
     # changes, and can simply set it inside pyproject.toml before hand.
-    with (
-        KeycloakContainer()
-        .with_bind_ports(8080, 47005)
-        .with_realm_import_file("./tests/keycloak_integration_realm.json") as keycloak
-    ):
+    with KeycloakContainer().with_bind_ports(8080, 47005).with_realm_import_file("./tests/keycloak_integration_realm.json") as keycloak:
         realm_name = "integration-test-realm"
         jwks_url = keycloak.get_url() + f"/realms/{realm_name}/protocol/openid-connect/certs"
 
@@ -110,11 +106,7 @@ def integration_test_oauth_client() -> Iterable[IntegrationTestOAuthClient]:
         with temp_pem_file_path.open("wb") as temp_pem_file:
             try:
                 # Write the public key PEM bytes of the keycloak instance to the temp file.
-                temp_pem_file.write(
-                    rsa_pub_key.public_bytes(
-                        encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
-                    )
-                )
+                temp_pem_file.write(rsa_pub_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo))
                 temp_pem_file.flush()
                 temp_pem_file.close()
 

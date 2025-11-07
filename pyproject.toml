@@ -70,7 +70,7 @@ bandit = "bandit -c pyproject.toml -r ."
 test = "pytest --cov --doctest-modules openadr3_client/ tests/"
 
 [tool.ruff]
-line-length = 120
+line-length = 175
 
 [tool.ruff.lint]
 select = ["ALL"]

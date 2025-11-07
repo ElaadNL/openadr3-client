@@ -120,9 +120,7 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = programs_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -226,9 +224,7 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     program2 = NewProgram(
         program_name="test-program-2",
@@ -236,9 +232,7 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program1 = programs_interface.create_program(new_program=program1)
     created_program2 = programs_interface.create_program(new_program=program2)
@@ -346,29 +340,21 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
 
                 try:
                     # Test getting all reports
-                    all_reports = interface.get_reports(
-                        pagination=None, program_id=None, event_id=None, client_name=None
-                    )
+                    all_reports = interface.get_reports(pagination=None, program_id=None, event_id=None, client_name=None)
                     assert len(all_reports) == 2, "Should return both reports"
 
                     # Test getting reports by program ID
-                    program_reports = interface.get_reports(
-                        pagination=None, program_id=created_program1.id, event_id=None, client_name=None
-                    )
+                    program_reports = interface.get_reports(pagination=None, program_id=created_program1.id, event_id=None, client_name=None)
                     assert len(program_reports) == 1, "Should return one report"
                     assert program_reports[0].program_id == created_program1.id, "Should return the correct report"
 
                     # Test getting reports by event ID
-                    event_reports = interface.get_reports(
-                        pagination=None, program_id=None, event_id=created_event2.id, client_name=None
-                    )
+                    event_reports = interface.get_reports(pagination=None, program_id=None, event_id=created_event2.id, client_name=None)
                     assert len(event_reports) == 1, "Should return one report"
                     assert event_reports[0].event_id == created_event2.id, "Should return the correct report"
 
                     # Test getting reports by client name
-                    client_reports = interface.get_reports(
-                        pagination=None, program_id=None, event_id=None, client_name=created_ven1.ven_name
-                    )
+                    client_reports = interface.get_reports(pagination=None, program_id=None, event_id=None, client_name=created_ven1.ven_name)
                     assert len(client_reports) == 1, "Should return one report"
                     assert client_reports[0].client_name == created_ven1.ven_name, "Should return the correct report"
                 finally:
@@ -411,9 +397,7 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = programs_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -481,12 +465,8 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
                 assert deleted_report.program_id == created_program.id, "program ID should match"
                 assert deleted_report.event_id == created_event.id, "event ID should match"
                 assert deleted_report.client_name == "test-client", "client name should match"
-                assert deleted_report.created_date_time == created_report.created_date_time, (
-                    "created date time should match"
-                )
-                assert deleted_report.modification_date_time == created_report.modification_date_time, (
-                    "modification date time should match"
-                )
+                assert deleted_report.created_date_time == created_report.created_date_time, "created date time should match"
+                assert deleted_report.modification_date_time == created_report.modification_date_time, "modification date time should match"
                 assert deleted_report.resources is not None, "resources should not be None"
                 assert len(deleted_report.resources) > 0, "resources should not be empty"
                 assert deleted_report.resources[0].resource_name == "test-resource", "resource name should match"
@@ -528,9 +508,7 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = programs_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -615,25 +593,17 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
                         ),
                     )
 
-                    updated_report = interface.update_report_by_id(
-                        report_id=created_report.id, updated_report=created_report.update(report_update)
-                    )
+                    updated_report = interface.update_report_by_id(report_id=created_report.id, updated_report=created_report.update(report_update))
 
                     # Verify the update
                     assert updated_report.program_id == created_program.id, "program ID should match"
                     assert updated_report.event_id == created_event.id, "event ID should match"
                     assert updated_report.client_name == "test-client-updated", "client name should be updated"
-                    assert updated_report.created_date_time == created_report.created_date_time, (
-                        "created date time should match"
-                    )
-                    assert updated_report.modification_date_time != created_report.modification_date_time, (
-                        "modification date time should not match"
-                    )
+                    assert updated_report.created_date_time == created_report.created_date_time, "created date time should match"
+                    assert updated_report.modification_date_time != created_report.modification_date_time, "modification date time should not match"
                     assert updated_report.resources is not None, "resources should not be None"
                     assert len(updated_report.resources) > 0, "resources should not be empty"
-                    assert updated_report.resources[0].resource_name == "test-resource-updated", (
-                        "resource name should be updated"
-                    )
+                    assert updated_report.resources[0].resource_name == "test-resource-updated", "resource name should be updated"
                 finally:
                     interface.delete_report_by_id(report_id=created_report.id)
             finally:

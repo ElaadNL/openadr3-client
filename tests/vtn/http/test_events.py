@@ -140,9 +140,7 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -154,9 +152,7 @@ def test_create_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             event_name="test-event",
             priority=1,
             targets=("test-value",),
-            payload_descriptors=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-            ),
+            payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -202,9 +198,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -216,9 +210,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             event_name="test-event-1",
             priority=1,
             targets=("test-value-1",),
-            payload_descriptors=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-            ),
+            payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -236,9 +228,7 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
             event_name="test-event-2",
             priority=2,
             targets=("test-value-2",),
-            payload_descriptors=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-            ),
+            payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -265,17 +255,13 @@ def test_get_events_with_parameters(integration_test_vtn_client: IntegrationTest
 
             # Test getting events by target
             target_filter = TargetFilter(targets=["test-value-1"])
-            event1_by_target = interface.get_events(
-                target=target_filter, pagination=None, program_id=created_program.id
-            )
+            event1_by_target = interface.get_events(target=target_filter, pagination=None, program_id=created_program.id)
             assert len(event1_by_target) == 1, "Should return one event"
             assert event1_by_target[0].event_name == "test-event-1", "Should return the correct event"
 
             # Test pagination
             pagination_filter = PaginationFilter(skip=0, limit=1)
-            paginated_events = interface.get_events(
-                target=None, pagination=pagination_filter, program_id=created_program.id
-            )
+            paginated_events = interface.get_events(target=None, pagination=pagination_filter, program_id=created_program.id)
             assert len(paginated_events) == 1, "Should return one event due to pagination"
         finally:
             interface.delete_event_by_id(event_id=created_event1.id)
@@ -302,9 +288,7 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -316,9 +300,7 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             event_name="test-event-to-delete",
             priority=1,
             targets=("test-value",),
-            payload_descriptors=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-            ),
+            payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -340,9 +322,7 @@ def test_delete_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
         assert deleted_event.event_name == "test-event-to-delete", "event name should match"
         assert deleted_event.priority == 1, "priority should match"
         assert deleted_event.created_date_time == created_event.created_date_time, "created date time should match"
-        assert deleted_event.modification_date_time == created_event.modification_date_time, (
-            "modification date time should match"
-        )
+        assert deleted_event.modification_date_time == created_event.modification_date_time, "modification date time should match"
         assert deleted_event.targets is not None, "targets should not be None"
         assert len(deleted_event.targets) > 0, "targets should not be empty"
         assert deleted_event.targets[0] == ("test-value",), "targets should match"
@@ -372,9 +352,7 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
             duration=timedelta(minutes=5),
         ),
-        payload_descriptors=(
-            EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = program_interface.create_program(new_program=program)
     assert created_program.id is not None, "program should be created successfully"
@@ -386,9 +364,7 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
             event_name="test-event-to-update",
             priority=1,
             targets=("test-value",),
-            payload_descriptors=(
-                EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),
-            ),
+            payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             interval_period=IntervalPeriod(
                 start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                 duration=timedelta(minutes=5),
@@ -412,17 +388,13 @@ def test_update_event(integration_test_vtn_client: IntegrationTestVTNClient) -> 
                 targets=("test-value-updated",),
             )
 
-            updated_event = interface.update_event_by_id(
-                event_id=created_event.id, updated_event=created_event.update(event_update)
-            )
+            updated_event = interface.update_event_by_id(event_id=created_event.id, updated_event=created_event.update(event_update))
 
             # Verify the update
             assert updated_event.event_name == "test-event-updated", "event name should be updated"
             assert updated_event.priority == 2, "priority should be updated"
             assert updated_event.created_date_time == created_event.created_date_time, "created date time should match"
-            assert updated_event.modification_date_time != created_event.modification_date_time, (
-                "modification date time should not match"
-            )
+            assert updated_event.modification_date_time != created_event.modification_date_time, "modification date time should not match"
             assert updated_event.targets is not None, "targets should not be None"
             assert len(updated_event.targets) > 0, "targets should not be empty"
             assert updated_event.targets[0] == ("test-value-updated",), "target values should be updated"

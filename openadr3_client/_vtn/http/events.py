@@ -21,12 +21,10 @@ base_prefix = "events"
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
-    def get_events(
-        self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None
-    ) -> tuple[ExistingEvent, ...]:
+    def get_events(self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None) -> tuple[ExistingEvent, ...]:
         """
         Retrieve events from the VTN.
 
@@ -74,8 +72,8 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, AuthenticatedHttpInte
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
         """
@@ -88,9 +86,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpIn
 
         """
         with new_event.with_creation_guard():
-            response = self.session.post(
-                f"{self.base_url}/{base_prefix}", json=new_event.model_dump(by_alias=True, mode="json")
-            )
+            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_event.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingEvent.model_validate(response.json())
 
@@ -115,9 +111,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpIn
         # No lock on the ExistingEvent type exists similar to the creation guard of a NewEvent.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{event_id}", json=updated_event.model_dump(by_alias=True, mode="json")
-        )
+        response = self.session.put(f"{self.base_url}/{base_prefix}/{event_id}", json=updated_event.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingEvent.model_validate(response.json())
 
@@ -139,5 +133,5 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpIn
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url, config, verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)

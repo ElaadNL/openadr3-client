@@ -65,9 +65,7 @@ class WriteOnlySubscriptionsInterface(ABC):
         """
 
     @abstractmethod
-    def update_subscription_by_id(
-        self, subscription_id: str, updated_subscription: ExistingSubscription
-    ) -> ExistingSubscription:
+    def update_subscription_by_id(self, subscription_id: str, updated_subscription: ExistingSubscription) -> ExistingSubscription:
         """
         Update the subscription with the subscription identifier in the VTN.
 

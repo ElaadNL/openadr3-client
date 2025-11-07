@@ -10,9 +10,7 @@ class ReadOnlyProgramsInterface(ABC):
     """Abstract class which contains the interface for read only methods of programs."""
 
     @abstractmethod
-    def get_programs(
-        self, target: TargetFilter | None, pagination: PaginationFilter | None
-    ) -> tuple[ExistingProgram, ...]:
+    def get_programs(self, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingProgram, ...]:
         """
         Retrieve programs from the VTN.
 

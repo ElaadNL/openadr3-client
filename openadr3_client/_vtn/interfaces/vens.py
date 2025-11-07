@@ -11,9 +11,7 @@ class ReadOnlyVensInterface(ABC):
     """Abstract class which contains the interface for read only methods of vens."""
 
     @abstractmethod
-    def get_vens(
-        self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None
-    ) -> tuple[ExistingVen, ...]:
+    def get_vens(self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingVen, ...]:
         """
         Retrieve vens from the VTN.
 
@@ -111,9 +109,7 @@ class WriteOnlyVensInterface(ABC):
         """
 
     @abstractmethod
-    def update_ven_resource_by_id(
-        self, ven_id: str, resource_id: str, updated_resource: ExistingResource
-    ) -> ExistingResource:
+    def update_ven_resource_by_id(self, ven_id: str, resource_id: str, updated_resource: ExistingResource) -> ExistingResource:
         """
         Update the resource with the resource identifier in the VTN.
 

@@ -97,9 +97,7 @@ class OpenLeadrVtnTestContainer:
         )
 
         # Configure the VTN with the database URL prior to starting it.
-        self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(
-            LogMessageWaitStrategy("pg_advisory_unlock")
-        ).start()
+        self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(LogMessageWaitStrategy("pg_advisory_unlock")).start()
         return self
 
     def get_base_url(self) -> str:
