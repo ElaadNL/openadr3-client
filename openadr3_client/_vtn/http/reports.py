@@ -19,8 +19,8 @@ base_prefix = "reports"
 class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url, config, verify_tls_certificate)
 
     def get_reports(
         self,
@@ -83,8 +83,8 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
 class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url, config, verify_tls_certificate)
 
     def create_report(self, new_report: NewReport) -> ExistingReport:
         """
@@ -147,5 +147,5 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
 class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url, config, verify_tls_certificate)
