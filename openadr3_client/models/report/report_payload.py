@@ -119,5 +119,47 @@ class ReportPayloadDescriptor(BasePayloadDescriptor):
 
 
 @final
+class ReportIntervals(str, Enum):
+    """Indicates VEN report interval options. See User Guide."""
+
+    INTERVALS = "INTERVALS"
+    SUB_INTERVALS = "SUB_INTERVALS"
+    OPEN_INTERVALS = "OPEN_INTERVALS"
+
+
+@final
+class ReportDescriptor(BasePayloadDescriptor):
+    """An object that may be used to request a report from a VEN."""
+
+    payload_type: ReportPayloadType
+    """The type of payload being described."""
+    reading_type: ReportReadingType | None = None
+    """The type of reading being described."""
+    units: Unit | None = None
+    """The units of measurement."""
+    targets: tuple[str, ...] | None = None
+    """The targets of the report."""
+    aggregate: bool = False
+    """Whether the report should aggregate results from all targeted resources.\n
+
+True if report should aggregate results from all targeted resources. False if report includes results for each resource.
+\nDefaults to False.
+    """
+    start_interval: int = -1
+    """The interval on which to generate a report. -1 indicates generate report at end of last interval."""
+    num_intervals: int = -1
+    """The number of intervals to include in a report. -1 indicates that all intervals are to be included."""
+    historical: bool = True
+    """True indicates report on intervals preceding start_interval. False indicates report on intervals following start_interval (e.g. forecast)."""
+    frequency: int = -1
+    """Number of intervals that elapse between reports. -1 indicates same as num_intervals."""
+    repeat: int = 1
+    """Number of times to repeat report. 1 indicates generate one report. -1 indicates repeat indefinitely."""
+    report_intervals: ReportIntervals = ReportIntervals.INTERVALS
+    """Indicates VEN report interval options. See User Guide.
+    
+    Defaults to INTERVALS."""
+
+@final
 class ReportPayload[T: AllowedPayloadInputs](_BasePayload[ReportPayloadType, T]):
     """The type of the report payload."""
