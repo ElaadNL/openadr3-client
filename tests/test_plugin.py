@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 from pydantic_core import InitErrorDetails, PydanticCustomError
 
-from openadr3_client.models.ven.ven import NewVen, Ven
+from openadr3_client.models.ven.ven import NewVenVenRequest, Ven
 from openadr3_client.plugin import ValidatorPlugin, ValidatorPluginRegistry
 
 
@@ -68,7 +68,7 @@ class NewVenSamplePlugin(ValidatorPlugin):
                 msg = "Name too short"
                 raise ValueError(msg)
 
-        plugin.register_field_validator(NewVen, "ven_name", validate_new_ven_name_length)
+        plugin.register_field_validator(NewVenVenRequest, "ven_name", validate_new_ven_name_length)
         return plugin
 
 
@@ -135,7 +135,7 @@ def test_registry_with_plugins_validates():
 
     # Test that validation fails for short names
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="Hi")
+        NewVenVenRequest(ven_name="Hi")
     assert "Name too short" in str(exc_info.value)
 
 
@@ -146,7 +146,7 @@ def test_validator_runs_for_class():
 
     # Test that validation fails for short names
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="Hi")
+        NewVenVenRequest(ven_name="Hi")
     assert "Name too short" in str(exc_info.value)
 
 
@@ -157,7 +157,7 @@ def test_base_class_validator_runs_for_subclass():
 
     # Test both validators run
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="Test123")
+        NewVenVenRequest(ven_name="Test123")
     assert "Name cannot contain numbers" in str(exc_info.value)
 
 
@@ -167,13 +167,13 @@ def test_registry_with_plugins_allows_valid_data():
     ValidatorPluginRegistry.register_plugin(plugin)
 
     # Test that validation passes for valid names
-    valid_instance = NewVen(ven_name="Valid Name")
+    valid_instance = NewVenVenRequest(ven_name="Valid Name")
     assert valid_instance.name == "Valid Name"
 
 
 def test_original_class_without_plugins():
     """Test that original class works without any plugins."""
-    original = NewVen(ven_name="Hi")
+    original = NewVenVenRequest(ven_name="Hi")
     assert original.name == "Hi"
 
 
@@ -184,13 +184,13 @@ def test_multiple_validators_in_plugin():
 
     # Test both validators run
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="a1")
+        NewVenVenRequest(ven_name="a1")
     error_str = str(exc_info.value)
     assert "Name too short" in error_str
     assert "Name cannot contain numbers" in error_str
 
     # Valid data should pass
-    valid_instance = NewVen(ven_name="ValidName")
+    valid_instance = NewVenVenRequest(ven_name="ValidName")
     assert valid_instance.name == "ValidName"
 
 
@@ -215,11 +215,11 @@ def test_field_validator():
 
     # Test that field validation fails
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="ab")
+        NewVenVenRequest(ven_name="ab")
     assert "1 validation error for NewVen" in str(exc_info.value)
     assert "Name too short" in str(exc_info.value)
     # Test that field validation passes
-    valid_instance = NewVen(ven_name="ven_valid")
+    valid_instance = NewVenVenRequest(ven_name="ven_valid")
     assert valid_instance.name == "ven_valid"
 
 
@@ -238,7 +238,7 @@ def test_model_validator_using_value_error():
 
     # Test that model validation fails
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="a")
+        NewVenVenRequest(ven_name="a")
     assert "Name too short" in str(exc_info.value)
 
 
@@ -257,7 +257,7 @@ def test_model_validator_using_init_error_details():
 
     # Test that model validation fails
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="a")
+        NewVenVenRequest(ven_name="a")
     assert "Name too short" in str(exc_info.value)
 
 
@@ -281,7 +281,7 @@ def test_mixed_validators():
 
     # Test that both validators fail
     with pytest.raises(ValidationError) as exc_info:
-        NewVen(ven_name="a")
+        NewVenVenRequest(ven_name="a")
     error_str = str(exc_info.value)
     assert "3 validation errors for NewVen" in error_str
     assert "Name too short" in error_str
@@ -289,5 +289,5 @@ def test_mixed_validators():
     assert "Name too short (InitErrorDetails)" in error_str
 
     # Test that valid data passes all validators
-    valid_instance = NewVen(ven_name="ven_validname")
+    valid_instance = NewVenVenRequest(ven_name="ven_validname")
     assert valid_instance.name == "ven_validname"

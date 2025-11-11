@@ -8,7 +8,7 @@ from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilt
 from openadr3_client._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
 from openadr3_client.logging import logger
 from openadr3_client.models.ven.resource import DeletedResource, ExistingResource, NewResource
-from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVen
+from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVenVenRequest
 
 base_prefix = "vens"
 
@@ -120,7 +120,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
         super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
-    def create_ven(self, new_ven: NewVen) -> ExistingVen:
+    def create_ven(self, new_ven: NewVenVenRequest) -> ExistingVen:
         """
         Creates a ven from the new ven.
 

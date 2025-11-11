@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.ven.resource import DeletedResource, ExistingResource, NewResource
-from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVen
+from openadr3_client.models.ven.ven import DeletedVen, ExistingVen, NewVenVenRequest
 
 
 class ReadOnlyVensInterface(ABC):
@@ -69,7 +69,7 @@ class WriteOnlyVensInterface(ABC):
     """Abstract class which contains the interface for write only methods of vens."""
 
     @abstractmethod
-    def create_ven(self, new_ven: NewVen) -> ExistingVen:
+    def create_ven(self, new_ven: NewVenVenRequest) -> ExistingVen:
         """
         Creates a ven from the new ven.
 

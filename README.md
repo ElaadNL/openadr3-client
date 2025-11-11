@@ -116,7 +116,7 @@ ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(
     client_id="your_client_id",
     client_secret="your_client_secret",
     token_url="https://auth.example.com/token",
-    scopes=["read_all", "write_reports"]  # Optional: specify required scopes
+    scopes=["read_all", "write_reports", "read_targets", "read_ven_objects"]  # Optional: specify required scopes
 )
 
 # Search for events inside the VTN.

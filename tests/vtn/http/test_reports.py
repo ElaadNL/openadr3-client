@@ -18,7 +18,7 @@ from openadr3_client.models.event.event_payload import EventPayload, EventPayloa
 from openadr3_client.models.program.program import NewProgram
 from openadr3_client.models.report.report import ExistingReport, NewReport, ReportResource, ReportUpdate
 from openadr3_client.models.report.report_payload import ReportPayload, ReportPayloadType
-from openadr3_client.models.ven.ven import NewVen
+from openadr3_client.models.ven.ven import NewVenVenRequest
 from tests.conftest import IntegrationTestVTNClient
 
 
@@ -150,7 +150,7 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN with the same name as the client_name
-            ven = NewVen(
+            ven = NewVenVenRequest(
                 ven_name="test-client",
                 targets=(),
             )
@@ -280,11 +280,11 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
 
         try:
             # Create two VENs
-            ven1 = NewVen(
+            ven1 = NewVenVenRequest(
                 ven_name="test-client-1",
                 targets=(),
             )
-            ven2 = NewVen(
+            ven2 = NewVenVenRequest(
                 ven_name="test-client-2",
                 targets=(),
             )
@@ -427,7 +427,7 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN
-            ven = NewVen(
+            ven = NewVenVenRequest(
                 ven_name="test-client",
                 targets=(),
             )
@@ -538,7 +538,7 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN
-            ven = NewVen(
+            ven = NewVenVenRequest(
                 ven_name="test-client",
                 targets=(),
             )

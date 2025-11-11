@@ -9,7 +9,7 @@ from openadr3_client._vtn.http.vens import VensHttpInterface
 from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.common.attribute import Attribute
 from openadr3_client.models.ven.resource import ExistingResource, NewResource, ResourceUpdate
-from openadr3_client.models.ven.ven import ExistingVen, NewVen, VenUpdate
+from openadr3_client.models.ven.ven import ExistingVen, NewVenVenRequest, VenUpdate
 from tests.conftest import IntegrationTestVTNClient
 
 
@@ -76,7 +76,7 @@ def test_create_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
         config=integration_test_vtn_client.config,
     )
 
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -138,7 +138,7 @@ def test_delete_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
     )
 
     # First create a ven
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-with-resource-to-delete",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -189,7 +189,7 @@ def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
     )
 
     # First create a ven
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-with-with-non-existent-resource",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -231,7 +231,7 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
     )
 
     # First create a ven
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-with-resource-to-update",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -288,7 +288,7 @@ def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClie
     )
 
     # First create a ven
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-with-resource",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -324,7 +324,7 @@ def test_create_ven_duplicate_name(integration_test_vtn_client: IntegrationTestV
     )
 
     # First create a ven
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-duplicate",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -332,7 +332,7 @@ def test_create_ven_duplicate_name(integration_test_vtn_client: IntegrationTestV
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
 
-    ven2 = NewVen(
+    ven2 = NewVenVenRequest(
         ven_name="test-ven-duplicate",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -354,12 +354,12 @@ def test_get_vens_with_parameters(integration_test_vtn_client: IntegrationTestVT
     )
 
     # Create two vens with different names and targets
-    ven1 = NewVen(
+    ven1 = NewVenVenRequest(
         ven_name="test-ven-1",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value-1",),
     )
-    ven2 = NewVen(
+    ven2 = NewVenVenRequest(
         ven_name="test-ven-2",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value-2",),
@@ -400,7 +400,7 @@ def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     )
 
     # Create a ven to delete
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-to-delete",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),
@@ -437,7 +437,7 @@ def test_update_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     )
 
     # Create a ven to update
-    ven = NewVen(
+    ven = NewVenVenRequest(
         ven_name="test-ven-to-update",
         attributes=(Attribute(type="test-attribute", values=("test-value",)),),
         targets=("test-value",),

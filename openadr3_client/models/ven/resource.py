@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import final
+from typing import Literal, final
 
 from pydantic import AwareDatetime, Field
 
@@ -21,9 +21,6 @@ class Resource(ABC, OpenADRResource):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the resource."""
 
-    targets: tuple[str, ...] | None = None
-    """The targets of the resource."""
-
     @property
     def name(self) -> str:
         """Helper method to get the name field of the model."""
@@ -31,12 +28,32 @@ class Resource(ABC, OpenADRResource):
 
 
 @final
-class NewResource(Resource, CreationGuarded):
-    """Class representing a new resource not yet pushed to the VTN."""
+class NewResourceVenRequest(Resource, CreationGuarded):
+    """Class representing a new resource not yet pushed to the VTN by a VEN client."""
 
+    object_type: Literal["VEN_RESOURCE_REQUEST"] = Field(default="VEN_RESOURCE_REQUEST")
+    """The object type."""
 
 @final
-class ResourceUpdate(BaseModel):
+class NewResourceBlRequest(Resource, CreationGuarded):
+    """Class representing a new resource not yet pushed to the VTN by a BL client."""
+
+    object_type: Literal["BL_RESOURCE_REQUEST"] = Field(default="BL_RESOURCE_REQUEST")
+    """The object type."""
+
+    client_id: str = Field(alias="clientID", min_length=1, max_length=128)
+    """Client ID of the VEN associated with the resource.
+    
+    MUST be assigned by a BL client, a VTN will reject or ignore the client ID provided by a VEN client.
+    """
+
+    targets: tuple[str, ...] | None = None
+    """The targets of the resource.
+    
+    Can only be assigned by a BL client, a VTN will reject or ignore targets provided by a VEN client."""
+
+
+class ResourceUpdate(ABC, BaseModel):
     """Class representing an update to a resource."""
 
     resource_name: str | None = Field(default=None, min_length=1, max_length=128)
@@ -48,9 +65,30 @@ class ResourceUpdate(BaseModel):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the resource."""
 
-    targets: tuple[str, ...] | None = None
-    """The targets of the resource."""
+@final
+class ResourceUpdateVenRequest(ResourceUpdate):
+    """Class representing an update to a resource by a VEN client."""
 
+    object_type: Literal["VEN_RESOURCE_REQUEST"] = Field(default="VEN_RESOURCE_REQUEST")
+    """The object type."""
+
+@final
+class ResourceUpdateBlRequest(ResourceUpdate):
+    """Class representing an update to a resource by a BL client."""
+
+    object_type: Literal["BL_RESOURCE_REQUEST"] = Field(default="BL_RESOURCE_REQUEST")
+    """The object type."""
+
+    client_id: str = Field(alias="clientID", min_length=1, max_length=128)
+    """Client ID of the VEN associated with the resource.
+    
+    MUST be assigned by a BL client, a VTN will reject or ignore the client ID provided by a VEN client.
+    """
+
+    targets: tuple[str, ...] | None = None
+    """The targets of the resource.
+    
+    Can only be assigned by a BL client, a VTN will reject or ignore targets provided by a VEN client."""
 
 class ServerResource(Resource):
     """Class representing an existing report retrieved from the VTN."""
