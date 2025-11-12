@@ -1,6 +1,7 @@
 from typing import final
 
 from openadr3_client._vtn.interfaces.events import ReadWriteEventsInterface
+from openadr3_client._vtn.interfaces.notifiers import ReadOnlyNotifierInterface
 from openadr3_client._vtn.interfaces.programs import ReadWriteProgramsInterface
 from openadr3_client._vtn.interfaces.reports import ReadOnlyReportsInterface
 from openadr3_client._vtn.interfaces.subscriptions import ReadOnlySubscriptionsInterface
@@ -22,6 +23,7 @@ class BusinessLogicClient:
         reports: ReadOnlyReportsInterface,
         vens: ReadWriteVensInterface,
         subscriptions: ReadOnlySubscriptionsInterface,
+        notifiers: ReadOnlyNotifierInterface
     ) -> None:
         """
         Initializes the business logic client.
@@ -32,6 +34,7 @@ class BusinessLogicClient:
             reports (ReadOnlyReportsInterface): The reports interface.
             vens (ReadOnlyVensInterface): The VENs interface.
             subscriptions (ReadOnlySubscriptionsInterface): The subscriptions interface.
+            notifiers (ReadOnlyNotifierInterface): The notifier interface.
 
         """
         self._events = events
@@ -39,6 +42,7 @@ class BusinessLogicClient:
         self._reports = reports
         self._vens = vens
         self._subscriptions = subscriptions
+        self._notifiers = notifiers
 
     @property
     def events(self) -> ReadWriteEventsInterface:
@@ -59,3 +63,7 @@ class BusinessLogicClient:
     @property
     def subscriptions(self) -> ReadOnlySubscriptionsInterface:
         return self._subscriptions
+    
+    @property
+    def notifiers(self) -> ReadOnlyNotifierInterface:
+        return self._notifiers

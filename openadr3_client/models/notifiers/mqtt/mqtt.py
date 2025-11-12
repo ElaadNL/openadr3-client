@@ -63,6 +63,23 @@ class MqttNotifierBindingObject(BaseModel):
     authentication: MqttNotifierAuthenticationBase
     """Authentication method supported for connection to MQTT broker."""
 
+class MqttNotifierTopicOperations(BaseModel):
+    """Contains topic operations of a topic in the MQTT notifier."""
+
+    create: str = Field(alias="CREATE")
+    """'Topic path for CREATE operations."""
+
+    update: str = Field(alias="UPDATE")
+    """'Topic path for UPDATE operations."""
+
+    delete: str = Field(alias="DELETE")
+    """'Topic path for DELETE operations."""
+
+    all: str = Field(alias="ALL")
+    """'Topic path for ALL operations."""
+    
 class MqttTopicInformation(BaseModel):
     """Contains topic information of the MQTT notifier."""
-    ...
+
+    topics: MqttNotifierTopicOperations
+    """Topic operations available as part of the MQTT notifier."""

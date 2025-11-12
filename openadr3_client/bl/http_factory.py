@@ -3,6 +3,7 @@ from typing import final
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.auth import AuthReadOnlyInterface
 from openadr3_client._vtn.http.events import EventsHttpInterface
+from openadr3_client._vtn.http.notifiers import NotifiersReadOnlyHttpInterface
 from openadr3_client._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.http.reports import ReportsReadOnlyHttpInterface
 from openadr3_client._vtn.http.subscriptions import SubscriptionsReadOnlyHttpInterface
@@ -86,4 +87,9 @@ class BusinessLogicHttpClientFactory:
                 config=config,
                 verify_tls_certificate=verify_vtn_tls_certificate,
             ),
+            notifiers=NotifiersReadOnlyHttpInterface(
+                base_url=vtn_base_url,
+                config=config,
+                verify_tls_certificate=verify_vtn_tls_certificate
+            )
         )

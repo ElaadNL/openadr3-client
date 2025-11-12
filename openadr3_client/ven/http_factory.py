@@ -3,6 +3,7 @@ from typing import final
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.auth import AuthReadOnlyInterface
 from openadr3_client._vtn.http.events import EventsReadOnlyHttpInterface
+from openadr3_client._vtn.http.notifiers import NotifiersReadOnlyHttpInterface
 from openadr3_client._vtn.http.programs import ProgramsReadOnlyHttpInterface
 from openadr3_client._vtn.http.reports import ReportsHttpInterface
 from openadr3_client._vtn.http.subscriptions import SubscriptionsHttpInterface
@@ -83,4 +84,9 @@ class VirtualEndNodeHttpClientFactory:
                 config=config,
                 verify_tls_certificate=verify_vtn_tls_certificate,
             ),
+            notifiers=NotifiersReadOnlyHttpInterface(
+                base_url=vtn_base_url,
+                config=config,
+                verify_tls_certificate=verify_vtn_tls_certificate
+            )
         )

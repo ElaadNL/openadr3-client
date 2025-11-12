@@ -1,6 +1,7 @@
 from typing import final
 
 from openadr3_client._vtn.interfaces.events import ReadOnlyEventsInterface
+from openadr3_client._vtn.interfaces.notifiers import ReadOnlyNotifierInterface
 from openadr3_client._vtn.interfaces.programs import ReadOnlyProgramsInterface
 from openadr3_client._vtn.interfaces.reports import ReadWriteReportsInterface
 from openadr3_client._vtn.interfaces.subscriptions import ReadWriteSubscriptionsInterface
@@ -22,6 +23,7 @@ class VirtualEndNodeClient:
         reports: ReadWriteReportsInterface,
         vens: ReadWriteVensInterface,
         subscriptions: ReadWriteSubscriptionsInterface,
+        notifiers: ReadOnlyNotifierInterface
     ) -> None:
         """
         Initializes the VEN client.
@@ -32,13 +34,14 @@ class VirtualEndNodeClient:
             reports (ReadWriteReportsInterface): The reports interface.
             vens (ReadWriteVensInterface): The VENs interface.
             subscriptions (ReadWriteSubscriptionsInterface): The subscriptions interface.
-
+            notifiers (ReadOnlyNotifierInterface): The notifiers interface.
         """
         self._events = events
         self._programs = programs
         self._reports = reports
         self._vens = vens
         self._subscriptions = subscriptions
+        self._notifiers = notifiers
 
     @property
     def events(self) -> ReadOnlyEventsInterface:
@@ -59,3 +62,7 @@ class VirtualEndNodeClient:
     @property
     def subscriptions(self) -> ReadWriteSubscriptionsInterface:
         return self._subscriptions
+
+    @property
+    def notifiers(self) -> ReadOnlyNotifierInterface:
+        return self._notifiers
