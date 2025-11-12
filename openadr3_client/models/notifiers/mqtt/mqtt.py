@@ -1,20 +1,24 @@
 from abc import ABC
 from enum import Enum
 from typing import Literal, final
+
 from pydantic import BaseModel, Field
 
 from openadr3_client.models.notifiers.serialization import NotifierSerialization
+
 
 @final
 class MqttNotifierAuthenticationMethod(str, Enum):
     """Authentication methods supported by the MQTT notifiers."""
 
     ANONYMOUS = "ANONYMOUS"
-    OAUTH2_BEARER_TOKEN = "OAUTH2_BEARER_TOKEN"
+    OAUTH2_BEARER_TOKEN = "OAUTH2_BEARER_TOKEN"  # noqa: S105
     CERTIFICATE = "CERTIFICATE"
+
 
 class MqttNotifierAuthenticationBase(ABC, BaseModel):
     """Domain model representing the MQTT notifiers authentication mechanism."""
+
 
 @final
 class MqttNotifierAuthenticationAnonymous(MqttNotifierAuthenticationBase):
@@ -22,6 +26,7 @@ class MqttNotifierAuthenticationAnonymous(MqttNotifierAuthenticationBase):
 
     method = Literal[MqttNotifierAuthenticationMethod.ANONYMOUS]
     """The authentication method."""
+
 
 @final
 class MqttNotifierAuthenticationOAuth2BearerToken(MqttNotifierAuthenticationBase):
@@ -32,6 +37,7 @@ class MqttNotifierAuthenticationOAuth2BearerToken(MqttNotifierAuthenticationBase
 
     username: str
     """Either the distinguished string "{clientID}", or any other literal string."""
+
 
 @final
 class MqttNotifierAuthenticationCertificate(MqttNotifierAuthenticationBase):
@@ -49,10 +55,13 @@ class MqttNotifierAuthenticationCertificate(MqttNotifierAuthenticationBase):
     client_key: str
     """String containing the client certificate private key."""
 
+
 class MqttNotifierBindingObject(BaseModel):
-    """Domain model representing an MQTT notifier binding.
-    
-    Contains Details of MQTT binding for messaging protocol support"""
+    """
+    Domain model representing an MQTT notifier binding.
+
+    Contains Details of MQTT binding for messaging protocol support
+    """
 
     uris: list[str] = Field(alias="URIS")
     """URIs for connection to MQTT broker."""
@@ -62,6 +71,7 @@ class MqttNotifierBindingObject(BaseModel):
 
     authentication: MqttNotifierAuthenticationBase
     """Authentication method supported for connection to MQTT broker."""
+
 
 class MqttNotifierTopicOperations(BaseModel):
     """Contains topic operations of a topic in the MQTT notifier."""
@@ -77,7 +87,8 @@ class MqttNotifierTopicOperations(BaseModel):
 
     all: str = Field(alias="ALL")
     """'Topic path for ALL operations."""
-    
+
+
 class MqttTopicInformation(BaseModel):
     """Contains topic information of the MQTT notifier."""
 

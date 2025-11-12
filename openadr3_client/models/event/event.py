@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from datetime import timedelta
+from datetime import timedelta  # noqa: TC003
 from typing import final
 
 from pydantic import AwareDatetime, Field, NonNegativeInt, field_validator
@@ -46,10 +46,10 @@ class Event(ABC, OpenADRResource):
 
     duration: timedelta | None = None
     """The duration of the event.
-    
+
     The event property 'duration' may be used to augment intervalPeriod definitions to shorten or lengthen the temporal span of an event.
     For example, event.duration = “P9999Y” indicates the set of intervals repeat indefinitely.
-    
+
     For additional information related to the usage of this field
     consult the OpenADR 3.1.0 user guide."""
 

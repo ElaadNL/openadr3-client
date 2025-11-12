@@ -1,8 +1,8 @@
-"""Implements the communication with the notifiers interface of an OpenADR 3 VTN.
+"""
+Implements the communication with the notifiers interface of an OpenADR 3 VTN.
 
-Notifiers was introduced in OpenADR 3.1, VTN implementations implementing earlier versions will not respond to this interface."""
-
-from pydantic.type_adapter import TypeAdapter
+Notifiers was introduced in OpenADR 3.1, VTN implementations implementing earlier versions will not respond to this interface.
+"""
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
 from openadr3_client._vtn.http.http_interface import AuthenticatedHttpInterface
@@ -11,9 +11,11 @@ from openadr3_client._vtn.interfaces.notifiers import (
     ReadOnlyNotifierInterface,
 )
 from openadr3_client.logging import logger
-from openadr3_client.models.notifiers.mqtt.mqtt import MqttNotifierBindingObject, MqttTopicInformation
+from openadr3_client.models.notifiers.mqtt.mqtt import MqttTopicInformation
+from openadr3_client.models.notifiers.response import NotifierDetails
 
 base_prefix = "notifiers"
+
 
 class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNotifierInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the notifiers HTTP interface of an OpenADR 3 VTN."""
@@ -22,7 +24,8 @@ class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNoti
         super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
     def _get_topic_information(self, request_name: str, url_appendix: str) -> MqttTopicInformation:
-        """Retrieve topic information from the VTN.
+        """
+        Retrieve topic information from the VTN.
 
         Args:
             request_name (str): The request name, used for logging purposes.
@@ -31,6 +34,7 @@ class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNoti
 
         Returns:
             MqttTopicInformation: MQTT topic information retrieved from the VTN.
+
         """
         logger.debug(f"Notifiers - Performing {request_name} request")
 
@@ -39,13 +43,13 @@ class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNoti
 
         return MqttTopicInformation.model_validate(response.json())
 
-    def get_notifiers(self) -> MqttNotifierBindingObject:
-        logger.debug(f"Notifiers - Performing get_notifiers request")
+    def get_notifiers(self) -> NotifierDetails:
+        logger.debug("Notifiers - Performing get_notifiers request")
 
         response = self.session.get(f"{self.base_url}/{base_prefix}")
         response.raise_for_status()
 
-        return MqttNotifierBindingObject.model_validate(response.json())
+        return NotifierDetails.model_validate(response.json())
 
     def get_program_topics(self) -> MqttTopicInformation:
         return self._get_topic_information("get_program_topics", "mqtt/topics/programs")
@@ -82,7 +86,3 @@ class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNoti
 
     def get_resource_topics_for_ven(self, ven_id: str) -> MqttTopicInformation:
         return self._get_topic_information("get_program_topics", f"mqtt/topics/vens/{ven_id}/resources")
-    
-
-
-    

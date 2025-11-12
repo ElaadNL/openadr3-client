@@ -27,31 +27,38 @@ class Ven(ABC, OpenADRResource):
         """Helper method to get the name field of the model."""
         return self.ven_name
 
+
+class NewVen(Ven, CreationGuarded):
+    """Base class representing a new VEN that was not yet pushed to the VTN."""
+
+
 @final
-class NewVenVenRequest(Ven, CreationGuarded):
+class NewVenVenRequest(NewVen):
     """Class representing a new ven created by a VEN not yet pushed to the VTN."""
 
     object_type: Literal["VEN_VEN_REQUEST"] = Field(default="VEN_VEN_REQUEST")
     """The object type."""
 
+
 @final
-class NewVenBlRequest(Ven, CreationGuarded):
+class NewVenBlRequest(NewVen):
     """Class representing a new ven created by a BL not yet pushed to the VTN."""
 
     targets: tuple[str, ...] | None = None
     """The targets of the ven object.
-    
+
     Can only be assigned by a BL client, a VTN will reject or ignore targets provided by a VEN client.
     """
 
-    client_id: str  = Field(alias="clientID", min_length=1, max_length=128)
+    client_id: str = Field(alias="clientID", min_length=1, max_length=128)
     """Client ID of the VEN.
-    
+
     MUST be assigned by a BL client, a VTN will reject or ignore the client ID provided by a VEN client.
     """
 
     object_type: Literal["BL_VEN_REQUEST"] = Field(default="BL_VEN_REQUEST")
     """The object type."""
+
 
 class VenUpdate(ABC, BaseModel):
     """Class representing an update to a ven by a VEN client."""
@@ -65,6 +72,7 @@ class VenUpdate(ABC, BaseModel):
     resources: tuple[ExistingResource, ...] | None = None
     """The resources of the ven object."""
 
+
 @final
 class VenUpdateVenRequest(VenUpdate):
     """Class representing an update to a ven by a VEN client."""
@@ -72,18 +80,19 @@ class VenUpdateVenRequest(VenUpdate):
     object_type: Literal["VEN_VEN_REQUEST"] = Field(default="VEN_VEN_REQUEST")
     """The object type."""
 
+
 @final
 class VenUpdateBlRequest(VenUpdate):
     """Class representing an update to a ven by a BL client."""
 
     targets: tuple[str, ...] | None = None
     """The targets of the ven object.
-    
+
     Can only be assigned by a BL client, a VTN will reject or ignore targets provided by a VEN client."""
 
     client_id: str = Field(alias="clientID", min_length=1, max_length=128)
     """Client ID of the VEN.
-    
+
     MUST be assigned by a BL client, a VTN will reject or ignore the client ID provided by a VEN client.
     """
 
@@ -99,6 +108,18 @@ class ServerVen(Ven):
 
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
+
+    targets: tuple[str, ...] | None = None
+    """The targets of the ven object.
+
+    Can only be assigned by a BL client, a VTN will reject or ignore targets provided by a VEN client.
+    """
+
+    client_id: str = Field(alias="clientID", min_length=1, max_length=128)
+    """Client ID of the VEN.
+
+    MUST be assigned by a BL client, a VTN will reject or ignore the client ID provided by a VEN client.
+    """
 
 
 @final

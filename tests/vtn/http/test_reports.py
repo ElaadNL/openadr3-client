@@ -150,10 +150,7 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN with the same name as the client_name
-            ven = NewVenVenRequest(
-                ven_name="test-client",
-                targets=(),
-            )
+            ven = NewVenVenRequest(ven_name="test-client")
             created_ven = vens_interface.create_ven(new_ven=ven)
             assert created_ven.id is not None, "VEN should be created successfully"
 
@@ -280,14 +277,8 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
 
         try:
             # Create two VENs
-            ven1 = NewVenVenRequest(
-                ven_name="test-client-1",
-                targets=(),
-            )
-            ven2 = NewVenVenRequest(
-                ven_name="test-client-2",
-                targets=(),
-            )
+            ven1 = NewVenVenRequest(ven_name="test-client-1")
+            ven2 = NewVenVenRequest(ven_name="test-client-2")
             created_ven1 = vens_interface.create_ven(new_ven=ven1)
             created_ven2 = vens_interface.create_ven(new_ven=ven2)
 
@@ -427,10 +418,7 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN
-            ven = NewVenVenRequest(
-                ven_name="test-client",
-                targets=(),
-            )
+            ven = NewVenVenRequest(ven_name="test-client")
             created_ven = vens_interface.create_ven(new_ven=ven)
             assert created_ven.id is not None, "VEN should be created successfully"
 
@@ -540,7 +528,6 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
             # Create a VEN
             ven = NewVenVenRequest(
                 ven_name="test-client",
-                targets=(),
             )
             created_ven = vens_interface.create_ven(new_ven=ven)
             assert created_ven.id is not None, "VEN should be created successfully"

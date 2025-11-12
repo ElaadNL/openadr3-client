@@ -23,7 +23,7 @@ class BusinessLogicClient:
         reports: ReadOnlyReportsInterface,
         vens: ReadWriteVensInterface,
         subscriptions: ReadOnlySubscriptionsInterface,
-        notifiers: ReadOnlyNotifierInterface
+        notifiers: ReadOnlyNotifierInterface,
     ) -> None:
         """
         Initializes the business logic client.
@@ -63,7 +63,7 @@ class BusinessLogicClient:
     @property
     def subscriptions(self) -> ReadOnlySubscriptionsInterface:
         return self._subscriptions
-    
+
     @property
     def notifiers(self) -> ReadOnlyNotifierInterface:
         return self._notifiers

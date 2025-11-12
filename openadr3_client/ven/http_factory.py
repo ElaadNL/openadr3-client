@@ -84,9 +84,5 @@ class VirtualEndNodeHttpClientFactory:
                 config=config,
                 verify_tls_certificate=verify_vtn_tls_certificate,
             ),
-            notifiers=NotifiersReadOnlyHttpInterface(
-                base_url=vtn_base_url,
-                config=config,
-                verify_tls_certificate=verify_vtn_tls_certificate
-            )
+            notifiers=NotifiersReadOnlyHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
         )

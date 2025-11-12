@@ -157,8 +157,9 @@ True if report should aggregate results from all targeted resources. False if re
     """Number of times to repeat report. 1 indicates generate one report. -1 indicates repeat indefinitely."""
     report_intervals: ReportIntervals = ReportIntervals.INTERVALS
     """Indicates VEN report interval options. See User Guide.
-    
+
     Defaults to INTERVALS."""
+
 
 @final
 class ReportPayload[T: AllowedPayloadInputs](_BasePayload[ReportPayloadType, T]):

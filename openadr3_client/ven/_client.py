@@ -23,7 +23,7 @@ class VirtualEndNodeClient:
         reports: ReadWriteReportsInterface,
         vens: ReadWriteVensInterface,
         subscriptions: ReadWriteSubscriptionsInterface,
-        notifiers: ReadOnlyNotifierInterface
+        notifiers: ReadOnlyNotifierInterface,
     ) -> None:
         """
         Initializes the VEN client.
@@ -35,6 +35,7 @@ class VirtualEndNodeClient:
             vens (ReadWriteVensInterface): The VENs interface.
             subscriptions (ReadWriteSubscriptionsInterface): The subscriptions interface.
             notifiers (ReadOnlyNotifierInterface): The notifiers interface.
+
         """
         self._events = events
         self._programs = programs
