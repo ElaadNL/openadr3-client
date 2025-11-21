@@ -41,7 +41,7 @@ class Event(ABC, OpenADRResource):
     interval_period: IntervalPeriod | None = None
     """The interval period of the event."""
 
-    intervals: tuple[Interval[EventPayload], ...]
+    intervals: tuple[Interval[EventPayload], ...] | None = None
     """The intervals of the event."""
 
     duration: timedelta | None = None
@@ -88,21 +88,6 @@ class EventUpdate(BaseModel):
 @final
 class NewEvent(Event, CreationGuarded):
     """Class representing a new event not yet pushed to the VTN."""
-
-    @field_validator("intervals", mode="after")
-    @classmethod
-    def atleast_one_interval(cls, intervals: tuple[Interval, ...]) -> tuple[Interval, ...]:
-        """
-        Validates that an event has at least one interval defined.
-
-        Args:
-            intervals (tuple[Interval, ...]): The intervals of the event.
-
-        """
-        if len(intervals) == 0:
-            err_msg = "NewEvent must contain at least one interval."
-            raise ValueError(err_msg)
-        return intervals
 
 
 class ServerEvent(Event):
