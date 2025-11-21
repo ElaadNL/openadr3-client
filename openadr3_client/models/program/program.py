@@ -10,6 +10,7 @@ from pydantic import AnyUrl, AwareDatetime, Field, model_validator
 from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client.models._base_model import BaseModel
+from openadr3_client.models.common.attribute import Attribute
 from openadr3_client.models.common.creation_guarded import CreationGuarded
 from openadr3_client.models.common.interval_period import IntervalPeriod
 from openadr3_client.models.event.event_payload import EventPayloadDescriptor
@@ -73,6 +74,9 @@ class Program(ABC, OpenADRResource):
 
     targets: tuple[str, ...] | None = None
     """The targets of the program."""
+
+    attributes: tuple[Attribute, ...] | None = None
+    """The attributes of the program."""
 
     @property
     def name(self) -> str:
