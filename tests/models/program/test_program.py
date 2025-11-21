@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 from pydantic_extra_types.country import CountryAlpha2
 
-from openadr3_client.models.program.program import NewProgram
+from openadr3_client.models.oadr310.program.program import NewProgram
 
 
 def test_new_program_creation_guard() -> None:

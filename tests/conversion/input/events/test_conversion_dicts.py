@@ -9,9 +9,9 @@ from openadr3_client.conversion.input.events.dict import (
     DictEventIntervalConverter,
     EventIntervalDictInput,
 )
-from openadr3_client.models.common.interval import Interval
-from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.event.event_payload import EventPayload, EventPayloadType
+from openadr3_client.models.oadr310.common.interval import Interval
+from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadType
 
 
 def get_inputs() -> list[list[EventIntervalDictInput]]:

@@ -5,9 +5,9 @@ import string
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.common.interval import Interval
-from openadr3_client.models.report.report import NewReport, ReportResource
-from openadr3_client.models.report.report_payload import ReportPayload, ReportPayloadType
+from openadr3_client.models.oadr310.common.interval import Interval
+from openadr3_client.models.oadr310.report.report import NewReport, ReportResource
+from openadr3_client.models.oadr310.report.report_payload import ReportPayload, ReportPayloadType
 
 
 def test_new_report_creation_guard() -> None:

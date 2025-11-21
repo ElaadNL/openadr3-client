@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import TypedDict
 
 from openadr3_client.models._base_model import BaseModel
-from openadr3_client.models.common.payload import AllowedPayloadInputs
+from openadr3_client.models.oadr310.common.payload import AllowedPayloadInputs
 
 
 class _EventIntervalDictRequiredFields(TypedDict):

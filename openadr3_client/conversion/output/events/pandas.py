@@ -10,8 +10,8 @@ except ImportError as e:
 from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema
 from openadr3_client.conversion.output._base_converter import BaseOutputConverter
 from openadr3_client.logging import logger
-from openadr3_client.models.common.interval import Interval
-from openadr3_client.models.event.event_payload import EventPayload
+from openadr3_client.models.oadr310.common.interval import Interval
+from openadr3_client.models.oadr310.event.event_payload import EventPayload
 
 
 @final

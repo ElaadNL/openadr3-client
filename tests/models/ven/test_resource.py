@@ -5,7 +5,7 @@ import string
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.ven.resource import NewResource
+from openadr3_client.models.oadr310.ven.resource import NewResource
 
 
 def test_new_resource_creation_guard() -> None:

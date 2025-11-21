@@ -1,13 +1,14 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.auth import AuthReadOnlyInterface
-from openadr3_client._vtn.http.events import EventsReadOnlyHttpInterface
-from openadr3_client._vtn.http.notifiers import NotifiersReadOnlyHttpInterface
-from openadr3_client._vtn.http.programs import ProgramsReadOnlyHttpInterface
-from openadr3_client._vtn.http.reports import ReportsHttpInterface
-from openadr3_client._vtn.http.subscriptions import SubscriptionsHttpInterface
-from openadr3_client._vtn.http.vens import VensHttpInterface
+from openadr3_client._vtn.oadr310.http.auth import AuthReadOnlyInterface
+from openadr3_client._vtn.oadr310.http.events import EventsReadOnlyHttpInterface
+from openadr3_client._vtn.oadr310.http.notifiers import NotifiersReadOnlyHttpInterface
+from openadr3_client._vtn.oadr310.http.programs import ProgramsReadOnlyHttpInterface
+from openadr3_client._vtn.oadr310.http.reports import ReportsHttpInterface
+from openadr3_client._vtn.oadr310.http.resources import ResourcesHttpInterface
+from openadr3_client._vtn.oadr310.http.subscriptions import SubscriptionsHttpInterface
+from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
 from openadr3_client.logging import logger
 from openadr3_client.ven._client import VirtualEndNodeClient
 
@@ -85,4 +86,5 @@ class VirtualEndNodeHttpClientFactory:
                 verify_tls_certificate=verify_vtn_tls_certificate,
             ),
             notifiers=NotifiersReadOnlyHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
+            resources=ResourcesHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
         )

@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 from pydantic_core import InitErrorDetails, PydanticCustomError
 
-from openadr3_client.models.ven.ven import NewVenVenRequest, Ven
+from openadr3_client.models.oadr310.ven.ven import NewVenVenRequest, Ven
 from openadr3_client.plugin import ValidatorPlugin, ValidatorPluginRegistry
 
 

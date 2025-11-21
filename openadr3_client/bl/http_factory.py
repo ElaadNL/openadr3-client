@@ -1,13 +1,14 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.http.auth import AuthReadOnlyInterface
-from openadr3_client._vtn.http.events import EventsHttpInterface
-from openadr3_client._vtn.http.notifiers import NotifiersReadOnlyHttpInterface
-from openadr3_client._vtn.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.http.reports import ReportsReadOnlyHttpInterface
-from openadr3_client._vtn.http.subscriptions import SubscriptionsReadOnlyHttpInterface
-from openadr3_client._vtn.http.vens import VensHttpInterface
+from openadr3_client._vtn.oadr310.http.auth import AuthReadOnlyInterface
+from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
+from openadr3_client._vtn.oadr310.http.notifiers import NotifiersReadOnlyHttpInterface
+from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
+from openadr3_client._vtn.oadr310.http.reports import ReportsReadOnlyHttpInterface
+from openadr3_client._vtn.oadr310.http.resources import ResourcesHttpInterface
+from openadr3_client._vtn.oadr310.http.subscriptions import SubscriptionsReadOnlyHttpInterface
+from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
 from openadr3_client.bl._client import BusinessLogicClient
 from openadr3_client.logging import logger
 
@@ -88,4 +89,5 @@ class BusinessLogicHttpClientFactory:
                 verify_tls_certificate=verify_vtn_tls_certificate,
             ),
             notifiers=NotifiersReadOnlyHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
+            resources=ResourcesHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
         )

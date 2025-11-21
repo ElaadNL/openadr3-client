@@ -3,8 +3,8 @@ from typing import final
 
 from openadr3_client.conversion.common.dict import EventIntervalDictInput
 from openadr3_client.conversion.output._base_converter import BaseOutputConverter
-from openadr3_client.models.common.interval import Interval
-from openadr3_client.models.event.event_payload import EventPayload
+from openadr3_client.models.oadr310.common.interval import Interval
+from openadr3_client.models.oadr310.event.event_payload import EventPayload
 
 
 @final

@@ -8,12 +8,12 @@ from pydantic_extra_types.country import CountryAlpha2
 from pydantic_extra_types.currency_code import ISO4217
 from requests.exceptions import HTTPError
 
-from openadr3_client._vtn.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.common.interval_period import IntervalPeriod
-from openadr3_client.models.common.unit import Unit
-from openadr3_client.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.program.program import ExistingProgram, NewProgram, ProgramDescription, ProgramUpdate
+from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
+from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr310.common.unit import Unit
+from openadr3_client.models.oadr310.event.event_payload import EventPayloadDescriptor, EventPayloadType
+from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram, ProgramDescription, ProgramUpdate
 from tests.conftest import IntegrationTestVTNClient
 
 

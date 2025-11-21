@@ -5,11 +5,11 @@ from datetime import UTC, datetime
 import pytest
 from requests import HTTPError
 
-from openadr3_client._vtn.http.vens import VensHttpInterface
-from openadr3_client._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.common.attribute import Attribute
-from openadr3_client.models.ven.resource import ExistingResource, NewResource, ResourceUpdate
-from openadr3_client.models.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest, VenUpdate
+from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
+from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.oadr310.common.attribute import Attribute
+from openadr3_client.models.oadr310.ven.resource import ExistingResource, NewResource, ResourceUpdate
+from openadr3_client.models.oadr310.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest, VenUpdate
 from tests.conftest import IntegrationTestVTNClient
 
 

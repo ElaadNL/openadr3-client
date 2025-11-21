@@ -1,11 +1,12 @@
 from typing import final
 
-from openadr3_client._vtn.interfaces.events import ReadWriteEventsInterface
-from openadr3_client._vtn.interfaces.notifiers import ReadOnlyNotifierInterface
-from openadr3_client._vtn.interfaces.programs import ReadWriteProgramsInterface
-from openadr3_client._vtn.interfaces.reports import ReadOnlyReportsInterface
-from openadr3_client._vtn.interfaces.subscriptions import ReadOnlySubscriptionsInterface
-from openadr3_client._vtn.interfaces.vens import ReadWriteVensInterface
+from openadr3_client._vtn.oadr310.interfaces.events import ReadWriteEventsInterface
+from openadr3_client._vtn.oadr310.interfaces.notifiers import ReadOnlyNotifierInterface
+from openadr3_client._vtn.oadr310.interfaces.programs import ReadWriteProgramsInterface
+from openadr3_client._vtn.oadr310.interfaces.reports import ReadOnlyReportsInterface
+from openadr3_client._vtn.oadr310.interfaces.resources import ReadWriteResourceInterface
+from openadr3_client._vtn.oadr310.interfaces.subscriptions import ReadOnlySubscriptionsInterface
+from openadr3_client._vtn.oadr310.interfaces.vens import ReadWriteVensInterface
 
 
 @final
@@ -24,6 +25,7 @@ class BusinessLogicClient:
         vens: ReadWriteVensInterface,
         subscriptions: ReadOnlySubscriptionsInterface,
         notifiers: ReadOnlyNotifierInterface,
+        resources: ReadWriteResourceInterface,
     ) -> None:
         """
         Initializes the business logic client.
@@ -35,6 +37,7 @@ class BusinessLogicClient:
             vens (ReadOnlyVensInterface): The VENs interface.
             subscriptions (ReadOnlySubscriptionsInterface): The subscriptions interface.
             notifiers (ReadOnlyNotifierInterface): The notifier interface.
+            resources (ReadWriteEventsInterface): The resources interface.
 
         """
         self._events = events
@@ -43,6 +46,7 @@ class BusinessLogicClient:
         self._vens = vens
         self._subscriptions = subscriptions
         self._notifiers = notifiers
+        self._resources = resources
 
     @property
     def events(self) -> ReadWriteEventsInterface:
@@ -67,3 +71,7 @@ class BusinessLogicClient:
     @property
     def notifiers(self) -> ReadOnlyNotifierInterface:
         return self._notifiers
+
+    @property
+    def resources(self) -> ReadWriteResourceInterface:
+        return self._resources
