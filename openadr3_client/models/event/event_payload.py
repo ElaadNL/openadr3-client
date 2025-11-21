@@ -14,6 +14,7 @@ class EventPayloadType(str, Enum):
     """Enumeration of the event payload types of OpenADR 3."""
 
     SIMPLE = "SIMPLE"
+    PRICE_ALTERNATE = "PRICE_ALTERNATE"
     PRICE = "PRICE"
     CHARGE_STATE_SETPOINT = "CHARGE_STATE_SETPOINT"
     DISPATCH_SETPOINT = "DISPATCH_SETPOINT"
