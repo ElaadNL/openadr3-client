@@ -30,7 +30,6 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, Authent
     def get_subscriptions(
         self,
         pagination: PaginationFilter | None,
-        target: TargetFilter | None,
         program_id: str | None,
         client_name: str | None,
         objects: tuple[Object, ...] | None,
@@ -50,9 +49,6 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, Authent
         # Convert the filters to dictionaries and union them. No key clashing can happen, as the properties
         # of the filters are unique.
         query_params: dict = {}
-
-        if target:
-            query_params |= target.model_dump(by_alias=True, mode="json")
 
         if pagination:
             query_params |= pagination.model_dump(by_alias=True, mode="json")
