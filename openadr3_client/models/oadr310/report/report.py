@@ -48,9 +48,6 @@ class ReportResource(ValidatableModel):
 class Report(ABC, OpenADRResource):
     """Base class for reports."""
 
-    program_id: str = Field(alias="programID", min_length=1, max_length=128)
-    """The program this report is related to."""
-
     event_id: str = Field(alias="eventID", min_length=1, max_length=128)
     """The event this report is related to."""
 
@@ -95,9 +92,6 @@ class NewReport(Report, CreationGuarded):
 @final
 class ReportUpdate(BaseModel):
     """Class representing an update to a report."""
-
-    program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
-    """The program this report is related to."""
 
     event_id: str | None = Field(alias="eventID", default=None, min_length=1, max_length=128)
     """The event this report is related to."""
