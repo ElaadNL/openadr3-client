@@ -6,6 +6,7 @@ class Unit(str, Enum):
     """Enumeration of the units allowed by OpenADR 3."""
 
     KWH = "KWH"
+    Therms = "THERMS"
     GHG = "GHG"
     Volts = "VOLTS"
     Amps = "AMPS"
