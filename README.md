@@ -45,7 +45,7 @@ bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
     client_id="your_client_id",
     client_secret="your_client_secret", 
     token_url="https://auth.example.com/token",
-    scopes=["read_all", "write_events", "write_programs"]  # Optional: specify required scopes
+    scopes=["read_all", "read_bl", "write_events", "write_programs"]  # Optional: specify required scopes
 )
 
 # Create a new program (NewProgram allows for more properties, this is just a simple example).
