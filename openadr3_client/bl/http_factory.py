@@ -1,16 +1,9 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
-from openadr3_client._vtn.oadr310.http.auth import AuthReadOnlyInterface
-from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
-from openadr3_client._vtn.oadr310.http.notifiers import NotifiersReadOnlyHttpInterface
-from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.oadr310.http.reports import ReportsReadOnlyHttpInterface
-from openadr3_client._vtn.oadr310.http.resources import ResourcesHttpInterface
-from openadr3_client._vtn.oadr310.http.subscriptions import SubscriptionsReadOnlyHttpInterface
-from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
-from openadr3_client.bl._client import BusinessLogicClient
+from openadr3_client.bl._client import BaseBusinessLogicClient
 from openadr3_client.logging import logger
+from openadr3_client.version import OADRVersion
 
 
 @final
@@ -27,7 +20,8 @@ class BusinessLogicHttpClientFactory:
         audience: str | None = None,
         *,
         verify_vtn_tls_certificate: bool | str = True,
-    ) -> BusinessLogicClient:
+        version: OADRVersion = OADRVersion.OADR_310,
+    ) -> BaseBusinessLogicClient:
         """
         Creates a business logic client which uses the HTTP interface of a VTN.
 
@@ -43,11 +37,17 @@ class BusinessLogicHttpClientFactory:
             Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
             If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
             PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            version (OADRVersion): The OpenADR version to use. Defaults to OADR_310.
+
+        Returns:
+            BaseBusinessLogicClient: The business logic client instance.
 
         """
-        # TODO: Likely not the best place to do this, but works for the # noqa: FIX002, TD003, TD002
-        # initial migration steps. Reconsider and clean up when all changes are implemented.
-        if token_url is None:
+        # Starting with OpenADR 3.1.0, the token URL can be discovered from the VTN through the discovery endpoint.
+        # This is only done if the token_url has not been manually provided.
+        if version != OADRVersion.OADR_301 and token_url is None:
+            from openadr3_client._vtn.oadr310.http.auth import AuthReadOnlyInterface  # noqa: PLC0415
+
             # If token URL is None, discover the token URL from the VTN through the discovery endpoint.
             logger.info("Token URL not provided to VEN client factory, calling VTN discovery endpoint to fetch token URL...")
             auth_interface = AuthReadOnlyInterface(base_url=vtn_base_url, verify_tls_certificate=verify_vtn_tls_certificate)
@@ -62,32 +62,19 @@ class BusinessLogicHttpClientFactory:
             audience=audience,
         )
 
-        return BusinessLogicClient(
-            events=EventsHttpInterface(
-                base_url=vtn_base_url,
+        if version == OADRVersion.OADR_310:
+            from openadr3_client.bl.oadr310.client import get_oadr310_bl_client  # noqa: PLC0415
+
+            return get_oadr310_bl_client(
+                vtn_base_url=vtn_base_url,
                 config=config,
-                verify_tls_certificate=verify_vtn_tls_certificate,
-            ),
-            programs=ProgramsHttpInterface(
-                base_url=vtn_base_url,
-                config=config,
-                verify_tls_certificate=verify_vtn_tls_certificate,
-            ),
-            reports=ReportsReadOnlyHttpInterface(
-                base_url=vtn_base_url,
-                config=config,
-                verify_tls_certificate=verify_vtn_tls_certificate,
-            ),
-            vens=VensHttpInterface(
-                base_url=vtn_base_url,
-                config=config,
-                verify_tls_certificate=verify_vtn_tls_certificate,
-            ),
-            subscriptions=SubscriptionsReadOnlyHttpInterface(
-                base_url=vtn_base_url,
-                config=config,
-                verify_tls_certificate=verify_vtn_tls_certificate,
-            ),
-            notifiers=NotifiersReadOnlyHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
-            resources=ResourcesHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
+                verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            )
+
+        from openadr3_client.bl.oadr301.client import get_oadr301_bl_client  # noqa: PLC0415
+
+        return get_oadr301_bl_client(
+            vtn_base_url=vtn_base_url,
+            config=config,
+            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
         )

@@ -3,18 +3,17 @@
 from __future__ import annotations
 
 from abc import ABC
-from datetime import timedelta  # noqa: TC003
 from typing import final
 
-from pydantic import AwareDatetime, Field, NonNegativeInt
+from pydantic import AwareDatetime, Field, NonNegativeInt, field_validator
 
 from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.model import OpenADRResource
-from openadr3_client.models.oadr310.common.creation_guarded import CreationGuarded
-from openadr3_client.models.oadr310.common.interval import Interval
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor
-from openadr3_client.models.oadr310.report.report_payload import ReportDescriptor
+from openadr3_client.models.oadr301.common.creation_guarded import CreationGuarded
+from openadr3_client.models.oadr301.common.interval import Interval
+from openadr3_client.models.oadr301.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr301.common.target import Target
+from openadr3_client.models.oadr301.event.event_payload import EventPayload, EventPayloadDescriptor
 
 
 class Event(ABC, OpenADRResource):
@@ -29,29 +28,17 @@ class Event(ABC, OpenADRResource):
     priority: NonNegativeInt | None = None
     """The priority of the event, less is higher priority."""
 
-    targets: tuple[str, ...] | None = None
+    targets: tuple[Target, ...] | None = None
     """The targets of the event."""
 
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The payload descriptors of the event."""
 
-    report_descriptors: tuple[ReportDescriptor, ...] | None = None
-    """The report descriptors of the event."""
-
     interval_period: IntervalPeriod | None = None
     """The interval period of the event."""
 
-    intervals: tuple[Interval[EventPayload], ...] | None = None
+    intervals: tuple[Interval[EventPayload], ...]
     """The intervals of the event."""
-
-    duration: timedelta | None = None
-    """The duration of the event.
-
-    The event property 'duration' may be used to augment intervalPeriod definitions to shorten or lengthen the temporal span of an event.
-    For example, event.duration = “P9999Y” indicates the set of intervals repeat indefinitely.
-
-    For additional information related to the usage of this field
-    consult the OpenADR 3.1.0 user guide."""
 
     @property
     def name(self) -> str | None:
@@ -72,7 +59,7 @@ class EventUpdate(BaseModel):
     priority: NonNegativeInt | None = None
     """The priority of the event, less is higher priority."""
 
-    targets: tuple[str, ...] | None = None
+    targets: tuple[Target, ...] | None = None
     """The targets of the event."""
 
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
@@ -88,6 +75,21 @@ class EventUpdate(BaseModel):
 @final
 class NewEvent(Event, CreationGuarded):
     """Class representing a new event not yet pushed to the VTN."""
+
+    @field_validator("intervals", mode="after")
+    @classmethod
+    def atleast_one_interval(cls, intervals: tuple[Interval, ...]) -> tuple[Interval, ...]:
+        """
+        Validates that an event has at least one interval defined.
+
+        Args:
+            intervals (tuple[Interval, ...]): The intervals of the event.
+
+        """
+        if len(intervals) == 0:
+            err_msg = "NewEvent must contain at least one interval."
+            raise ValueError(err_msg)
+        return intervals
 
 
 class ServerEvent(Event):
