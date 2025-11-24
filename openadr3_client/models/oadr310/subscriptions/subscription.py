@@ -88,7 +88,7 @@ class Subscription(ABC, OpenADRResource):
     client_name: str = Field(min_length=1, max_length=128)
     """The client name of the subscription object."""
 
-    program_id: str = Field(alias="programID", min_length=1, max_length=128)
+    program_id: str | None = Field(alias="programID", min_length=1, max_length=128, default=None)
     """The program id of the subscription object."""
 
     object_operations: tuple[ObjectOperation, ...]
