@@ -59,7 +59,7 @@ class MQTTClient(Client):
         self.on_connect = lambda _client, _userdata, _flags, rc, _props: logger.info(f"Connected to broker with result code '{rc}'")
         self.on_connect_fail = lambda _client, _userdata: logger.warning("Failed to connect to broker")
         self.on_publish = lambda _client, _userdata, mid, a, _b: logger.debug(f"Published message with mid: {mid}. Reasoncode {a}")
-        self.on_disconnect = lambda _client, _userdata, _flags, _rc, _props: logger.info("Disconnected from MQTT broker")
+        self.on_disconnect = lambda client, userdata, rc, properties=None: logger.info("Disconnected from MQTT broker")  # noqa: ARG005
         self.on_subscribe = lambda _client, _userdata, mid, granted_qos, _properties: logger.debug(f"Subscribed to topic with mid: {mid} and QoS: {granted_qos}")
         self.on_unsubscribe = lambda _client, _userdata, mid, granted_qos, _properties: logger.debug(f"Unsubscribed from topic with mid: {mid} and QoS: {granted_qos}")
 
@@ -67,9 +67,9 @@ class MQTTClient(Client):
         # Capture any existing callback and call it as normal.
         existing_cb = self.on_disconnect
 
-        def _on_disconnect_handler(client, userdata, flags, rc, props) -> None:  # noqa: ANN001
+        def _on_disconnect_handler(client, userdata, rc, properties=None):  # noqa: ANN001, ANN202
             if existing_cb is not None:
-                existing_cb(client, userdata, flags, rc, props)
+                existing_cb(client, userdata, rc, properties)
 
             # Handle token refresh callback only on unexpected disconnect.
             if rc != 0:
@@ -79,7 +79,10 @@ class MQTTClient(Client):
 
     def _refresh_token_on_disconnect(self) -> None:
         logger.debug("MQTTClient disconnected with non zero exit code, refreshing token and reconnecting.")
-        self.username_pw_set(password=self._oauth_token_manager.get_access_token())
+        if self._oauth_token_manager is None:
+            err_msg = "MQTTClient - oauth_token_manager is required to refresh access token on disconnect."
+            raise ValueError(err_msg)
+        self.username_pw_set(username=None, password=self._oauth_token_manager.get_access_token())
         try:
             self.reconnect()
         except Exception:  # noqa: BLE001

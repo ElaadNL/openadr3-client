@@ -25,7 +25,7 @@ class _BearerAuth(AuthBase):
         return r
 
 
-class _BearerAuthenticatedSession(Session):
+class BearerAuthenticatedSession(Session):
     """Session that includes a bearer token in all requests made through it."""
 
     def __init__(self, token_manager: OAuthTokenManager) -> None:

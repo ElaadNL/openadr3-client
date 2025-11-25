@@ -177,6 +177,7 @@ def get_oadr310_ven_client(
 
     """
     return VirtualEndNodeClient(
+        version=OADRVersion.OADR_310,
         auth=AuthReadOnlyInterface(
             base_url=vtn_base_url,
             verify_tls_certificate=verify_vtn_tls_certificate,

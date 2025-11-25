@@ -6,19 +6,19 @@ import pytest
 from pydantic_extra_types.currency_code import ISO4217
 from requests import HTTPError
 
-from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
-from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.oadr310.http.reports import ReportsHttpInterface
-from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
-from openadr3_client.models.oadr310.common.interval import Interval
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.common.unit import Unit
-from openadr3_client.models.oadr310.event.event import NewEvent
-from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.oadr310.program.program import NewProgram
-from openadr3_client.models.oadr310.report.report import ExistingReport, NewReport, ReportResource, ReportUpdate
-from openadr3_client.models.oadr310.report.report_payload import ReportPayload, ReportPayloadType
-from openadr3_client.models.oadr310.ven.ven import NewVenVenRequest
+from openadr3_client._vtn.oadr301.http.events import EventsHttpInterface
+from openadr3_client._vtn.oadr301.http.programs import ProgramsHttpInterface
+from openadr3_client._vtn.oadr301.http.reports import ReportsHttpInterface
+from openadr3_client._vtn.oadr301.http.vens import VensHttpInterface
+from openadr3_client.models.oadr301.common.interval import Interval
+from openadr3_client.models.oadr301.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr301.common.unit import Unit
+from openadr3_client.models.oadr301.event.event import NewEvent
+from openadr3_client.models.oadr301.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
+from openadr3_client.models.oadr301.program.program import NewProgram
+from openadr3_client.models.oadr301.report.report import ExistingReport, NewReport, ReportResource, ReportUpdate
+from openadr3_client.models.oadr301.report.report_payload import ReportPayload, ReportPayloadType
+from openadr3_client.models.oadr301.ven.ven import NewVen
 from tests.conftest import IntegrationTestVTNClient
 
 
@@ -150,7 +150,7 @@ def test_create_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN with the same name as the client_name
-            ven = NewVenVenRequest(ven_name="test-client")
+            ven = NewVen(ven_name="test-client")
             created_ven = vens_interface.create_ven(new_ven=ven)
             assert created_ven.id is not None, "VEN should be created successfully"
 
@@ -277,8 +277,8 @@ def test_get_reports_with_parameters(integration_test_vtn_client: IntegrationTes
 
         try:
             # Create two VENs
-            ven1 = NewVenVenRequest(ven_name="test-client-1")
-            ven2 = NewVenVenRequest(ven_name="test-client-2")
+            ven1 = NewVen(ven_name="test-client-1")
+            ven2 = NewVen(ven_name="test-client-2")
             created_ven1 = vens_interface.create_ven(new_ven=ven1)
             created_ven2 = vens_interface.create_ven(new_ven=ven2)
 
@@ -418,7 +418,7 @@ def test_delete_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN
-            ven = NewVenVenRequest(ven_name="test-client")
+            ven = NewVen(ven_name="test-client")
             created_ven = vens_interface.create_ven(new_ven=ven)
             assert created_ven.id is not None, "VEN should be created successfully"
 
@@ -526,7 +526,7 @@ def test_update_report(integration_test_vtn_client: IntegrationTestVTNClient) ->
 
         try:
             # Create a VEN
-            ven = NewVenVenRequest(
+            ven = NewVen(
                 ven_name="test-client",
             )
             created_ven = vens_interface.create_ven(new_ven=ven)

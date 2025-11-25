@@ -1,5 +1,5 @@
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
-from openadr3_client._vtn.oadr301.http.common._authenticated_session import _BearerAuthenticatedSession
+from openadr3_client._vtn.oadr301.http.common._authenticated_session import BearerAuthenticatedSession
 
 
 class HttpInterface:
@@ -22,4 +22,4 @@ class HttpInterface:
             msg = "base_url is required"
             raise ValueError(msg)
         self.base_url = base_url
-        self.session = _BearerAuthenticatedSession(OAuthTokenManager(config))
+        self.session = BearerAuthenticatedSession(OAuthTokenManager(config))

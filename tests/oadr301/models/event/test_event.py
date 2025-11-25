@@ -6,10 +6,10 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.oadr310.common.interval import Interval
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.event.event import NewEvent
-from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadType
+from openadr3_client.models.oadr301.common.interval import Interval
+from openadr3_client.models.oadr301.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr301.event.event import NewEvent
+from openadr3_client.models.oadr301.event.event_payload import EventPayload, EventPayloadType
 
 
 def test_new_event_no_intervals() -> None:

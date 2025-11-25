@@ -8,12 +8,13 @@ from pydantic_extra_types.country import CountryAlpha2
 from pydantic_extra_types.currency_code import ISO4217
 from requests.exceptions import HTTPError
 
-from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.common.unit import Unit
-from openadr3_client.models.oadr310.event.event_payload import EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram, ProgramDescription, ProgramUpdate
+from openadr3_client._vtn.oadr301.http.programs import ProgramsHttpInterface
+from openadr3_client._vtn.oadr301.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.models.oadr301.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr301.common.target import Target
+from openadr3_client.models.oadr301.common.unit import Unit
+from openadr3_client.models.oadr301.event.event_payload import EventPayloadDescriptor, EventPayloadType
+from openadr3_client.models.oadr301.program.program import ExistingProgram, NewProgram, ProgramDescription, ProgramUpdate
 from tests.conftest import IntegrationTestVTNClient
 
 
@@ -100,7 +101,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
-        targets=("test-value",),
+        targets=(Target(type="test-target", values=("test-value",)),),
     )
 
     try:
@@ -125,7 +126,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         assert response.program_descriptions == (ProgramDescription(url=AnyUrl("https://example.com")),), "program descriptions should match"
         assert response.binding_events is True, "binding events should match"
         assert response.local_price is True, "local price should match"
-        assert response.targets == ("test-value",), "targets should match"
+        assert response.targets == (Target(type="test-target", values=("test-value",)),), "targets should match"
     finally:
         interface.delete_program_by_id(program_id=response.id)
 
@@ -146,7 +147,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             duration=timedelta(minutes=5),
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-        targets=("test-value-1",),
+        targets=(Target(type="test-target-1", values=("test-value-1",)),),
     )
     program2 = NewProgram(
         program_name="test-program-2",
@@ -156,7 +157,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
             duration=timedelta(minutes=5),
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-        targets=("test-value-2",),
+        targets=(Target(type="test-target-2", values=("test-value-2",)),),
     )
     created_program1 = interface.create_program(new_program=program1)
     created_program2 = interface.create_program(new_program=program2)
@@ -167,7 +168,7 @@ def test_get_programs_with_parameters(integration_test_vtn_client: IntegrationTe
         assert len(all_programs) == 2, "Should return both programs"
 
         # Test getting programs by target
-        target_filter = TargetFilter(targets=["test-value-1"])
+        target_filter = TargetFilter(target_type="test-target-1", target_values=["test-value-1"])
         program1_by_target = interface.get_programs(target=target_filter, pagination=None)
         assert len(program1_by_target) == 1, "Should return one program"
         assert program1_by_target[0].program_name == "test-program-1", "Should return the correct program"
@@ -202,7 +203,7 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             duration=timedelta(minutes=5),
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-        targets=("test-value",),
+        targets=(Target(type="test-target", values=("test-value",)),),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
@@ -253,7 +254,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             duration=timedelta(minutes=5),
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-        targets=("test-value",),
+        targets=(Target(type="test-target", values=("test-value",)),),
         program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
@@ -279,7 +280,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
             binding_events=True,
             local_price=True,
-            targets=("test-value-updated",),
+            targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
         )
 
         updated_program = interface.update_program_by_id(program_id=created_program.id, updated_program=created_program.update(program_update))
@@ -295,6 +296,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         assert updated_program.modification_date_time != created_program.modification_date_time, "modification date time should not match"
         assert updated_program.targets is not None, "targets should not be None"
         assert len(updated_program.targets) > 0, "targets should not be empty"
-        assert updated_program.targets[0] == ("test-value-updated",), "targets should be updated"
+        assert updated_program.targets[0].type == "test-target-updated", "target type should be updated"
+        assert updated_program.targets[0].values == ("test-value-updated",), "target values should be updated"
     finally:
         interface.delete_program_by_id(program_id=created_program.id)

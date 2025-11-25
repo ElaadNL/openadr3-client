@@ -113,8 +113,6 @@ class VirtualEndNodeClient(BaseVirtualEndNodeClient):
 def get_oadr301_ven_client(
     vtn_base_url: str,
     config: OAuthTokenManagerConfig,
-    *,
-    verify_vtn_tls_certificate: bool | str = True,
 ) -> VirtualEndNodeClient:
     """
     Creates the OpenADR 3.0.1 virtual end node client.
@@ -122,39 +120,31 @@ def get_oadr301_ven_client(
     Args:
         vtn_base_url (str): The base URL for the HTTP interface of the VTN.
         config (OAuthTokenManagerConfig): The OAuth token manager configuration.
-        verify_vtn_tls_certificate (bool | str): Whether the BL verifies the TLS certificate of the VTN.
-        Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-        If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-        PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
 
     Returns:
         VirtualEndNodeClient: The virtual end node client instance.
 
     """
     return VirtualEndNodeClient(
+        version=OADRVersion.OADR_301,
         events=EventsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         programs=ProgramsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         reports=ReportsHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         vens=VensHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         subscriptions=SubscriptionsHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
     )

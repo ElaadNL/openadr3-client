@@ -110,8 +110,6 @@ class BusinessLogicClient(BaseBusinessLogicClient):
 def get_oadr301_bl_client(
     vtn_base_url: str,
     config: OAuthTokenManagerConfig,
-    *,
-    verify_vtn_tls_certificate: bool | str = True,
 ) -> BusinessLogicClient:
     """
     Creates the OpenADR 3.0.1 business logic client.
@@ -119,39 +117,31 @@ def get_oadr301_bl_client(
     Args:
         vtn_base_url (str): The base URL for the HTTP interface of the VTN.
         config (OAuthTokenManagerConfig): The OAuth token manager configuration.
-        verify_vtn_tls_certificate (bool | str): Whether the BL verifies the TLS certificate of the VTN.
-        Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-        If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-        PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
 
     Returns:
         BusinessLogicClient: The business logic client instance.
 
     """
     return BusinessLogicClient(
+        version=OADRVersion.OADR_301,
         events=EventsHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         programs=ProgramsHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         reports=ReportsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         vens=VensHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
         subscriptions=SubscriptionsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
-            verify_tls_certificate=verify_vtn_tls_certificate,
         ),
     )

@@ -7,14 +7,14 @@ from testcontainers.postgres import PostgresContainer
 
 
 class OpenLeadrVtnTestContainer:
-    """A test container for an OpenLeadr-rs VTN with a PostgreSQL testcontainer dependency."""
+    """A test container for an OpenLeadr-rs VTN (OpenADR 3.0.1) with a PostgreSQL testcontainer dependency."""
 
     def __init__(
         self,
         external_oauth_signing_key_pem_path: str,
         oauth_valid_audiences: str,
         oauth_key_type: str = "RSA",
-        openleadr_rs_image: str = "ghcr.io/openleadr/openleadr-rs:latest",
+        openleadr_rs_image: str = "ghcr.io/openleadr/openleadr-rs:1764056494-6b11907",
         postgres_image: str = "postgres:16",
         vtn_port: int = 3000,
         postgres_port: int = 5432,
@@ -65,6 +65,7 @@ class OpenLeadrVtnTestContainer:
         # Initialize VTN container with the static environment variables.
         self._vtn = (
             DockerContainer(openleadr_rs_image, **kwargs)
+            .with_kwargs(platform="linux/amd64")
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
             .with_volume_mapping(host=external_oauth_signing_key_pem_path, container="/keys/pub-sign-key.pem")

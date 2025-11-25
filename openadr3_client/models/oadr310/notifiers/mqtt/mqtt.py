@@ -24,7 +24,7 @@ class MqttNotifierAuthenticationBase(ABC, BaseModel):
 class MqttNotifierAuthenticationAnonymous(MqttNotifierAuthenticationBase):
     """Represents anonymous authentication for the MQTT notifier."""
 
-    method = Literal[MqttNotifierAuthenticationMethod.ANONYMOUS]
+    method: Literal[MqttNotifierAuthenticationMethod.ANONYMOUS] = MqttNotifierAuthenticationMethod.ANONYMOUS
     """The authentication method."""
 
 
@@ -32,7 +32,7 @@ class MqttNotifierAuthenticationAnonymous(MqttNotifierAuthenticationBase):
 class MqttNotifierAuthenticationOAuth2BearerToken(MqttNotifierAuthenticationBase):
     """Represents oauth2 bearer authentication for the MQTT notifier."""
 
-    method = Literal[MqttNotifierAuthenticationMethod.OAUTH2_BEARER_TOKEN]
+    method: Literal[MqttNotifierAuthenticationMethod.OAUTH2_BEARER_TOKEN] = MqttNotifierAuthenticationMethod.OAUTH2_BEARER_TOKEN
     """The authentication method."""
 
     username: str
@@ -43,7 +43,7 @@ class MqttNotifierAuthenticationOAuth2BearerToken(MqttNotifierAuthenticationBase
 class MqttNotifierAuthenticationCertificate(MqttNotifierAuthenticationBase):
     """Represents certificate based authentication for the MQTT notifier."""
 
-    method = Literal[MqttNotifierAuthenticationMethod.CERTIFICATE]
+    method: Literal[MqttNotifierAuthenticationMethod.CERTIFICATE] = MqttNotifierAuthenticationMethod.CERTIFICATE
     """The authentication method."""
 
     ca_cert: str
