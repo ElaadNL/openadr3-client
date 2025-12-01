@@ -8,7 +8,7 @@ from openadr3_client.models.model import OpenADRResource
 from openadr3_client.models.oadr301.common.attribute import Attribute
 from openadr3_client.models.oadr301.common.creation_guarded import CreationGuarded
 from openadr3_client.models.oadr301.common.target import Target
-from openadr3_client.models.oadr301.ven.resource import ExistingResource
+from openadr3_client.models.oadr301.ven.resource import Resource
 
 
 class Ven(ABC, OpenADRResource):
@@ -23,7 +23,7 @@ class Ven(ABC, OpenADRResource):
     targets: tuple[Target, ...] | None = None
     """The targets of the ven object."""
 
-    resources: tuple[ExistingResource, ...] | None = None
+    resources: tuple[Resource, ...] | None = None
     """The resources of the ven object."""
 
     @property
@@ -50,7 +50,7 @@ class VenUpdate(BaseModel):
     targets: tuple[Target, ...] | None = None
     """The targets of the ven object."""
 
-    resources: tuple[ExistingResource, ...] | None = None
+    resources: tuple[Resource, ...] | None = None
     """The resources of the ven object."""
 
 

@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.oadr310.ven.resource import DeletedResource, ExistingResource, NewResource
+from openadr3_client.models.oadr310.resource.resource import DeletedResource, ExistingResource, NewResource
 
 
 class ReadOnlyResourcesInterface(ABC):

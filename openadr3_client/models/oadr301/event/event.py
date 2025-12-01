@@ -14,7 +14,7 @@ from openadr3_client.models.oadr301.common.interval import Interval
 from openadr3_client.models.oadr301.common.interval_period import IntervalPeriod
 from openadr3_client.models.oadr301.common.target import Target
 from openadr3_client.models.oadr301.event.event_payload import EventPayload, EventPayloadDescriptor
-
+from openadr3_client.models.oadr301.report.report_payload import ReportDescriptor
 
 class Event(ABC, OpenADRResource):
     """Base class for events."""
@@ -33,6 +33,9 @@ class Event(ABC, OpenADRResource):
 
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The payload descriptors of the event."""
+
+    report_descriptors: tuple[ReportDescriptor, ...] | None = None
+    """The report descriptors of the event."""
 
     interval_period: IntervalPeriod | None = None
     """The interval period of the event."""

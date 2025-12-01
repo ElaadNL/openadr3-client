@@ -14,6 +14,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from testcontainers.keycloak import KeycloakContainer
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from tests.openadr310_vtn_test_container import OpenADR310VtnTestContainer
 from tests.openleadr_test_container import OpenLeadrVtnTestContainer
 
 # Set up logging for the testcontainers package
@@ -32,7 +33,7 @@ class IntegrationTestVTNClient:
     to exist for the duration of the integration tests.
     """
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None = None, mqtt_broker_url: str | None = None) -> None:
         """
         Initializes the IntegrationTestOAuthClient.
 
@@ -43,6 +44,9 @@ class IntegrationTestVTNClient:
         """
         self.vtn_base_url = base_url
         self.config = config
+        self.mqtt_broker_url = mqtt_broker_url
+
+
 
 
 class IntegrationTestOAuthClient:
@@ -126,7 +130,7 @@ def integration_test_vtn_client(
     integration_test_oauth_client: IntegrationTestOAuthClient,
 ) -> Iterable[IntegrationTestVTNClient]:
     """
-    A testcontainers openleadr-vtn fixture which is initialized once per test run.
+    A testcontainers openleadr-vtn (OpenADR 3.0.1) fixture which is initialized once per test run.
 
     Yields an IntegrationTestVTNClient which contains the base URL of the VTN being hosted.
 
@@ -152,4 +156,27 @@ def integration_test_vtn_client(
                 scopes=None,
                 audience=None,
             ),
+        )
+
+def integration_test_vtn_openadr_310() -> Iterable[IntegrationTestVTNClient]:
+    """
+    A testcontainers OpenADR 3.1 reference VTN (with MQTT broker) fixture which is initialized once per test run.
+
+    Yields an IntegrationTestVTNClient which contains the base URL of the VTN being hosted.
+
+    Args:
+        integration_test_oauth_client (IntegrationTestOAuthClient): The integration test oauth client.
+        This client is used to fetch the public key file from keycloak
+
+    Yields:
+        Iterable[IntegrationTestVTNClient]: The integration test vtn client.
+
+    """
+    # TODO: also include MQTT broker.
+    with OpenADR310VtnTestContainer(
+    ) as vtn_container:
+        yield IntegrationTestVTNClient(
+                base_url=vtn_container.get_base_url(),
+                config=None,
+                mqtt_broker_url=vtn_container.get_mqtt_broker_url(),
         )

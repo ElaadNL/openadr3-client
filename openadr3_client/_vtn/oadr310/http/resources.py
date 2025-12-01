@@ -7,7 +7,7 @@ from openadr3_client._vtn.oadr310.http.http_interface import AuthenticatedHttpIn
 from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client._vtn.oadr310.interfaces.resources import ReadOnlyResourcesInterface, ReadWriteResourceInterface, WriteOnlyResourcesInterface
 from openadr3_client.logging import logger
-from openadr3_client.models.oadr310.ven.resource import DeletedResource, ExistingResource, NewResource
+from openadr3_client.models.oadr310.resource.resource import DeletedResource, ExistingResource, NewResource
 
 base_prefix = "resources"
 
