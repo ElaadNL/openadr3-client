@@ -1,6 +1,24 @@
 {
   "realm": "integration-test-realm",
   "enabled": true,
+  "clientScopes": [
+    {
+      "name": "test/BL",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "test/VEN",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    }
+  ],
   "clients": [
     {
       "clientId": "test-client-id",
@@ -11,6 +29,12 @@
       "publicClient": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "test/BL",
+        "test/VEN"
+      ],
       "protocolMappers": [
         {
           "name": "custom roles mapper",

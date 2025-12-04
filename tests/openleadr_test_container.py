@@ -13,6 +13,7 @@ class OpenLeadrVtnTestContainer:
         self,
         external_oauth_signing_key_pem_path: str,
         oauth_valid_audiences: str,
+        network: Network | None = None,
         oauth_key_type: str = "RSA",
         openleadr_rs_image: str = "ghcr.io/openleadr/openleadr-rs:1764056494-6b11907",
         postgres_image: str = "postgres:16",
@@ -45,8 +46,12 @@ class OpenLeadrVtnTestContainer:
         self._vtn_port = vtn_port
         self._postgres_port = postgres_port
 
-        # Create a network for the containers to communicate on.
-        self._network = Network()
+        if network is None:
+            self._internal_network = True
+            self._network = Network()
+        else:
+            self._internal_network = False
+            self._network = network
 
         # Initialize PostgreSQL container
         self._postgres = (
@@ -84,7 +89,9 @@ class OpenLeadrVtnTestContainer:
 
     def start(self) -> Self:
         """Start both containers and wait for them to be ready."""
-        self._network.create()
+        if self._internal_network:
+            # Internal network, so we must create the network manually.
+            self._network.create()
 
         self._postgres.start()
 
@@ -109,7 +116,9 @@ class OpenLeadrVtnTestContainer:
         """Stop the openleadr test container and its dependencies."""
         self._vtn.stop()
         self._postgres.stop()
-        self._network.remove()
+        if self._internal_network:
+            # Internal network, so we must remove the network ourselves.
+            self._network.remove()
 
     def __enter__(self) -> Self:
         """Context manager entry."""
