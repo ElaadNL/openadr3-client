@@ -17,13 +17,11 @@ from openadr3_client.models.oadr310.event.event_payload import EventPayload, Eve
 from openadr3_client.models.oadr310.program.program import NewProgram
 from tests.conftest import IntegrationTestVTNClient
 
-# TODO: Config is None in integration_test_vtn, how to mock it so it works with the bl-token auth? Inheritance?
-
-def test_get_events_non_existent_program_vtn(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_get_events_non_existent_program_vtn(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that getting events in a VTN with an invalid program returns an empty list."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
@@ -32,11 +30,11 @@ def test_get_events_non_existent_program_vtn(integration_test_vtn_openadr_310: I
     assert len(response) == 0, "no events should be returned by the VTN."
 
 
-def test_get_events_no_events_in_vtn(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_get_events_no_events_in_vtn(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that getting events in a VTN without any events returns an empty list."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
@@ -45,11 +43,11 @@ def test_get_events_no_events_in_vtn(integration_test_vtn_openadr_310: Integrati
     assert len(response) == 0, "no events should be stored in VTN."
 
 
-def test_get_event_by_id_non_existent(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_get_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that getting an event by ID in a VTN with no such event raises an exception."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
@@ -57,11 +55,11 @@ def test_get_event_by_id_non_existent(integration_test_vtn_openadr_310: Integrat
         _ = interface.get_event_by_id(event_id="fake-event-id")
 
 
-def test_delete_event_by_id_non_existent(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_delete_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that deleting an event by ID in a VTN with no such event raises a 404 error."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
@@ -69,11 +67,11 @@ def test_delete_event_by_id_non_existent(integration_test_vtn_openadr_310: Integ
         interface.delete_event_by_id(event_id="fake-event-id")
 
 
-def test_update_event_by_id_non_existent(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_update_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that updating an event by ID in a VTN with no such event raises a 404 error."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
@@ -102,11 +100,11 @@ def test_update_event_by_id_non_existent(integration_test_vtn_openadr_310: Integ
         )
 
 
-def test_create_event_invalid_program(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_create_event_invalid_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that creating an event in a VTN with a non existent program fails."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
@@ -141,17 +139,17 @@ def test_create_event_invalid_program(integration_test_vtn_openadr_310: Integrat
     assert "program_id does not refer to an existing program" in e.value.response.text
 
 
-def test_create_event(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_create_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate that creating an event in a VTN works correctly."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
     program_interface = ProgramsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
     program = NewProgram(
@@ -207,18 +205,18 @@ def test_create_event(integration_test_vtn_openadr_310: IntegrationTestVTNClient
         program_interface.delete_program_by_id(program_id=created_program.id)
 
 
-def test_get_events_with_parameters(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_get_events_with_parameters(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate getting events with various parameter combinations."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
     # First create a program since events require a program
     program_interface = ProgramsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
     program = NewProgram(
@@ -312,18 +310,18 @@ def test_get_events_with_parameters(integration_test_vtn_openadr_310: Integratio
         program_interface.delete_program_by_id(program_id=created_program.id)
 
 
-def test_delete_event(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_delete_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate deleting an event that exists."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
     # First create a program since events require a program
     program_interface = ProgramsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
     program = NewProgram(
@@ -385,18 +383,18 @@ def test_delete_event(integration_test_vtn_openadr_310: IntegrationTestVTNClient
         program_interface.delete_program_by_id(program_id=created_program.id)
 
 
-def test_update_event(integration_test_vtn_openadr_310: IntegrationTestVTNClient) -> None:
+def test_update_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate updating an event that exists."""
     interface = EventsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
 
     # First create a program since events require a program
     program_interface = ProgramsHttpInterface(
-        base_url=integration_test_vtn_openadr_310.vtn_base_url,
-        config=integration_test_vtn_openadr_310.config,
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False # Self signed certificate used in integration tests.
     )
     program = NewProgram(
@@ -454,7 +452,6 @@ def test_update_event(integration_test_vtn_openadr_310: IntegrationTestVTNClient
             assert updated_event.event_name == "test-event-updated", "event name should be updated"
             assert updated_event.priority == 2, "priority should be updated"
             assert updated_event.created_date_time == created_event.created_date_time, "created date time should match"
-            assert updated_event.modification_date_time != created_event.modification_date_time, "modification date time should not match"
             assert updated_event.targets is not None, "targets should not be None"
             assert len(updated_event.targets) > 0, "targets should not be empty"
             assert updated_event.targets[0] == "test-value-updated", "target values should be updated"

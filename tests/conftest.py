@@ -189,42 +189,81 @@ def integration_test_vtn_client(
                 audience=None,
             ),
         )
-        
-@pytest.fixture(scope="session")
-def integration_test_vtn_openadr_310(
-    integration_test_docker_network: Network,
-    integration_test_auth_server: KeycloakContainer,
-) -> Iterable[IntegrationTestVTNClient]:
-    """
-    A testcontainers OpenADR 3.1 reference VTN (with MQTT broker) fixture which is initialized once per test run.
 
-    Yields an IntegrationTestVTNClient which contains the base URL of the VTN being hosted.
+
+@pytest.fixture(scope="session")
+def integration_test_openadr310_reference_vtn(
+    integration_test_auth_server: KeycloakContainer,
+    integration_test_docker_network: Network) -> Iterable[OpenADR310VtnTestContainer]:
+    """
+    A testcontainers OpenADR 3.1 reference VTN (without MQTT broker) fixture which is initialized once per test run.
 
     Args:
         integration_test_oauth_client (IntegrationTestOAuthClient): The integration test oauth client.
         This client is used to fetch the public key file from keycloak
+        integration_test_docker_network (Network): The docker network to which the keycloak container will be connected.
 
     Yields:
-        Iterable[IntegrationTestVTNClient]: The integration test vtn client.
+        Iterable[OpenADR310VtnTestContainer]: The OpenADR 3.1 reference VTN container.
 
     """
     realm_name = "integration-test-realm"
     jwks_url = "http://keycloak:" + f"{str(integration_test_auth_server.port)}/realms/{realm_name}/protocol/openid-connect/certs"
-
-    # TODO: also include MQTT broker.
     with OpenADR310VtnTestContainer(
         oauth_token_endpoint=OAUTH_TOKEN_ENDPOINT or "",
         oauth_jwks_url=jwks_url,
         network=integration_test_docker_network,
     ) as vtn_container:
-        yield IntegrationTestVTNClient(
-                base_url=vtn_container.get_base_url(),
-                config=OAuthTokenManagerConfig(
-                    client_id=OAUTH_CLIENT_ID or "",
-                    client_secret=OAUTH_CLIENT_SECRET or "",
-                    token_url=OAUTH_TOKEN_ENDPOINT or "",
-                    scopes=None,
-                    audience=None,
-                ),
-                mqtt_broker_url=vtn_container.get_mqtt_broker_url(),
-        )
+        yield vtn_container
+        
+@pytest.fixture(scope="session")
+def vtn_openadr_310_bl_token(
+    integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer,
+) -> Iterable[IntegrationTestVTNClient]:
+    """
+    Returns an integration test VTN client instance which is configured to have a BL token to communicate with the VTN.
+
+    Args:
+        integration_test_openadr310_reference_vtn (OpenADR310VtnTestContainer): The openadr 3.1.0 reference VTN container.
+
+    Yields:
+        Iterable[IntegrationTestVTNClient]: The integration test vtn client.
+
+    """
+    yield IntegrationTestVTNClient(
+        base_url=integration_test_openadr310_reference_vtn.get_base_url(),
+        config=OAuthTokenManagerConfig(
+            client_id=OAUTH_CLIENT_ID or "",
+            client_secret=OAUTH_CLIENT_SECRET or "",
+            token_url=OAUTH_TOKEN_ENDPOINT or "",
+            scopes=None,
+            audience=None,
+        ),
+        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_url(),
+    )
+
+@pytest.fixture(scope="session")
+def vtn_openadr_310_ven_token(
+    integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer,
+) -> Iterable[IntegrationTestVTNClient]:
+    """
+    Returns an integration test VTN client instance which is configured to have a VEN token to communicate with the VTN.
+
+    Args:
+        integration_test_openadr310_reference_vtn (OpenADR310VtnTestContainer): The openadr 3.1.0 reference VTN container.
+
+    Yields:
+        Iterable[IntegrationTestVTNClient]: The integration test vtn client.
+
+    """
+    yield IntegrationTestVTNClient(
+        base_url=integration_test_openadr310_reference_vtn.get_base_url(),
+        config=OAuthTokenManagerConfig(
+            client_id=OAUTH_CLIENT_ID or "",
+            client_secret=OAUTH_CLIENT_SECRET or "",
+            token_url=OAUTH_TOKEN_ENDPOINT or "",
+            scopes=None,
+            audience=None,
+        ),
+        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_url(),
+    )
