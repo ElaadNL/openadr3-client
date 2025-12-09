@@ -1,0 +1,92 @@
+import contextlib
+from collections.abc import Generator
+from contextlib import contextmanager
+from datetime import UTC, datetime, timedelta
+
+from pydantic_extra_types.currency_code import ISO4217
+
+from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
+from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
+from openadr3_client.models.oadr310.common.interval import Interval
+from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
+from openadr3_client.models.oadr310.common.unit import Unit
+from openadr3_client.models.oadr310.event.event import ExistingEvent, NewEvent
+from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
+from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram
+from tests.conftest import IntegrationTestVTNClient
+
+
+@contextmanager
+def new_program(vtn_client: IntegrationTestVTNClient, program_name: str) -> Generator[ExistingProgram, None, None]:
+    """
+    Helper function to create a program in the VTN for testing purposes.
+
+    Args:
+        vtn_client (IntegrationTestVTNClient): The VTN client to use.
+        program_name (str): The name of the program to create.
+
+    """
+    program_interface = ProgramsHttpInterface(
+        base_url=vtn_client.vtn_base_url,
+        config=vtn_client.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+    )
+    program = NewProgram(
+        program_name=program_name,
+        interval_period=IntervalPeriod(
+            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+            duration=timedelta(minutes=5),
+            randomize_start=timedelta(seconds=0),
+        ),
+        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
+    )
+    created_program = program_interface.create_program(new_program=program)
+    yield created_program
+    program_interface.delete_program_by_id(program_id=created_program.id)
+
+
+@contextmanager
+def event_in_program_with_targets(
+    vtn_client: IntegrationTestVTNClient,
+    program: ExistingProgram,
+    intervals: tuple[Interval[EventPayload], ...] | None,
+    targets: tuple[str, ...] = (),
+    event_name: str | None = None,
+) -> Generator[ExistingEvent, None, None]:
+    """
+    Creates an event in the VTN for testing purposes.
+
+    Args:
+        vtn_client (IntegrationTestVTNClient): The VTN client to use.
+        program (ExistingProgram): Program to create event in.
+        intervals (tuple[Interval[EventPayload], ...] | None): Intervals for the event. If None, no intervals are set.
+        targets (tuple[str, ...]): Targets for the event.
+        event_name (str | None): Optional name for the event.
+
+    """
+    interface = EventsHttpInterface(
+        base_url=vtn_client.vtn_base_url,
+        config=vtn_client.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+    )
+
+    event = NewEvent(
+        programID=program.id,
+        event_name=event_name,
+        priority=None,
+        targets=targets,
+        payload_descriptors=(),
+        interval_period=IntervalPeriod(
+            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+            duration=timedelta(minutes=5),
+            randomize_start=timedelta(seconds=0),
+        ),
+        intervals=intervals,
+        duration=timedelta(seconds=0),
+    )
+    created_event = interface.create_event(new_event=event)
+    yield created_event
+
+    # Do not fail if deletion fails, which can occur if the event is manually deleted in a test.
+    with contextlib.suppress(Exception):
+        interface.delete_event_by_id(event_id=created_event.id)

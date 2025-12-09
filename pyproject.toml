@@ -128,5 +128,5 @@ filterwarnings = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["testcontainers.keycloak", "testcontainers.core.container", "testcontainers.core.network", "testcontainers.postgres", "testcontainers.core.waiting_utils", "pandera.pandas"]
+module = ["testcontainers.keycloak", "testcontainers.core.container", "testcontainers.core.network", "testcontainers.postgres", "testcontainers.core.waiting_utils", "testcontainers.mqtt", "pandera.pandas"]
 ignore_missing_imports = true

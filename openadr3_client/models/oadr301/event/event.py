@@ -16,6 +16,7 @@ from openadr3_client.models.oadr301.common.target import Target
 from openadr3_client.models.oadr301.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.models.oadr301.report.report_payload import ReportDescriptor
 
+
 class Event(ABC, OpenADRResource):
     """Base class for events."""
 

@@ -122,6 +122,7 @@ class ReportPayloadDescriptor(BasePayloadDescriptor):
 class ReportPayload[T: AllowedPayloadInputs](_BasePayload[ReportPayloadType, T]):
     """The type of the report payload."""
 
+
 @final
 class ReportDescriptor(BasePayloadDescriptor):
     """An object that may be used to request a report from a VEN."""

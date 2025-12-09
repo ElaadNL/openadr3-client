@@ -31,6 +31,7 @@ class OpenLeadrVtnTestContainer:
             external_oauth_signing_key_pem_path (str): The path to the external OAuth signing public key in PEM format.
             oauth_valid_audiences (str): The valid audiences for the OAuth token, the provided value must be a
             comma seperated list of valid audiences.
+            network (Network | None, optional): The Docker network to use. If None, a new network will be created.
             oauth_key_type (str, optional): The type of OAuth key. Defaults to "RSA".
             openleadr_rs_image (str, optional): The image to use for the VTN.
             Defaults to "ghcr.io/openleadr/openleadr-rs:latest".

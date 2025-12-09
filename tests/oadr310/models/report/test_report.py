@@ -46,6 +46,7 @@ def test_new_report_no_resources() -> None:
     with pytest.raises(ValidationError, match="NewReport must contain at least one resource"):
         _ = NewReport(eventID="my-event", client_name="client", resources=())
 
+
 def test_report_event_id_too_long() -> None:
     """Test that validates that the event id of a report can only be 128 characters max."""
     length = 129

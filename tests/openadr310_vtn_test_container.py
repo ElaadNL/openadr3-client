@@ -1,11 +1,12 @@
-from pathlib import Path
 import re
+from pathlib import Path
 from types import TracebackType
 from typing import Any, Self
 
 from testcontainers.core.container import DockerContainer, LogMessageWaitStrategy
 from testcontainers.core.network import Network
 from testcontainers.mqtt import MosquittoContainer
+
 
 class OpenADR310VtnTestContainer:
     """A test container for an OpenLeadr-rs VTN (OpenADR 3.0.1) with a PostgreSQL testcontainer dependency."""
@@ -25,6 +26,7 @@ class OpenADR310VtnTestContainer:
         Args:
             oauth_token_endpoint (str): The OAuth token endpoint URL for the VTN to use for token validation.
             oauth_jwks_url (str): The OAuth JWKS URL for the VTN to use for token validation.
+            network (Network | None, optional): The Docker network to use. If None, a new network will be created.
             vtn_reference_image (str, optional): The Docker image reference for the VTN. Defaults to "ghcr.io/nicburgt/oadr310-vtn-test:latest".
             vtn_port (int, optional): The port on which the VTN will listen. Defaults to 8080.
             **kwargs: Additional arguments to pass to the DockerContainer constructor.
@@ -67,7 +69,7 @@ class OpenADR310VtnTestContainer:
             .with_env("TLS_CERT_FILE", "/vtn_certs/cert.pem")
             .with_env("TLS_KEY_FILE", "/vtn_certs/key.pem")
             .with_volume_mapping(host=str(cert_dir), container="/vtn_certs", mode="ro")
-            .waiting_for(LogMessageWaitStrategy(re.compile(r'.*ListStore\.__init__\(\).*'), re.DOTALL))
+            .waiting_for(LogMessageWaitStrategy(re.compile(r".*ListStore\.__init__\(\).*"), re.DOTALL))
         )
 
     def start(self) -> Self:
@@ -79,19 +81,16 @@ class OpenADR310VtnTestContainer:
         self._mqtt.start()
 
         # Configure the VTN with the MQTT broker URL prior to starting it.
-        self._vtn \
-            .with_env("MQTT_VTN_BROKER_IP", "mqttbroker") \
-            .with_env("MQTT_VTN_BROKER_PORT", self._mqtt.MQTT_PORT) \
-            .with_env("MQTT_CLIENT_BROKER_HOST", "mqttbroker") \
-            .with_env("MQTT_CLIENT_BROKER_PORT", self._mqtt.MQTT_PORT) \
-            .start()
-        
+        self._vtn.with_env("MQTT_VTN_BROKER_IP", "mqttbroker").with_env("MQTT_VTN_BROKER_PORT", self._mqtt.MQTT_PORT).with_env(
+            "MQTT_CLIENT_BROKER_HOST", "mqttbroker"
+        ).with_env("MQTT_CLIENT_BROKER_PORT", self._mqtt.MQTT_PORT).start()
+
         return self
 
     def get_base_url(self) -> str:
         """Get the base URL for the VTN."""
         return f"https://localhost:{self._vtn.get_exposed_port(self._vtn_port)}/openadr3/3.1.0"
-    
+
     def get_mqtt_broker_url(self) -> str:
         """Get the MQTT broker URL for the VTN."""
         return f"mqtt://localhost:{self._mqtt.get_exposed_port(1883)}"

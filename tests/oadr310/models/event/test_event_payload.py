@@ -10,6 +10,7 @@ def test_event_payload_no_values() -> None:
     with pytest.raises(ValidationError, match="payload must contain at least one value"):
         _ = EventPayload(type=EventPayloadType.SIMPLE, values=())
 
+
 def test_event_payload_custom() -> None:
     """
     Test that verifies that a custom event payload is allowed.
