@@ -226,7 +226,7 @@ def integration_test_openadr310_reference_vtn(
 @pytest.fixture(scope="session")
 def vtn_openadr_310_bl_token(
     integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer,
-) -> Iterable[IntegrationTestVTNClient]:
+) -> IntegrationTestVTNClient:
     """
     Returns an integration test VTN client instance which is configured to have a BL token to communicate with the VTN.
 
@@ -253,7 +253,7 @@ def vtn_openadr_310_bl_token(
 @pytest.fixture(scope="session")
 def vtn_openadr_310_ven_token(
     integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer,
-) -> Iterable[IntegrationTestVTNClient]:
+) -> IntegrationTestVTNClient:
     """
     Returns an integration test VTN client instance which is configured to have a VEN token to communicate with the VTN.
 
@@ -280,7 +280,7 @@ def vtn_openadr_310_ven_token(
 @pytest.fixture(scope="session")
 def vtn_openadr_310_ven2_token(
     integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer,
-) -> Iterable[IntegrationTestVTNClient]:
+) -> IntegrationTestVTNClient:
     """
     Returns an integration test VTN client instance which is configured to have a VEN token to communicate with the VTN.
 

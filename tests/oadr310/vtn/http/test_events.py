@@ -3,20 +3,16 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from pydantic_extra_types.currency_code import ISO4217
 from requests import HTTPError
 
 from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
-from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
 from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.models.oadr310.common.interval import Interval
 from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.common.unit import Unit
 from openadr3_client.models.oadr310.event.event import EventUpdate, ExistingEvent, NewEvent
-from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.oadr310.program.program import NewProgram
+from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadType
 from tests.conftest import IntegrationTestVTNClient
-from tests.oadr310.generators import event_in_program_with_targets, new_program
+from tests.oadr310.generators import event_in_program_with_targets, new_program, ven_with_targets
 
 
 def test_get_events_non_existent_program_vtn(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -267,7 +263,7 @@ def test_delete_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
             deleted_event = interface.delete_event_by_id(event_id=created_event.id)
 
             assert deleted_event.event_name == "test-event-to-delete", "event name should match"
-            assert deleted_event.priority == 1, "priority should match"
+            assert deleted_event.priority is None, "priority should match"
             assert deleted_event.created_date_time == created_event.created_date_time, "created date time should match"
             assert deleted_event.modification_date_time == created_event.modification_date_time, "modification date time should match"
             assert deleted_event.targets is not None, "targets should not be None"
@@ -342,32 +338,104 @@ def test_ven_get_events_no_events(vtn_openadr_310_ven_token: IntegrationTestVTNC
     assert len(response) == 0, "no events should be stored in VTN."
 
 
-def test_ven_get_public_events(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
-    """Test to validate that getting public events (without targets) in a VTN returns the correct events for a VEN token."""
+def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
+    """
+    Test to validate that VENs are able to see targeted events.
+
+    Validates that events with targets that are in the allowed targets list of the ven object of that client
+    are visible to that VEN.
+    """
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
-    program_interface = ProgramsHttpInterface(
-        base_url=vtn_openadr_310_bl_token.vtn_base_url,
-        config=vtn_openadr_310_bl_token.config,
+    with new_program(vtn_openadr_310_bl_token, program_name="test-program5") as created_program:
+        assert created_program.id is not None, "program should be created successfully"
+
+        targets = ("ven-target",)
+
+        with ven_with_targets(vtn_openadr_310_ven_token, ven_name="targeted-ven", targets=targets) as _:
+            event_name = "targeted-event"
+            intervals = (
+                Interval(
+                    id=0,
+                    interval_period=IntervalPeriod(
+                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                        duration=timedelta(minutes=5),
+                        randomize_start=timedelta(seconds=0),
+                    ),
+                    payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
+                ),
+            )
+
+            with (
+                event_in_program_with_targets(
+                    vtn_client=vtn_openadr_310_bl_token,
+                    program=created_program,
+                    intervals=intervals,
+                    targets=targets,
+                    event_name=event_name,
+                ),
+                event_in_program_with_targets(
+                    vtn_client=vtn_openadr_310_bl_token,
+                    program=created_program,
+                    intervals=intervals,
+                    targets=("other-target",),
+                    event_name="not-targeted-event",
+                ),
+            ):
+                response = interface.get_events(target=None, pagination=None, program_id=None)
+                assert len(response) == 1, "one event should be returned by the VTN."
+                assert response[0].event_name == event_name, "the event should have the correct name."
+
+                response = interface.get_events(target=TargetFilter(targets=list(targets)), pagination=None, program_id=None)
+                assert len(response) == 1, "one event should be returned by the VTN."
+                assert response[0].event_name == event_name, "the event should have the correct name."
+
+
+def test_ven_should_not_see_other_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
+    """
+    Test to validate that events can only be seen by the appropriate VEN.
+
+    Validates that events with targets that are not in the allowed targets list of the ven object of that client
+    are not visible to that VEN. Even if they target them manually.
+    """
+    interface = EventsHttpInterface(
+        base_url=vtn_openadr_310_ven_token.vtn_base_url,
+        config=vtn_openadr_310_ven_token.config,
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
-    program = NewProgram(
-        program_name="test-program",
-        interval_period=IntervalPeriod(
-            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-            duration=timedelta(minutes=5),
-            randomize_start=timedelta(seconds=0),
-        ),
-        payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-    )
-    created_program = program_interface.create_program(new_program=program)
-    assert created_program.id is not None, "program should be created successfully"
 
-    response = interface.get_events(target=None, pagination=None, program_id=None)
+    with new_program(vtn_openadr_310_bl_token, program_name="test-program6") as created_program:
+        assert created_program.id is not None, "program should be created successfully"
 
-    assert len(response) == 1, "one public event should be returned by the VTN."
-    assert response[0].event_name == "Public Event", "the public event should have the correct name."
+        targets = ("ven-target",)
+
+        with ven_with_targets(vtn_openadr_310_ven_token, ven_name="not-targeted-ven", targets=targets) as _:
+            intervals = (
+                Interval(
+                    id=0,
+                    interval_period=IntervalPeriod(
+                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                        duration=timedelta(minutes=5),
+                        randomize_start=timedelta(seconds=0),
+                    ),
+                    payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
+                ),
+            )
+
+            with event_in_program_with_targets(
+                vtn_client=vtn_openadr_310_bl_token,
+                program=created_program,
+                intervals=intervals,
+                targets=("other-target",),
+                event_name="not-targeted-event",
+            ):
+                response = interface.get_events(target=None, pagination=None, program_id=None)
+                assert len(response) == 0, "No events should be seen the VEN."
+
+                # Even knowing the target, the VEN should not be able to find the event even if filtering on it.
+                response = interface.get_events(target=TargetFilter(targets=list(targets)), pagination=None, program_id=None)
+                assert len(response) == 0, "No events should be seen the VEN."
