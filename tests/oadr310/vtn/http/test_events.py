@@ -356,7 +356,7 @@ def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNCl
 
         targets = ("ven-target",)
 
-        with ven_with_targets(vtn_openadr_310_ven_token, ven_name="targeted-ven", targets=targets) as _:
+        with ven_with_targets(vtn_openadr_310_bl_token, ven_name="targeted-ven", client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=targets):
             event_name = "targeted-event"
             intervals = (
                 Interval(
@@ -413,7 +413,7 @@ def test_ven_should_not_see_other_targeted_events(vtn_openadr_310_ven_token: Int
 
         targets = ("ven-target",)
 
-        with ven_with_targets(vtn_openadr_310_ven_token, ven_name="not-targeted-ven", targets=targets) as _:
+        with ven_with_targets(vtn_openadr_310_bl_token, ven_name="not-targeted-ven", client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=targets):
             intervals = (
                 Interval(
                     id=0,

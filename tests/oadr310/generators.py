@@ -14,18 +14,52 @@ from openadr3_client.models.oadr310.common.unit import Unit
 from openadr3_client.models.oadr310.event.event import ExistingEvent, NewEvent
 from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram
-from openadr3_client.models.oadr310.ven.ven import ExistingVen, NewVenBlRequest
+from openadr3_client.models.oadr310.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest
 from tests.conftest import IntegrationTestVTNClient
 
 
 @contextmanager
-def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, targets: tuple[str, ...] = ()) -> Generator[ExistingVen, None, None]:
+def ven_created_by_ven(vtn_client: IntegrationTestVTNClient, ven_name: str) -> Generator[ExistingVen, None, None]:
     """
     Helper function to create a ven in the VTN for testing purposes.
 
     Args:
         vtn_client (IntegrationTestVTNClient): vtn client configuration.
         ven_name (str): The ven name of the ven to create.
+
+    Yields:
+        Generator[ExistingVen, None, None]: _description_
+
+    """
+    ven_interface = VensHttpInterface(
+        base_url=vtn_client.vtn_base_url,
+        config=vtn_client.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.)
+    )
+
+    ven = NewVenVenRequest(
+        ven_name=ven_name,
+    )
+
+    created_ven = ven_interface.create_ven(new_ven=ven)
+
+    try:
+        yield created_ven
+    finally:
+        # Do not fail if deletion fails, which can occur if the ven is manually deleted in a test.
+        with contextlib.suppress(Exception):
+            ven_interface.delete_ven_by_id(ven_id=created_ven.id)
+
+
+@contextmanager
+def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, client_id_of_ven: str, targets: tuple[str, ...] = ()) -> Generator[ExistingVen, None, None]:
+    """
+    Helper function to create a ven in the VTN for testing purposes.
+
+    Args:
+        vtn_client (IntegrationTestVTNClient): vtn client configuration.
+        ven_name (str): The ven name of the ven to create.
+        client_id_of_ven (str): The client ID of the ven object.
         targets (tuple[str, ...]): The targets of the ven to create, defaults to an empty tuple.
 
     Yields:
@@ -41,7 +75,7 @@ def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, target
     ven = NewVenBlRequest(
         ven_name=ven_name,
         targets=targets,
-        clientID=vtn_client.config.client_id,
+        clientID=client_id_of_ven,
     )
 
     created_ven = ven_interface.create_ven(new_ven=ven)

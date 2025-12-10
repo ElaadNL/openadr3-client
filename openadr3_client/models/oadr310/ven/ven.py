@@ -7,7 +7,6 @@ from openadr3_client.models._base_model import BaseModel
 from openadr3_client.models.model import OpenADRResource
 from openadr3_client.models.oadr310.common.attribute import Attribute
 from openadr3_client.models.oadr310.common.creation_guarded import CreationGuarded
-from openadr3_client.models.oadr310.resource.resource import Resource
 
 
 class Ven(ABC, OpenADRResource):
@@ -18,9 +17,6 @@ class Ven(ABC, OpenADRResource):
 
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the ven."""
-
-    resources: tuple[Resource, ...] | None = None
-    """The resources of the ven object."""
 
     @property
     def name(self) -> str | None:
@@ -68,9 +64,6 @@ class VenUpdate(ABC, BaseModel):
 
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the ven."""
-
-    resources: tuple[Resource, ...] | None = None
-    """The resources of the ven object."""
 
 
 @final
