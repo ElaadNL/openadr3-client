@@ -55,13 +55,14 @@ def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, target
 
 
 @contextmanager
-def new_program(vtn_client: IntegrationTestVTNClient, program_name: str) -> Generator[ExistingProgram, None, None]:
+def new_program(vtn_client: IntegrationTestVTNClient, program_name: str, targets: tuple[str, ...] = ()) -> Generator[ExistingProgram, None, None]:
     """
     Helper function to create a program in the VTN for testing purposes.
 
     Args:
         vtn_client (IntegrationTestVTNClient): The VTN client to use.
         program_name (str): The name of the program to create.
+        targets (tuple[str, ...]): Targets for the program.
 
     """
     program_interface = ProgramsHttpInterface(
@@ -76,6 +77,7 @@ def new_program(vtn_client: IntegrationTestVTNClient, program_name: str) -> Gene
             duration=timedelta(minutes=5),
             randomize_start=timedelta(seconds=0),
         ),
+        targets=targets,
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
     )
     created_program = program_interface.create_program(new_program=program)
