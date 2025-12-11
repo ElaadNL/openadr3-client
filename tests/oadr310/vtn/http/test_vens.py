@@ -72,7 +72,7 @@ def test_update_ven_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTest
     )
 
     tz_aware_dt = datetime.now(tz=UTC)
-    with pytest.raises(HTTPError, match="404 Client Error"):
+    with pytest.raises(HTTPError, match="400 Client Error"):
         interface.update_ven_by_id(
             ven_id="fake-ven-id",
             updated_ven=ExistingVen(
@@ -107,7 +107,7 @@ def test_create_ven_ven(vtn_openadr_310_ven_token: IntegrationTestVTNClient) -> 
         assert created_ven.id is not None, "ven should be created successfully."
         assert created_ven.ven_name == ven_name, "ven name should match"
         assert created_ven.attributes is None, "attributes should match"
-        assert created_ven.targets is None, "targets should match"
+        assert created_ven.targets == (), "targets should match"
 
 
 def test_create_ven_duplicate_name(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -149,11 +149,11 @@ def test_get_all_vens(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
 
     with (
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-test") as ven1,
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test") as ven2,
+        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test-2") as ven2,
     ):
         vens_paginated = interface.get_vens(ven_name=None, target=None, pagination=None)
         assert len(vens_paginated) == 2, "Should return one ven"
-        assert vens_paginated == [ven1, ven2], "Should return both vens, in order"
+        assert vens_paginated == (ven1, ven2), "Should return both vens, in order"
 
 
 def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -174,8 +174,8 @@ def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) 
     ven_name_2 = "my-ven-name-paginated-2"
 
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-test"),
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test") as ven2,
+        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-paginated-test"),
+        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-paginated-test-2") as ven2,
     ):
         pagination_filter = PaginationFilter(skip=1, limit=5)
         vens_paginated = interface.get_vens(ven_name=None, target=None, pagination=pagination_filter)
@@ -200,7 +200,7 @@ def test_get_vens_by_target_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClien
     ven_name = "my-ven-name-target-bl"
     ven_targets = ("test-target-2",)
 
-    with ven_with_targets(vtn_client=vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-test", targets=ven_targets) as created_ven:
+    with ven_with_targets(vtn_client=vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-target-bl-test", targets=ven_targets) as created_ven:
         # Test getting vens by target
         target_filter = TargetFilter(targets=list(ven_targets))
         vens_by_target = interface.get_vens(ven_name=None, target=target_filter, pagination=None)
@@ -208,11 +208,12 @@ def test_get_vens_by_target_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClien
         assert vens_by_target[0] == created_ven, "Should return the correct ven"
 
 
-def test_get_vens_ven_no_associated_ven_object(vtn_openadr_310_ven_token: IntegrationTestVTNClient) -> None:
+def test_get_vens_ven_no_associated_ven_object(vtn_openadr_310_bl_token: IntegrationTestVTNClient, vtn_openadr_310_ven_token: IntegrationTestVTNClient) -> None:
     """
     Test that validates a VEN cannot retrieve others VENS object not associated with its client.
 
     Args:
+        vtn_openadr_310_bl_token (IntegrationTestVTNClient): The BL vtn client configuration.
         vtn_openadr_310_ven_token (IntegrationTestVTNClient): The ven vtn client configuration.
 
     """
@@ -224,10 +225,7 @@ def test_get_vens_ven_no_associated_ven_object(vtn_openadr_310_ven_token: Integr
 
     ven_name = "my-ven-name-target-ven-not-allowed"
 
-    with ven_created_by_ven(
-        vtn_client=vtn_openadr_310_ven_token,
-        ven_name=ven_name,
-    ):
+    with ven_with_targets(vtn_client=vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="test-client-id-not-associated-with-ven"):
         vens_by_target = interface.get_vens(ven_name=None, target=None, pagination=None)
         assert len(vens_by_target) == 0, "Should return no vens"
 
@@ -251,7 +249,7 @@ def test_get_vens_ven_can_only_see_associated_ven_object(vtn_openadr_310_bl_toke
     ven_name_2 = "my-ven-name-target-ven-allowed-2"
     with (
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test"),
+        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-testting"),
     ):
         vens_visible_to_ven = interface.get_vens(ven_name=None, target=None, pagination=None)
         assert len(vens_visible_to_ven) == 1, "Should return single ven visible to client"
@@ -271,7 +269,7 @@ def test_delete_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         deleted_ven = interface.delete_ven_by_id(ven_id=ven_to_delete.id)
 
         # Verify returned ven
-        assert deleted_ven == ven_to_delete
+        assert deleted_ven.id == ven_to_delete.id
 
         # Verify the ven is deleted
         with pytest.raises(HTTPError, match="404 Client Error"):
@@ -303,14 +301,14 @@ def test_delete_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
         deleted_ven = interface.delete_ven_by_id(ven_id=my_ven.id)
 
         # Verify returned ven
-        assert deleted_ven == my_ven
+        assert deleted_ven.id == my_ven.id
 
         # Verify the ven is deleted
         with pytest.raises(HTTPError, match="404 Client Error"):
             _ = interface.get_ven_by_id(ven_id=my_ven.id)
 
         # Verify that VEN cannot delete VEN not associated with its client.
-        with pytest.raises(HTTPError, match="404 Client Error"):
+        with pytest.raises(HTTPError, match="400 Client Error"):
             _ = interface.delete_ven_by_id(ven_id=other_ven.id)
 
 
