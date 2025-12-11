@@ -7,6 +7,7 @@ from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
 from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
+from openadr3_client._vtn.oadr310.http.reports import ReportsHttpInterface
 from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
 from openadr3_client.models.oadr310.common.interval import Interval
 from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
@@ -14,6 +15,7 @@ from openadr3_client.models.oadr310.common.unit import Unit
 from openadr3_client.models.oadr310.event.event import ExistingEvent, NewEvent
 from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram
+from openadr3_client.models.oadr310.report.report import ExistingReport, NewReport, ReportResource
 from openadr3_client.models.oadr310.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest
 from tests.conftest import IntegrationTestVTNClient
 
@@ -171,3 +173,43 @@ def event_in_program_with_targets(
         # Do not fail if deletion fails, which can occur if the event is manually deleted in a test.
         with contextlib.suppress(Exception):
             interface.delete_event_by_id(event_id=created_event.id)
+
+
+@contextmanager
+def report_from_ven_in_program(
+    vtn_client: IntegrationTestVTNClient,
+    ven: ExistingVen,
+    event: ExistingEvent,
+    resources: tuple[ReportResource, ...] = (),
+) -> Generator[ExistingReport, None, None]:
+    """
+    Generates a report in a program from a specific VEN.
+
+    Args:
+        vtn_client (IntegrationTestVTNClient): The VTN client to use.
+        program (ExistingProgram): Program to create report for.
+        ven (ExistingVen): The VEN to create the report for.
+        event (ExistingEvent): The event to create the report for.
+        resources (tuple[ReportResource, ...], optional): The resources inside the report. Defaults to ().
+
+    """
+    interface = ReportsHttpInterface(
+        base_url=vtn_client.vtn_base_url,
+        config=vtn_client.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+    )
+
+    report = NewReport(
+        eventID=event.id,
+        client_name=ven.ven_name,
+        resources=resources,
+    )
+
+    created_report = interface.create_report(new_report=report)
+
+    try:
+        yield created_report
+    finally:
+        # Do not fail if deletion fails, which can occur if the report is manually deleted in a test.
+        with contextlib.suppress(Exception):
+            interface.delete_report_by_id(report_id=created_report.id)
