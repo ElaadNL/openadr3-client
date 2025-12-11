@@ -180,7 +180,7 @@ def report_from_ven_in_program(
     vtn_client: IntegrationTestVTNClient,
     ven: ExistingVen,
     event: ExistingEvent,
-    resources: tuple[ReportResource, ...] = (),
+    resources: tuple[ReportResource, ...],
 ) -> Generator[ExistingReport, None, None]:
     """
     Generates a report in a program from a specific VEN.

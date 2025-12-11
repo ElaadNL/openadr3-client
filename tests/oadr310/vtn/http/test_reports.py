@@ -75,11 +75,16 @@ def test_update_report_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationT
                         interval_period=IntervalPeriod(
                             start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                             duration=timedelta(minutes=5),
+                            randomize_start=timedelta(seconds=0)
                         ),
                         intervals=(
                             Interval(
                                 id=0,
-                                interval_period=None,
+                                interval_period=IntervalPeriod(
+                                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                                    duration=timedelta(minutes=5),
+                                    randomize_start=timedelta(seconds=0)
+                                ),
                                 payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                             ),
                         ),
@@ -102,11 +107,16 @@ def test_create_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
                 interval_period=IntervalPeriod(
                     start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(minutes=5),
+                    randomize_start=timedelta(seconds=0)
                 ),
                 intervals=(
                     Interval(
                         id=0,
-                        interval_period=None,
+                        interval_period=IntervalPeriod(
+                            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                            duration=timedelta(minutes=5),
+                            randomize_start=timedelta(seconds=0)
+                        ),
                         payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                     ),
                 ),
@@ -128,19 +138,41 @@ def test_get_reports_with_parameters(vtn_openadr_310_bl_token: IntegrationTestVT
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
+    report_resources = (
+        ReportResource(
+            resource_name="test-get-reports-with-parameters-resource",
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+                randomize_start=timedelta(seconds=0)
+            ),
+            intervals=(
+                Interval(
+                    id=0,
+                    interval_period=IntervalPeriod(
+                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                        duration=timedelta(minutes=5),
+                        randomize_start=timedelta(seconds=0)
+                    ),
+                    payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
+                ),
+            ),
+        ),
+    )
+
     with (
         new_program(vtn_client=vtn_openadr_310_bl_token, program_name="get_reports_with_parameters_program_1") as program1,
         ven_with_targets(
             vtn_client=vtn_openadr_310_bl_token, ven_name="get_reports_with_parameters_ven_1", client_id_of_ven="get_reports_with_parameters_ven_client_1"
         ) as ven1,
         event_in_program_with_targets(vtn_client=vtn_openadr_310_bl_token, program=program1, intervals=(), event_name="get_reports_with_parameters_event_1") as event1,
-        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven1, event=event1),
-        new_program(vtn_client=vtn_openadr_310_bl_token, program_name="get_reports_with_parameters_program_1") as program2,
+        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven1, event=event1, resources=report_resources),
+        new_program(vtn_client=vtn_openadr_310_bl_token, program_name="get_reports_with_parameters_program_2") as program2,
         ven_with_targets(
             vtn_client=vtn_openadr_310_bl_token, ven_name="get_reports_with_parameters_ven_2", client_id_of_ven="get_reports_with_parameters_ven_client_2"
         ) as ven2,
         event_in_program_with_targets(vtn_client=vtn_openadr_310_bl_token, program=program2, intervals=(), event_name="get_reports_with_parameters_event_2") as event2,
-        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven2, event=event2),
+        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven2, event=event2, resources=report_resources),
     ):
         # Test getting all reports
         all_reports = interface.get_reports(pagination=None, program_id=None, event_id=None, client_name=None)
@@ -170,11 +202,33 @@ def test_delete_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
+    report_resources = (
+        ReportResource(
+            resource_name="test-update-report-resource",
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+                randomize_start=timedelta(seconds=0)
+            ),
+            intervals=(
+                Interval(
+                    id=0,
+                    interval_period=IntervalPeriod(
+                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                        duration=timedelta(minutes=5),
+                        randomize_start=timedelta(seconds=0)
+                    ),
+                    payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
+                ),
+            ),
+        ),
+    )
+
     with (
         new_program(vtn_client=vtn_openadr_310_bl_token, program_name="delete_report_program") as program,
         ven_with_targets(vtn_client=vtn_openadr_310_bl_token, ven_name="delete_report_ven", client_id_of_ven="delete_report_ven_client_id") as ven,
         event_in_program_with_targets(vtn_client=vtn_openadr_310_bl_token, program=program, intervals=(), event_name="delete_report_event") as event,
-        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven, event=event) as created_report,
+        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven, event=event, resources=report_resources) as created_report,
     ):
         # Delete the report
         deleted_report = interface.delete_report_by_id(report_id=created_report.id)
@@ -195,12 +249,34 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
+    report_resources = (
+        ReportResource(
+            resource_name="test-update-report-resource",
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+                randomize_start=timedelta(seconds=0)
+            ),
+            intervals=(
+                Interval(
+                    id=0,
+                    interval_period=IntervalPeriod(
+                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                        duration=timedelta(minutes=5),
+                        randomize_start=timedelta(seconds=0)
+                    ),
+                    payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
+                ),
+            ),
+        ),
+    )
+
     with (
         new_program(vtn_client=vtn_openadr_310_bl_token, program_name="update_report_program") as program,
         ven_with_targets(vtn_client=vtn_openadr_310_bl_token, ven_name="update_report_ven", client_id_of_ven="update_report_ven_client_id") as ven,
         event_in_program_with_targets(vtn_client=vtn_openadr_310_bl_token, program=program, intervals=(), event_name="update_report_event") as event,
         ven_with_targets(vtn_client=vtn_openadr_310_bl_token, ven_name="update_report_ven_2", client_id_of_ven="update_report_ven_client_id_2") as new_ven,
-        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven, event=event) as created_report,
+        report_from_ven_in_program(vtn_client=vtn_openadr_310_bl_token, ven=ven, event=event, resources=report_resources) as created_report,
     ):
         updated_report_resources = (
             ReportResource(
@@ -208,11 +284,16 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
                 interval_period=IntervalPeriod(
                     start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
                     duration=timedelta(minutes=5),
+                    randomize_start=timedelta(seconds=0)
                 ),
                 intervals=(
                     Interval(
                         id=0,
-                        interval_period=None,
+                        interval_period=IntervalPeriod(
+                            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                            duration=timedelta(minutes=5),
+                            randomize_start=timedelta(seconds=0)
+                        ),
                         payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                     ),
                 ),

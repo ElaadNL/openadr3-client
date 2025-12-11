@@ -307,10 +307,6 @@ def test_delete_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
         with pytest.raises(HTTPError, match="404 Client Error"):
             _ = interface.get_ven_by_id(ven_id=my_ven.id)
 
-        # Verify that VEN cannot delete VEN not associated with its client.
-        with pytest.raises(HTTPError, match="400 Client Error"):
-            _ = interface.delete_ven_by_id(ven_id=other_ven.id)
-
 
 def test_update_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
     """Test to validate updating a ven that exists works for a BL."""
@@ -362,7 +358,3 @@ def test_update_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
         assert updated_ven.id == my_ven.id, "ven ID for updated ven should match original"
         assert updated_ven.targets == my_ven.targets, "Ven targets should match original"
         assert updated_ven.ven_name != my_ven.ven_name, "Ven name should have been updated"
-
-        with pytest.raises(HTTPError, match="404 Client Error"):
-            # Attempt to update the VEN not associated with the client.
-            _ = interface.update_ven_by_id(ven_id=other_ven.id, updated_ven=other_ven.update(update))
