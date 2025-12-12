@@ -5,14 +5,14 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from requests import HTTPError
 
-from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
-from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.oadr310.common.interval import Interval
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.event.event import EventUpdate, ExistingEvent, NewEvent
-from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadType
+from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
+from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.oadr310.models.common.interval import Interval
+from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
+from openadr3_client.oadr310.models.event.event import EventUpdate, ExistingEvent, NewEvent
+from openadr3_client.oadr310.models.event.event_payload import EventPayload, EventPayloadType
 from tests.conftest import IntegrationTestVTNClient
-from tests.oadr310.generators import event_in_program_with_targets, new_program, ven_with_targets, resource_for_ven
+from tests.oadr310.generators import event_in_program_with_targets, new_program, resource_for_ven, ven_with_targets
 
 
 def test_get_events_non_existent_program_vtn(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -395,21 +395,11 @@ def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNCl
                 assert response[0].event_name == event_name, "the event should have the correct name."
 
 
-def test_ven_with_resource_target_gets_targeted_events(
-    vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient
-) -> None:
-    """
-    Validate that a VEN with an associated resource with targets can see events with those targets.
-    """
+def test_ven_with_resource_target_gets_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
+    """Validate that a VEN with an associated resource with targets can see events with those targets."""
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
-    )
-
-    interface2 = EventsHttpInterface(
-        base_url=vtn_openadr_310_bl_token.vtn_base_url,
-        config=vtn_openadr_310_bl_token.config,
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 

@@ -5,9 +5,9 @@ from datetime import UTC, datetime
 import pytest
 from requests import HTTPError
 
-from openadr3_client._vtn.oadr310.http.resources import ResourcesHttpInterface
-from openadr3_client.models.oadr310.common.attribute import Attribute
-from openadr3_client.models.oadr310.resource.resource import ExistingResource, ResourceUpdateBlRequest
+from openadr3_client.oadr310._vtn.http.resources import ResourcesHttpInterface
+from openadr3_client.oadr310.models.common.attribute import Attribute
+from openadr3_client.oadr310.models.resource.resource import ExistingResource, ResourceUpdateBlRequest
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import resource_for_ven, ven_with_targets
 

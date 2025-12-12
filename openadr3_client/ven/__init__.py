@@ -1,5 +1,5 @@
 """
-Virtual End Node (BL) module of the OpenADR3 Client.
+Virtual End Node (VEN) module of the OpenADR3 Client.
 
-This module provides VEN specific logic and implementations for the OpenADR3 Client.
+This module implements the public VEN client creation logic for the OpenADR3 Client.
 """

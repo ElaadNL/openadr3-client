@@ -68,7 +68,7 @@ class OpenADR310VtnTestContainer:
             .with_env("USE_TLS", "true")
             .with_env("TLS_CERT_FILE", "/vtn_certs/cert.pem")
             .with_env("TLS_KEY_FILE", "/vtn_certs/key.pem")
-            .with_env("LOG_LEVEL", "10") # Debug log level
+            .with_env("LOG_LEVEL", "10")  # Debug log level
             .with_volume_mapping(host=str(cert_dir), container="/vtn_certs", mode="ro")
             .waiting_for(LogMessageWaitStrategy(re.compile(r".*ListStore\.__init__\(\).*"), re.DOTALL))
         )

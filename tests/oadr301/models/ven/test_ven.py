@@ -5,7 +5,7 @@ import string
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.oadr301.ven.ven import NewVen
+from openadr3_client.oadr301.models.ven.ven import NewVen
 
 
 def test_new_ven_creation_guard() -> None:

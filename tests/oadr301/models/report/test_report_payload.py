@@ -1,8 +1,8 @@
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.models.oadr301.common.unit import Unit
-from openadr3_client.models.oadr301.report.report_payload import (
+from openadr3_client.oadr301.models.common.unit import Unit
+from openadr3_client.oadr301.models.report.report_payload import (
     ReportPayload,
     ReportPayloadDescriptor,
     ReportPayloadType,

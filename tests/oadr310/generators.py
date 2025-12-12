@@ -5,21 +5,21 @@ from datetime import UTC, datetime, timedelta
 
 from pydantic_extra_types.currency_code import ISO4217
 
-from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
-from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.oadr310.http.resources import ResourcesHttpInterface
-from openadr3_client._vtn.oadr310.http.reports import ReportsHttpInterface
-from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
-from openadr3_client.models.oadr310.common.interval import Interval
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.common.unit import Unit
-from openadr3_client.models.oadr310.common.attribute import Attribute
-from openadr3_client.models.oadr310.event.event import ExistingEvent, NewEvent
-from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram
-from openadr3_client.models.oadr310.report.report import ExistingReport, NewReport, ReportResource
-from openadr3_client.models.oadr310.resource.resource import ExistingResource, NewResourceBlRequest
-from openadr3_client.models.oadr310.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest
+from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
+from openadr3_client.oadr310._vtn.http.programs import ProgramsHttpInterface
+from openadr3_client.oadr310._vtn.http.reports import ReportsHttpInterface
+from openadr3_client.oadr310._vtn.http.resources import ResourcesHttpInterface
+from openadr3_client.oadr310._vtn.http.vens import VensHttpInterface
+from openadr3_client.oadr310.models.common.attribute import Attribute
+from openadr3_client.oadr310.models.common.interval import Interval
+from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
+from openadr3_client.oadr310.models.common.unit import Unit
+from openadr3_client.oadr310.models.event.event import ExistingEvent, NewEvent
+from openadr3_client.oadr310.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
+from openadr3_client.oadr310.models.program.program import ExistingProgram, NewProgram
+from openadr3_client.oadr310.models.report.report import ExistingReport, NewReport, ReportResource
+from openadr3_client.oadr310.models.resource.resource import ExistingResource, NewResourceBlRequest
+from openadr3_client.oadr310.models.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest
 from tests.conftest import IntegrationTestVTNClient
 
 

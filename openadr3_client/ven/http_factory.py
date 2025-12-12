@@ -45,7 +45,7 @@ class VirtualEndNodeHttpClientFactory:
                 msg = "Token URL must be provided for OpenADR 3.0.1 clients."
                 raise ValueError(msg)
             if version == OADRVersion.OADR_310:
-                from openadr3_client._vtn.oadr310.http.auth import AuthReadOnlyInterface  # noqa: PLC0415
+                from openadr3_client.oadr310._vtn.http.auth import AuthReadOnlyInterface  # noqa: PLC0415
 
                 # If token URL is None, discover the token URL from the VTN through the discovery endpoint.
                 logger.info("Token URL not provided to VEN client factory, calling VTN discovery endpoint to fetch token URL...")
@@ -62,7 +62,7 @@ class VirtualEndNodeHttpClientFactory:
         )
 
         if version == OADRVersion.OADR_310:
-            from openadr3_client.ven.oadr310.client import get_oadr310_ven_client  # noqa: PLC0415
+            from openadr3_client.oadr310._ven.client import get_oadr310_ven_client  # noqa: PLC0415
 
             return get_oadr310_ven_client(
                 vtn_base_url=vtn_base_url,
@@ -70,7 +70,7 @@ class VirtualEndNodeHttpClientFactory:
                 verify_vtn_tls_certificate=verify_vtn_tls_certificate,
             )
 
-        from openadr3_client.ven.oadr301.client import get_oadr301_ven_client  # noqa: PLC0415
+        from openadr3_client.oadr301._ven.client import get_oadr301_ven_client  # noqa: PLC0415
 
         return get_oadr301_ven_client(
             vtn_base_url=vtn_base_url,

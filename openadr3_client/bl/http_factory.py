@@ -50,7 +50,7 @@ class BusinessLogicHttpClientFactory:
                 msg = "Token URL must be provided for OpenADR 3.0.1 clients."
                 raise ValueError(msg)
             if version == OADRVersion.OADR_310:
-                from openadr3_client._vtn.oadr310.http.auth import AuthReadOnlyInterface  # noqa: PLC0415
+                from openadr3_client.oadr310._vtn.http.auth import AuthReadOnlyInterface  # noqa: PLC0415
 
                 # If token URL is None, discover the token URL from the VTN through the discovery endpoint.
                 logger.info("Token URL not provided to BL client factory, calling VTN discovery endpoint to fetch token URL...")
@@ -67,7 +67,7 @@ class BusinessLogicHttpClientFactory:
         )
 
         if version == OADRVersion.OADR_310:
-            from openadr3_client.bl.oadr310.client import get_oadr310_bl_client  # noqa: PLC0415
+            from openadr3_client.oadr310._bl.client import get_oadr310_bl_client  # noqa: PLC0415
 
             return get_oadr310_bl_client(
                 vtn_base_url=vtn_base_url,
@@ -75,7 +75,7 @@ class BusinessLogicHttpClientFactory:
                 verify_vtn_tls_certificate=verify_vtn_tls_certificate,
             )
 
-        from openadr3_client.bl.oadr301.client import get_oadr301_bl_client  # noqa: PLC0415
+        from openadr3_client.oadr301._bl.client import get_oadr301_bl_client  # noqa: PLC0415
 
         return get_oadr301_bl_client(
             vtn_base_url=vtn_base_url,

@@ -5,11 +5,11 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from requests import HTTPError
 
-from openadr3_client._vtn.oadr310.http.reports import ReportsHttpInterface
-from openadr3_client.models.oadr310.common.interval import Interval
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.report.report import ExistingReport, ReportResource, ReportUpdate
-from openadr3_client.models.oadr310.report.report_payload import ReportPayload, ReportPayloadType
+from openadr3_client.oadr310._vtn.http.reports import ReportsHttpInterface
+from openadr3_client.oadr310.models.common.interval import Interval
+from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
+from openadr3_client.oadr310.models.report.report import ExistingReport, ReportResource, ReportUpdate
+from openadr3_client.oadr310.models.report.report_payload import ReportPayload, ReportPayloadType
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import event_in_program_with_targets, new_program, report_from_ven_in_program, ven_with_targets
 
@@ -72,18 +72,12 @@ def test_update_report_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationT
                 resources=(
                     ReportResource(
                         resource_name="test-resource",
-                        interval_period=IntervalPeriod(
-                            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                            duration=timedelta(minutes=5),
-                            randomize_start=timedelta(seconds=0)
-                        ),
+                        interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                         intervals=(
                             Interval(
                                 id=0,
                                 interval_period=IntervalPeriod(
-                                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                                    duration=timedelta(minutes=5),
-                                    randomize_start=timedelta(seconds=0)
+                                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)
                                 ),
                                 payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                             ),
@@ -104,19 +98,11 @@ def test_create_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         resources = (
             ReportResource(
                 resource_name="test-resource",
-                interval_period=IntervalPeriod(
-                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                    duration=timedelta(minutes=5),
-                    randomize_start=timedelta(seconds=0)
-                ),
+                interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                 intervals=(
                     Interval(
                         id=0,
-                        interval_period=IntervalPeriod(
-                            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                            duration=timedelta(minutes=5),
-                            randomize_start=timedelta(seconds=0)
-                        ),
+                        interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                         payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                     ),
                 ),
@@ -141,19 +127,11 @@ def test_get_reports_with_parameters(vtn_openadr_310_bl_token: IntegrationTestVT
     report_resources = (
         ReportResource(
             resource_name="test-get-reports-with-parameters-resource",
-            interval_period=IntervalPeriod(
-                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                duration=timedelta(minutes=5),
-                randomize_start=timedelta(seconds=0)
-            ),
+            interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
             intervals=(
                 Interval(
                     id=0,
-                    interval_period=IntervalPeriod(
-                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                        duration=timedelta(minutes=5),
-                        randomize_start=timedelta(seconds=0)
-                    ),
+                    interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                     payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                 ),
             ),
@@ -205,19 +183,11 @@ def test_delete_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
     report_resources = (
         ReportResource(
             resource_name="test-update-report-resource",
-            interval_period=IntervalPeriod(
-                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                duration=timedelta(minutes=5),
-                randomize_start=timedelta(seconds=0)
-            ),
+            interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
             intervals=(
                 Interval(
                     id=0,
-                    interval_period=IntervalPeriod(
-                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                        duration=timedelta(minutes=5),
-                        randomize_start=timedelta(seconds=0)
-                    ),
+                    interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                     payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                 ),
             ),
@@ -252,19 +222,11 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
     report_resources = (
         ReportResource(
             resource_name="test-update-report-resource",
-            interval_period=IntervalPeriod(
-                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                duration=timedelta(minutes=5),
-                randomize_start=timedelta(seconds=0)
-            ),
+            interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
             intervals=(
                 Interval(
                     id=0,
-                    interval_period=IntervalPeriod(
-                        start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                        duration=timedelta(minutes=5),
-                        randomize_start=timedelta(seconds=0)
-                    ),
+                    interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                     payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                 ),
             ),
@@ -281,19 +243,11 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         updated_report_resources = (
             ReportResource(
                 resource_name="test-resource-updated",
-                interval_period=IntervalPeriod(
-                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                    duration=timedelta(minutes=5),
-                    randomize_start=timedelta(seconds=0)
-                ),
+                interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                 intervals=(
                     Interval(
                         id=0,
-                        interval_period=IntervalPeriod(
-                            start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
-                            duration=timedelta(minutes=5),
-                            randomize_start=timedelta(seconds=0)
-                        ),
+                        interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                         payloads=(ReportPayload(type=ReportPayloadType.READING, values=(2.0, 3.0)),),
                     ),
                 ),

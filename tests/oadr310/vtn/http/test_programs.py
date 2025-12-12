@@ -6,12 +6,12 @@ import pytest
 from pydantic_extra_types.currency_code import ISO4217
 from requests.exceptions import HTTPError
 
-from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
-from openadr3_client._vtn.oadr310.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
-from openadr3_client.models.oadr310.common.unit import Unit
-from openadr3_client.models.oadr310.event.event_payload import EventPayloadDescriptor, EventPayloadType
-from openadr3_client.models.oadr310.program.program import ExistingProgram, ProgramUpdate
+from openadr3_client.oadr310._vtn.http.programs import ProgramsHttpInterface
+from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
+from openadr3_client.oadr310.models.common.unit import Unit
+from openadr3_client.oadr310.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
+from openadr3_client.oadr310.models.program.program import ExistingProgram, ProgramUpdate
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import new_program
 
