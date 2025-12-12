@@ -9,7 +9,7 @@ from testcontainers.mqtt import MosquittoContainer
 
 
 class OpenADR310VtnTestContainer:
-    """A test container for an OpenLeadr-rs VTN (OpenADR 3.0.1) with a PostgreSQL testcontainer dependency."""
+    """A test container for an OpenADR 3.1.0 VTN."""
 
     def __init__(
         self,
@@ -21,7 +21,7 @@ class OpenADR310VtnTestContainer:
         **kwargs: dict[str, Any],
     ) -> None:
         """
-        Initialize the VTN test container with its PostgreSQL dependency.
+        Initialize the VTN test container.
 
         Args:
             oauth_token_endpoint (str): The OAuth token endpoint URL for the VTN to use for token validation.
@@ -68,6 +68,7 @@ class OpenADR310VtnTestContainer:
             .with_env("USE_TLS", "true")
             .with_env("TLS_CERT_FILE", "/vtn_certs/cert.pem")
             .with_env("TLS_KEY_FILE", "/vtn_certs/key.pem")
+            .with_env("LOG_LEVEL", "10") # Debug log level
             .with_volume_mapping(host=str(cert_dir), container="/vtn_certs", mode="ro")
             .waiting_for(LogMessageWaitStrategy(re.compile(r".*ListStore\.__init__\(\).*"), re.DOTALL))
         )
