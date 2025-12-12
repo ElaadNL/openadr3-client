@@ -12,7 +12,7 @@ from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
 from openadr3_client.models.oadr310.event.event import EventUpdate, ExistingEvent, NewEvent
 from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadType
 from tests.conftest import IntegrationTestVTNClient
-from tests.oadr310.generators import event_in_program_with_targets, new_program, ven_with_targets
+from tests.oadr310.generators import event_in_program_with_targets, new_program, ven_with_targets, resource_for_ven
 
 
 def test_get_events_non_existent_program_vtn(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -393,6 +393,78 @@ def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNCl
                 response = interface.get_events(target=TargetFilter(targets=list(targets)), pagination=None, program_id=None)
                 assert len(response) == 1, "one event should be returned by the VTN."
                 assert response[0].event_name == event_name, "the event should have the correct name."
+
+
+def test_ven_with_resource_target_gets_targeted_events(
+    vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient
+) -> None:
+    """
+    Validate that a VEN with an associated resource with targets can see events with those targets.
+    """
+    interface = EventsHttpInterface(
+        base_url=vtn_openadr_310_ven_token.vtn_base_url,
+        config=vtn_openadr_310_ven_token.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+    )
+
+    interface2 = EventsHttpInterface(
+        base_url=vtn_openadr_310_bl_token.vtn_base_url,
+        config=vtn_openadr_310_bl_token.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+    )
+
+    with new_program(vtn_openadr_310_bl_token, program_name="test-program-resource-target") as created_program:
+        assert created_program.id is not None, "program should be created successfully"
+
+        resource_targets = ("resource-target",)
+        intervals = (
+            Interval(
+                id=0,
+                interval_period=IntervalPeriod(
+                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                    duration=timedelta(minutes=5),
+                    randomize_start=timedelta(seconds=0),
+                ),
+                payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(2.0, 3.0)),),
+            ),
+        )
+
+        with (
+            ven_with_targets(
+                vtn_openadr_310_bl_token,
+                ven_name="ven-with-resource-target",
+                client_id_of_ven=vtn_openadr_310_ven_token.config.client_id,
+            ) as ven,
+            resource_for_ven(
+                vtn_client=vtn_openadr_310_bl_token,
+                ven_id=ven.id,
+                resource_name="resource-targeted",
+                client_id_of_resource=ven.client_id,
+                attributes=None,
+                targets=resource_targets,
+            ),
+            event_in_program_with_targets(
+                vtn_client=vtn_openadr_310_bl_token,
+                program=created_program,
+                intervals=intervals,
+                targets=resource_targets,
+                event_name="resource-targeted-event",
+            ) as targeted_event,
+            event_in_program_with_targets(
+                vtn_client=vtn_openadr_310_bl_token,
+                program=created_program,
+                intervals=intervals,
+                targets=("other-target",),
+                event_name="not-targeted-event",
+            ),
+        ):
+            response = interface.get_events(target=None, pagination=None, program_id=None)
+            assert len(response) == 1, "one event should be returned by the VTN."
+            assert response[0].event_name == targeted_event.event_name, "the event should have the correct name."
+
+            response = interface.get_events(target=TargetFilter(targets=list(resource_targets)), pagination=None, program_id=None)
+            assert len(response) == 1, "one event should be returned by the VTN."
+            assert response[0].event_name == targeted_event.event_name, "the event should have the correct name."
 
 
 def test_ven_should_not_see_other_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
