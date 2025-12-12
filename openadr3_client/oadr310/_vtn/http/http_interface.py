@@ -1,7 +1,7 @@
 from requests import Session
 
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
-from openadr3_client.oadr310._vtn.http.common._authenticated_session import _BearerAuthenticatedSession
+from openadr3_client._common.http.authenticated_session import _BearerAuthenticatedHttpsOnlySession
 
 
 class _BaseHttpInterface:
@@ -74,5 +74,5 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
             PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
 
         """
-        authenticated_session = _BearerAuthenticatedSession(token_manager=OAuthTokenManager(config), verify_tls_certificate=verify_tls_certificate)
+        authenticated_session = _BearerAuthenticatedHttpsOnlySession(token_manager=OAuthTokenManager(config), verify_tls_certificate=verify_tls_certificate)
         super().__init__(base_url=base_url, session=authenticated_session)

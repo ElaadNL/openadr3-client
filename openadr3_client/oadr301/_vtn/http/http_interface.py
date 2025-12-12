@@ -1,5 +1,5 @@
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
-from openadr3_client.oadr301._vtn.http.common._authenticated_session import BearerAuthenticatedSession
+from openadr3_client._common.http.authenticated_session import BearerAuthenticatedSession
 
 
 class HttpInterface:

@@ -38,8 +38,16 @@ class HTTPSOnlySession(Session):
         return super().request(method, url, *args, **kwargs)
 
 
-class _BearerAuthenticatedSession(HTTPSOnlySession):
+class BearerAuthenticatedSession(Session):
     """Session that includes a bearer token in all requests made through it."""
+
+    def __init__(self, token_manager: OAuthTokenManager) -> None:
+        super().__init__()
+        self.auth = _BearerAuth(token_manager)
+
+
+class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
+    """Session that includes a bearer token and requires HTTPS in all requests made through it."""
 
     def __init__(self, token_manager: OAuthTokenManager, *, verify_tls_certificate: bool | str = True) -> None:
         """
