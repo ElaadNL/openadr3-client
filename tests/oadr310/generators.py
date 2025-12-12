@@ -7,15 +7,18 @@ from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client._vtn.oadr310.http.events import EventsHttpInterface
 from openadr3_client._vtn.oadr310.http.programs import ProgramsHttpInterface
+from openadr3_client._vtn.oadr310.http.resources import ResourcesHttpInterface
 from openadr3_client._vtn.oadr310.http.reports import ReportsHttpInterface
 from openadr3_client._vtn.oadr310.http.vens import VensHttpInterface
 from openadr3_client.models.oadr310.common.interval import Interval
 from openadr3_client.models.oadr310.common.interval_period import IntervalPeriod
 from openadr3_client.models.oadr310.common.unit import Unit
+from openadr3_client.models.oadr310.common.attribute import Attribute
 from openadr3_client.models.oadr310.event.event import ExistingEvent, NewEvent
 from openadr3_client.models.oadr310.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
 from openadr3_client.models.oadr310.program.program import ExistingProgram, NewProgram
 from openadr3_client.models.oadr310.report.report import ExistingReport, NewReport, ReportResource
+from openadr3_client.models.oadr310.resource.resource import ExistingResource, NewResourceBlRequest
 from openadr3_client.models.oadr310.ven.ven import ExistingVen, NewVenBlRequest, NewVenVenRequest
 from tests.conftest import IntegrationTestVTNClient
 
@@ -88,6 +91,51 @@ def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, client
         # Do not fail if deletion fails, which can occur if the ven is manually deleted in a test.
         with contextlib.suppress(Exception):
             ven_interface.delete_ven_by_id(ven_id=created_ven.id)
+
+
+@contextmanager
+def resource_for_ven(
+    vtn_client: IntegrationTestVTNClient,
+    ven_id: str,
+    resource_name: str,
+    client_id_of_resource: str,
+    attributes: tuple[Attribute, ...] | None = None,
+    targets: tuple[str, ...] | None = None,
+) -> Generator[ExistingResource, None, None]:
+    """
+    Helper function to create a resource in the VTN for testing purposes.
+
+    Args:
+        vtn_client (IntegrationTestVTNClient): VTN client configuration.
+        ven_id (str): The identifier of the ven the resource belongs to.
+        resource_name (str): The name of the resource to create.
+        client_id_of_resource (str): The client ID associated with the resource.
+        attributes (tuple[Attribute, ...] | None): Attributes to set on the resource.
+        targets (tuple[str, ...] | None): Targets to set on the resource.
+
+    """
+    interface = ResourcesHttpInterface(
+        base_url=vtn_client.vtn_base_url,
+        config=vtn_client.config,
+        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+    )
+
+    resource = NewResourceBlRequest(
+        resource_name=resource_name,
+        venID=ven_id,
+        attributes=attributes,
+        clientID=client_id_of_resource,
+        targets=targets,
+    )
+
+    created_resource = interface.create_resource(new_resource=resource)
+
+    try:
+        yield created_resource
+    finally:
+        # Do not fail if deletion fails, which can occur if the resource is manually deleted in a test.
+        with contextlib.suppress(Exception):
+            interface.delete_resource_by_id(resource_id=created_resource.id)
 
 
 @contextmanager
