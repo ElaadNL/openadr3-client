@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from openadr3_client.conversion.input.events._base_converter import OK
+from openadr3_client._conversion.input._base_converter import OK
 
 
 def test_main_package_imports_without_pandas() -> None:
@@ -22,11 +22,11 @@ def test_pandas_classes_import_successfully_with_pandas() -> None:
     """Test that pandas-dependent classes can be imported successfully when pandas is available."""
     # Test importing the classes as a user would do
     try:
-        from openadr3_client.conversion.common.dataframe import EventIntervalDataFrameSchema  # noqa: F401 PLC0415
-        from openadr3_client.conversion.input.events.pandas import (  # noqa: PLC0415
+        from openadr3_client._conversion.common.dataframe import EventIntervalDataFrameSchema  # noqa: F401 PLC0415
+        from openadr3_client.oadr301.conversion.input.events.pandas import (  # noqa: PLC0415
             PandasEventIntervalConverter,  # noqa: F401
         )
-        from openadr3_client.conversion.output.events.pandas import (  # noqa: PLC0415
+        from openadr3_client.oadr301.conversion.output.events.pandas import (  # noqa: PLC0415
             PandasEventIntervalConverter as OutputConverter,  # noqa: F401
         )
     except ImportError as e:
@@ -87,7 +87,7 @@ def test_pandas_functionality_works_when_available() -> None:
     try:
         import pandas as pd  # noqa: PLC0415
 
-        from openadr3_client.conversion.input.events.pandas import PandasEventIntervalConverter  # noqa: PLC0415
+        from openadr3_client.oadr301.conversion.input.events.pandas import PandasEventIntervalConverter  # noqa: PLC0415
     except ImportError:
         pytest.fail("Pandas should be available for this test")
 
