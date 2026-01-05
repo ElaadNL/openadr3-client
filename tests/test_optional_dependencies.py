@@ -49,9 +49,9 @@ def test_pandas_modules_have_import_guards() -> None:
         "pandas",
         "numpy",
         "pandera",
-        "openadr3_client.conversion.input.events.pandas",
-        "openadr3_client.conversion.output.events.pandas",
-        "openadr3_client.conversion.common.dataframe",
+        "openadr3_client.oadr301.conversion.input.events.pandas",
+        "openadr3_client.oadr301.conversion.output.events.pandas",
+        "openadr3_client._conversion.common.dataframe",
     ]
 
     original_modules = {}
@@ -65,13 +65,13 @@ def test_pandas_modules_have_import_guards() -> None:
         with patch("builtins.__import__", side_effect=mock_import):
             # Test input module
             with pytest.raises(ImportError) as excinfo:
-                importlib.import_module("openadr3_client.conversion.input.events.pandas")
+                importlib.import_module("openadr3_client.oadr301.conversion.input.events.pandas")
 
             assert "DataFrame conversion functionality requires the 'pandas' extra" in str(excinfo.value)
 
             # Test output module
             with pytest.raises(ImportError) as excinfo:
-                importlib.import_module("openadr3_client.conversion.output.events.pandas")
+                importlib.import_module("openadr3_client.oadr301.conversion.output.events.pandas")
 
             assert "DataFrame conversion functionality requires the 'pandas' extra" in str(excinfo.value)
 
