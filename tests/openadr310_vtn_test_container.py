@@ -51,13 +51,9 @@ class OpenADR310VtnTestContainer:
             )
             # Add mosquitto oauth plugin
             .with_volume_mapping(
-                host="",
-                container="",
-            )
-            .with_bind_mount(
-                host_path="tests/mosquitto/mosquitto.conf",
-                container_path="/mosquitto/config/mosquitto.conf",
-                mode="ro",
+                host="tests/mosquitto/mosquitto.conf",
+                container="/mosquitto/config/mosquitto.conf",
+                mode="ro"
             )
             .with_network(self._network)
             .with_network_aliases("mqttbroker")
