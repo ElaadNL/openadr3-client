@@ -18,6 +18,7 @@ class OpenADR310VtnTestContainer:
         network: Network | None = None,
         vtn_reference_image: str = "ghcr.io/nicburgt/oadr310-vtn-test:latest",
         vtn_port: int = 8080,
+        mqtt_port: int = 1883,
         **kwargs: dict[str, Any],
     ) -> None:
         """
@@ -29,10 +30,12 @@ class OpenADR310VtnTestContainer:
             network (Network | None, optional): The Docker network to use. If None, a new network will be created.
             vtn_reference_image (str, optional): The Docker image reference for the VTN. Defaults to "ghcr.io/nicburgt/oadr310-vtn-test:latest".
             vtn_port (int, optional): The port on which the VTN will listen. Defaults to 8080.
+            mqtt_port (int, optional): The port on which the MQTT broker will listen. Defaults to 1883.
             **kwargs: Additional arguments to pass to the DockerContainer constructor.
 
         """
         self._vtn_port = vtn_port
+        self._mqtt_port = mqtt_port
 
         if network is None:
             self._internal_network = True
@@ -46,8 +49,19 @@ class OpenADR310VtnTestContainer:
             MosquittoContainer(
                 image="eclipse-mosquitto:2.0.22",
             )
+            # Add mosquitto oauth plugin
+            .with_volume_mapping(
+                host="",
+                container="",
+            )
+            .with_bind_mount(
+                host_path="tests/mosquitto/mosquitto.conf",
+                container_path="/mosquitto/config/mosquitto.conf",
+                mode="ro",
+            )
             .with_network(self._network)
             .with_network_aliases("mqttbroker")
+            .with_exposed_ports(self._mqtt_port)
             .waiting_for(LogMessageWaitStrategy(re.compile(r"mosquitto version .* running")))
         )
 
