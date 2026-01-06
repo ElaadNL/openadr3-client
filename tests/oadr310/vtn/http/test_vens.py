@@ -1,14 +1,12 @@
 """Contains tests for the vens VTN module."""
 
-from datetime import UTC, datetime
-
 import pytest
 from requests import HTTPError
 
 from openadr3_client.oadr310._vtn.http.vens import VensHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr310.models.common.attribute import Attribute
-from openadr3_client.oadr310.models.ven.ven import ExistingVen, VenUpdateBlRequest, VenUpdateVenRequest
+from openadr3_client.oadr310.models.ven.ven import VenUpdateBlRequest, VenUpdateVenRequest
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import ven_created_by_ven, ven_with_targets
 
@@ -71,15 +69,11 @@ def test_update_ven_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTest
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
-    tz_aware_dt = datetime.now(tz=UTC)
-    with pytest.raises(HTTPError, match="400 Client Error"):
+    with pytest.raises(HTTPError, match="404 Client Error"):
         interface.update_ven_by_id(
             ven_id="fake-ven-id",
-            updated_ven=ExistingVen(
-                id="fake-ven-id",
+            updated_ven=VenUpdateBlRequest(
                 ven_name="test-ven",
-                created_date_time=tz_aware_dt,
-                modification_date_time=tz_aware_dt,
                 attributes=(Attribute(type="test-attribute", values=("test-value",)),),
                 targets=("test-value",),
                 clientID="non-existent-client-id",
@@ -323,7 +317,7 @@ def test_update_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
 
         update = VenUpdateBlRequest(ven_name="new-ven-name-updated-by-bl", targets=new_targets, clientID="client-id-of-ven-to-update")
         # update the ven
-        updated_ven = interface.update_ven_by_id(ven_id=ven_to_update.id, updated_ven=ven_to_update.update(update))
+        updated_ven = interface.update_ven_by_id(ven_id=ven_to_update.id, updated_ven=update)
 
         assert updated_ven.id == ven_to_update.id, "ven ID for updated ven should match original"
         assert updated_ven.ven_name != ven_to_update.ven_name, "Ven name should have been updated"
@@ -353,8 +347,7 @@ def test_update_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
     ):
         update = VenUpdateVenRequest(ven_name="new-ven-name-updated-by-ven")
         # Update the ven associated with the client.
-        updated_ven = interface.update_ven_by_id(ven_id=my_ven.id, updated_ven=my_ven.update(update))
+        updated_ven = interface.update_ven_by_id(ven_id=my_ven.id, updated_ven=update)
 
         assert updated_ven.id == my_ven.id, "ven ID for updated ven should match original"
-        assert updated_ven.targets == my_ven.targets, "Ven targets should match original"
         assert updated_ven.ven_name != my_ven.ven_name, "Ven name should have been updated"

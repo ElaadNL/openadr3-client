@@ -61,10 +61,10 @@ class NewResourceBlRequest(NewResource):
 class ResourceUpdate(ABC, BaseModel):
     """Class representing an update to a resource."""
 
-    resource_name: str | None = Field(default=None, min_length=1, max_length=128)
+    resource_name: str = Field(min_length=1, max_length=128)
     """The name of the resource."""
 
-    ven_id: str | None = Field(alias="venID", default=None, min_length=1, max_length=128)
+    ven_id: str = Field(alias="venID", min_length=1, max_length=128)
     """The identifier of the ven this resource belongs to."""
 
     attributes: tuple[Attribute, ...] | None = None

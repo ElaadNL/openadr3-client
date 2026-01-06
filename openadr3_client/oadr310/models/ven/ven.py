@@ -59,7 +59,7 @@ class NewVenBlRequest(NewVen):
 class VenUpdate(ABC, BaseModel):
     """Class representing an update to a ven by a VEN client."""
 
-    ven_name: str | None = Field(default=None, min_length=1, max_length=128)
+    ven_name: str = Field(min_length=1, max_length=128)
     """The ven name of the ven object."""
 
     attributes: tuple[Attribute, ...] | None = None
