@@ -109,7 +109,7 @@ class OpenADR310VtnTestContainer:
 
     def get_mqtt_broker_certificate_url(self) -> str:
         """Get the MQTT broker URL for certificate authentication."""
-        return f"mqtt://localhost:{self._mqtt.get_exposed_port(self._mqtt_port_anonymous)}"
+        return f"mqtts://localhost:{self._mqtt.get_exposed_port(self._mqtt_port_certificate_auth)}"
 
     def stop(self) -> None:
         """Stop the openleadr test container and its dependencies."""
