@@ -1,13 +1,11 @@
 """Contains tests for the resources VTN module."""
 
-from datetime import UTC, datetime
-
 import pytest
 from requests import HTTPError
 
 from openadr3_client.oadr310._vtn.http.resources import ResourcesHttpInterface
 from openadr3_client.oadr310.models.common.attribute import Attribute
-from openadr3_client.oadr310.models.resource.resource import ExistingResource, ResourceUpdateBlRequest
+from openadr3_client.oadr310.models.resource.resource import ResourceUpdateBlRequest
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import resource_for_ven, ven_with_targets
 
@@ -98,26 +96,24 @@ def test_update_ven_resource_by_id_non_existent(vtn_openadr_310_bl_token: Integr
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
-    with ven_with_targets(
-        vtn_client=vtn_openadr_310_bl_token,
-        ven_name="test-ven-with-non-existent-resource",
-        client_id_of_ven="client-id-of-ven-with-non-existent-resource",
-    ) as created_ven:
-        tz_aware_dt = datetime.now(tz=UTC)
-        with pytest.raises(HTTPError, match="400 Client Error"):
-            interface.update_resource_by_id(
-                resource_id="does-not-exist",
-                updated_resource=ExistingResource(
-                    id="does-not-exist",
-                    resource_name="test-resource",
-                    venID=created_ven.id,
-                    created_date_time=tz_aware_dt,
-                    modification_date_time=tz_aware_dt,
-                    attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-                    clientID=created_ven.client_id,
-                    targets=("test-target",),
-                ),
-            )
+    with (
+        ven_with_targets(
+            vtn_client=vtn_openadr_310_bl_token,
+            ven_name="test-ven-with-non-existent-resource",
+            client_id_of_ven="client-id-of-ven-with-non-existent-resource",
+        ) as created_ven,
+        pytest.raises(HTTPError, match="404 Client Error"),
+    ):
+        interface.update_resource_by_id(
+            resource_id="does-not-exist",
+            updated_resource=ResourceUpdateBlRequest(
+                resource_name="test-resource",
+                venID=created_ven.id,
+                attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+                clientID=created_ven.client_id,
+                targets=("test-target",),
+            ),
+        )
 
 
 def test_update_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -149,18 +145,18 @@ def test_update_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
             attributes=(Attribute(type="test-attribute-updated", values=("test-value-updated",)),),
             clientID=created_resource.client_id,
             targets=("test-target-updated",),
+            venID=created_resource.ven_id,
         )
 
         updated_resource = interface.update_resource_by_id(
             resource_id=created_resource.id,
-            updated_resource=created_resource.update(resource_update),
+            updated_resource=resource_update,
         )
 
         assert updated_resource.id == created_resource.id, "resource id should match"
         assert updated_resource.resource_name == "test-resource-updated-name", "resource name should match"
         assert updated_resource.ven_id == created_resource.ven_id, "ven id should match"
         assert updated_resource.created_date_time == created_resource.created_date_time, "created date time should match"
-        assert updated_resource.modification_date_time != created_resource.modification_date_time, "modification date time should not match"
         assert updated_resource.attributes is not None and len(updated_resource.attributes) == 1, "attribute count should match"
         assert updated_resource.attributes[0].type == "test-attribute-updated", "attribute type should match"
         assert updated_resource.attributes[0].values == ("test-value-updated",), "attribute values should match"

@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr310.models.ven.ven import DeletedVen, ExistingVen, NewVenVenRequest
+from openadr3_client.oadr310.models.ven.ven import DeletedVen, ExistingVen, NewVenVenRequest, VenUpdate
 
 
 class ReadOnlyVensInterface(ABC):
@@ -50,7 +50,7 @@ class WriteOnlyVensInterface(ABC):
         """
 
     @abstractmethod
-    def update_ven_by_id(self, ven_id: str, updated_ven: ExistingVen) -> ExistingVen:
+    def update_ven_by_id(self, ven_id: str, updated_ven: VenUpdate) -> ExistingVen:
         """
         Update the ven with the ven identifier in the VTN.
 
@@ -61,7 +61,7 @@ class WriteOnlyVensInterface(ABC):
 
         Args:
             ven_id (str): The identifier of the ven to update.
-            updated_ven (ExistingVen): The updated ven.
+            updated_ven (ExistingVen): The ven update to apply.
 
         """
 

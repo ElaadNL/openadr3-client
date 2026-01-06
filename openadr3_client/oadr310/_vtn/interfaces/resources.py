@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr310.models.resource.resource import DeletedResource, ExistingResource, NewResource
+from openadr3_client.oadr310.models.resource.resource import DeletedResource, ExistingResource, NewResource, ResourceUpdate
 
 
 class ReadOnlyResourcesInterface(ABC):
@@ -43,7 +43,7 @@ class WriteOnlyResourcesInterface(ABC):
     """Abstract class which contains the interface for write only methods of resources."""
 
     @abstractmethod
-    def update_resource_by_id(self, resource_id: str, updated_resource: ExistingResource) -> ExistingResource:
+    def update_resource_by_id(self, resource_id: str, updated_resource: ResourceUpdate) -> ExistingResource:
         """
         Update the resource with the resource identifier in the VTN.
 
@@ -56,7 +56,7 @@ class WriteOnlyResourcesInterface(ABC):
 
         Args:
             resource_id (str): The identifier of the resource to update.
-            updated_resource (ExistingResource): The updated resource.
+            updated_resource (ExistingResource): The resource update to apply.
 
         """
 

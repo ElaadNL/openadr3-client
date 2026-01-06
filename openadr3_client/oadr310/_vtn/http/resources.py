@@ -7,7 +7,7 @@ from openadr3_client.logging import logger
 from openadr3_client.oadr310._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr310._vtn.interfaces.resources import ReadOnlyResourcesInterface, ReadWriteResourceInterface, WriteOnlyResourcesInterface
-from openadr3_client.oadr310.models.resource.resource import DeletedResource, ExistingResource, NewResource
+from openadr3_client.oadr310.models.resource.resource import DeletedResource, ExistingResource, NewResource, ResourceUpdate
 
 base_prefix = "resources"
 
@@ -77,7 +77,7 @@ class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, Authenticated
     def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
         super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
 
-    def update_resource_by_id(self, resource_id: str, updated_resource: ExistingResource) -> ExistingResource:
+    def update_resource_by_id(self, resource_id: str, updated_resource: ResourceUpdate) -> ExistingResource:
         """
         Update the resource with the resource identifier in the VTN.
 
@@ -90,13 +90,9 @@ class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, Authenticated
 
         Args:
             resource_id (str): The identifier of the resource to update.
-            updated_resource (ExistingResource): The updated resource.
+            updated_resource (ResourceUpdate): The resource update.
 
         """
-        if resource_id != updated_resource.id:
-            exc_msg = "Resource id does not match id of updated resource object."
-            raise ValueError(exc_msg)
-
         # No lock on the ExistingResource type exists similar to the creation guard of a NewResource.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.

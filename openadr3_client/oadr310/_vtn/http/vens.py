@@ -7,7 +7,7 @@ from openadr3_client.logging import logger
 from openadr3_client.oadr310._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr310._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
-from openadr3_client.oadr310.models.ven.ven import DeletedVen, ExistingVen, NewVen
+from openadr3_client.oadr310.models.ven.ven import DeletedVen, ExistingVen, NewVen, VenUpdate
 
 base_prefix = "vens"
 
@@ -84,7 +84,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
             response.raise_for_status()
             return ExistingVen.model_validate(response.json())
 
-    def update_ven_by_id(self, ven_id: str, updated_ven: ExistingVen) -> ExistingVen:
+    def update_ven_by_id(self, ven_id: str, updated_ven: VenUpdate) -> ExistingVen:
         """
         Update the ven with the ven identifier in the VTN.
 
@@ -95,13 +95,9 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 
         Args:
             ven_id (str): The identifier of the ven to update.
-            updated_ven (ExistingVen): The updated ven.
+            updated_ven (ExistingVen): The ven update to apply.
 
         """
-        if ven_id != updated_ven.id:
-            exc_msg = "Ven id does not match ven id of updated ven object."
-            raise ValueError(exc_msg)
-
         # No lock on the ExistingVen type exists similar to the creation guard of a NewVen.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
