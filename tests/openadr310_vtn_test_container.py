@@ -58,11 +58,7 @@ class OpenADR310VtnTestContainer:
                 image="amd64/eclipse-mosquitto:2.0.22",
             )
             .with_kwargs(platform="linux/amd64")
-            .with_volume_mapping(
-                host=str(mosquitto_cert_dir),
-                container="/mosquitto/certs",
-                mode="ro"
-            )
+            .with_volume_mapping(host=str(mosquitto_cert_dir), container="/mosquitto/certs", mode="ro")
             .with_network(self._network)
             .with_network_aliases("mqttbroker")
             .with_exposed_ports(self._mqtt_port_anonymous, self._mqtt_port_certificate_auth)
@@ -107,9 +103,13 @@ class OpenADR310VtnTestContainer:
         """Get the base URL for the VTN."""
         return f"https://localhost:{self._vtn.get_exposed_port(self._vtn_port)}/openadr3/3.1.0"
 
-    def get_mqtt_broker_url(self) -> str:
-        """Get the MQTT broker URL for the VTN."""
-        return f"mqtt://localhost:{self._mqtt.get_exposed_port(1883)}"
+    def get_mqtt_broker_anonymous_url(self) -> str:
+        """Get the MQTT broker URL for anonymous authentication."""
+        return f"mqtt://localhost:{self._mqtt.get_exposed_port(self._mqtt_port_anonymous)}"
+
+    def get_mqtt_broker_certificate_url(self) -> str:
+        """Get the MQTT broker URL for certificate authentication."""
+        return f"mqtt://localhost:{self._mqtt.get_exposed_port(self._mqtt_port_anonymous)}"
 
     def stop(self) -> None:
         """Stop the openleadr test container and its dependencies."""
