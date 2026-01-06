@@ -3,28 +3,28 @@
 from openadr3_client.oadr310._vtn.mqtt.client import MQTTClient
 
 
-def test_mqtt_client_anonymous_auth(anonymous_mqtt_notifier_binding) -> None:
+def test_mqtt_client_anonymous_auth(anonymous_mqtt_notifier_binding_object) -> None:
     """Ensure the MQTT client can be created with anonymous authentication."""
-    client = MQTTClient(mqtt_notifier_binding=anonymous_mqtt_notifier_binding)
+    client = MQTTClient(mqtt_notifier_binding=anonymous_mqtt_notifier_binding_object)
 
     assert isinstance(client, MQTTClient)
 
 
 def test_mqtt_client_oauth2_bearer_auth(
-    oauth2_mqtt_notifier_binding,
-    oauth_token_manager,
+    oauth_mqtt_notifier_binding_object,
+    oauth_token_manager_mqtt,
 ) -> None:
     """Ensure the MQTT client can be created with OAuth2 bearer token authentication."""
     client = MQTTClient(
-        mqtt_notifier_binding=oauth2_mqtt_notifier_binding,
-        oauth_token_manager=oauth_token_manager,
+        mqtt_notifier_binding=oauth_mqtt_notifier_binding_object,
+        oauth_token_manager=oauth_token_manager_mqtt,
     )
 
     assert isinstance(client, MQTTClient)
 
 
-def test_mqtt_client_certificate_auth(certificate_mqtt_notifier_binding) -> None:
+def test_mqtt_client_certificate_auth(certificate_mqtt_notifier_binding_object) -> None:
     """Ensure the MQTT client can be created with certificate-based authentication."""
-    client = MQTTClient(mqtt_notifier_binding=certificate_mqtt_notifier_binding)
+    client = MQTTClient(mqtt_notifier_binding=certificate_mqtt_notifier_binding_object)
 
     assert isinstance(client, MQTTClient)
