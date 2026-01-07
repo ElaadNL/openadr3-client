@@ -9,7 +9,7 @@ from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, Ta
 from openadr3_client.oadr310._vtn.interfaces.vens import ReadOnlyVensInterface, ReadWriteVensInterface, WriteOnlyVensInterface
 from openadr3_client.oadr310.models.ven.ven import DeletedVen, ExistingVen, NewVen, VenUpdate
 
-base_prefix = "vens"
+BASE_PREFIX = "vens"
 
 
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterface):
@@ -39,9 +39,9 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterfac
         if ven_name:
             query_params |= {"venName": ven_name}
 
-        logger.debug("Ven - Performing get_vens request with query params: %s", query_params)
+        logger.debug(f"Ven - Performing get_vens request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingVen])
@@ -57,7 +57,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterfac
             ven_id (str): The ven identifier to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{ven_id}")
         response.raise_for_status()
 
         return ExistingVen.model_validate(response.json())
@@ -80,7 +80,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 
         """
         with new_ven.with_creation_guard():
-            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_ven.model_dump(by_alias=True, mode="json"))
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_ven.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingVen.model_validate(response.json())
 
@@ -101,7 +101,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
         # No lock on the ExistingVen type exists similar to the creation guard of a NewVen.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json"))
+        response = self.session.put(f"{self.base_url}/{BASE_PREFIX}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingVen.model_validate(response.json())
 
@@ -113,7 +113,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
             ven_id (str): The identifier of the ven to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{ven_id}")
         response.raise_for_status()
 
         return DeletedVen.model_validate(response.json())

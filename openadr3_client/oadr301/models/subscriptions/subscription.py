@@ -1,5 +1,5 @@
 from abc import ABC
-from enum import Enum
+from enum import StrEnum
 from typing import final
 
 from pydantic import AwareDatetime, Field, HttpUrl, field_validator
@@ -11,7 +11,7 @@ from openadr3_client.oadr301.models.common.target import Target
 
 
 @final
-class Object(str, Enum):
+class Object(StrEnum):
     """Enumeration of the object types of OpenADR 3."""
 
     PROGRAM = "PROGRAM"
@@ -23,7 +23,7 @@ class Object(str, Enum):
 
 
 @final
-class Operation(str, Enum):
+class Operation(StrEnum):
     """Enumeration of the operations of OpenADR 3."""
 
     GET = "GET"

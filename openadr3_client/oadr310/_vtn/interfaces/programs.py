@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr310.models.program.program import DeletedProgram, ExistingProgram, NewProgram
+from openadr3_client.oadr310.models.program.program import DeletedProgram, ExistingProgram, NewProgram, ProgramUpdate
 
 
 class ReadOnlyProgramsInterface(ABC):
@@ -45,7 +45,7 @@ class WriteOnlyProgramsInterface(ABC):
         """
 
     @abstractmethod
-    def update_program_by_id(self, program_id: str, updated_program: ExistingProgram) -> ExistingProgram:
+    def update_program_by_id(self, program_id: str, updated_program: ProgramUpdate) -> ExistingProgram:
         """
         Update the program with the program identifier in the VTN.
 
@@ -56,7 +56,7 @@ class WriteOnlyProgramsInterface(ABC):
 
         Args:
             program_id (str): The identifier of the program to update.
-            updated_program (ExistingProgram): The updated program.
+            updated_program (ProgramUpdate): The update to apply to the program.
 
         """
 

@@ -15,7 +15,7 @@ from openadr3_client.oadr301._vtn.interfaces.events import (
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr301.models.event.event import DeletedEvent, ExistingEvent, NewEvent
 
-base_prefix = "events"
+BASE_PREFIX = "events"
 
 
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
@@ -45,9 +45,9 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
         if program_id:
             query_params |= {"programID": program_id}
 
-        logger.debug("Events - Performing get_events request with query params: %s", query_params)
+        logger.debug(f"Events - Performing get_events request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingEvent])
@@ -63,7 +63,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
             event_id (str): The event identifier to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{event_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{event_id}")
         response.raise_for_status()
 
         return ExistingEvent.model_validate(response.json())
@@ -86,7 +86,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
 
         """
         with new_event.with_creation_guard():
-            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_event.model_dump(by_alias=True, mode="json"))
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_event.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingEvent.model_validate(response.json())
 
@@ -111,7 +111,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
         # No lock on the ExistingEvent type exists similar to the creation guard of a NewEvent.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(f"{self.base_url}/{base_prefix}/{event_id}", json=updated_event.model_dump(by_alias=True, mode="json"))
+        response = self.session.put(f"{self.base_url}/{BASE_PREFIX}/{event_id}", json=updated_event.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingEvent.model_validate(response.json())
 
@@ -123,7 +123,7 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
             event_id (str): The identifier of the event to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{event_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{event_id}")
         response.raise_for_status()
 
         return DeletedEvent.model_validate(response.json())

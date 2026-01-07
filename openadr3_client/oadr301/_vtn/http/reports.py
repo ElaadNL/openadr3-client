@@ -13,7 +13,7 @@ from openadr3_client.oadr301._vtn.interfaces.reports import (
 )
 from openadr3_client.oadr301.models.report.report import DeletedReport, ExistingReport, NewReport
 
-base_prefix = "reports"
+BASE_PREFIX = "reports"
 
 
 class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
@@ -56,9 +56,9 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
         if event_id:
             query_params |= {"eventID": event_id}
 
-        logger.debug("Reports - Performing get_reports request with query params: %s", query_params)
+        logger.debug(f"Reports - Performing get_reports request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingReport])
@@ -74,7 +74,7 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
             report_id (str): The report identifier to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{report_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{report_id}")
         response.raise_for_status()
 
         return ExistingReport.model_validate(response.json())
@@ -97,7 +97,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
 
         """
         with new_report.with_creation_guard():
-            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_report.model_dump(by_alias=True, mode="json"))
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_report.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingReport.model_validate(response.json())
 
@@ -122,7 +122,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
         # No lock on the ExistingReport type exists similar to the creation guard of a NewReport.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(f"{self.base_url}/{base_prefix}/{report_id}", json=updated_report.model_dump(by_alias=True, mode="json"))
+        response = self.session.put(f"{self.base_url}/{BASE_PREFIX}/{report_id}", json=updated_report.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingReport.model_validate(response.json())
 
@@ -134,7 +134,7 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
             report_id (str): The identifier of the report to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{report_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{report_id}")
         response.raise_for_status()
 
         return DeletedReport.model_validate(response.json())

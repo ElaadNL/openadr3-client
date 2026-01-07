@@ -3,7 +3,7 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from pydantic import AnyUrl
+from pydantic import AnyHttpUrl
 from pydantic_extra_types.country import CountryAlpha2
 from pydantic_extra_types.currency_code import ISO4217
 from requests.exceptions import HTTPError
@@ -98,7 +98,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
             randomize_start=timedelta(minutes=5),
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-        program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
+        program_descriptions=(ProgramDescription(url=AnyHttpUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
         targets=(Target(type="test-target", values=("test-value",)),),
@@ -123,7 +123,7 @@ def test_create_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         assert response.payload_descriptors == (EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),), (
             "payload descriptors should match"
         )
-        assert response.program_descriptions == (ProgramDescription(url=AnyUrl("https://example.com")),), "program descriptions should match"
+        assert response.program_descriptions == (ProgramDescription(url=AnyHttpUrl("https://example.com")),), "program descriptions should match"
         assert response.binding_events is True, "binding events should match"
         assert response.local_price is True, "local price should match"
         assert response.targets == (Target(type="test-target", values=("test-value",)),), "targets should match"
@@ -204,7 +204,7 @@ def test_delete_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         targets=(Target(type="test-target", values=("test-value",)),),
-        program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
+        program_descriptions=(ProgramDescription(url=AnyHttpUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
     )
@@ -255,7 +255,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
         ),
         payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
         targets=(Target(type="test-target", values=("test-value",)),),
-        program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
+        program_descriptions=(ProgramDescription(url=AnyHttpUrl("https://example.com")),),
         binding_events=True,
         local_price=True,
     )
@@ -277,7 +277,7 @@ def test_update_program(integration_test_vtn_client: IntegrationTestVTNClient) -
                 duration=timedelta(minutes=5),
             ),
             payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
-            program_descriptions=(ProgramDescription(url=AnyUrl("https://example.com")),),
+            program_descriptions=(ProgramDescription(url=AnyHttpUrl("https://example.com")),),
             binding_events=True,
             local_price=True,
             targets=(Target(type="test-target-updated", values=("test-value-updated",)),),

@@ -11,7 +11,7 @@ from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, Ta
 from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310.models.common.unit import Unit
 from openadr3_client.oadr310.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
-from openadr3_client.oadr310.models.program.program import ExistingProgram, ProgramUpdate
+from openadr3_client.oadr310.models.program.program import ProgramUpdate
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import new_program
 
@@ -61,15 +61,11 @@ def test_update_program_by_id_non_existent(vtn_openadr_310_bl_token: Integration
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
-    tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.update_program_by_id(
             program_id="fake-program-id",
-            updated_program=ExistingProgram(
-                id="fake-program-id",
+            updated_program=ProgramUpdate(
                 program_name="Test Program",
-                created_date_time=tz_aware_dt,
-                modification_date_time=tz_aware_dt,
                 interval_period=IntervalPeriod(start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC), duration=timedelta(minutes=5), randomize_start=timedelta(seconds=0)),
                 payload_descriptors=(EventPayloadDescriptor(payload_type=EventPayloadType.SIMPLE, units=Unit.KWH, currency=ISO4217("EUR")),),
             ),
@@ -178,7 +174,7 @@ def test_update_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> N
         # Update the program
         program_update = ProgramUpdate(program_name="test-program-updated", targets=("test-value-updated",))
 
-        updated_program = interface.update_program_by_id(program_id=created_program.id, updated_program=created_program.update(program_update))
+        updated_program = interface.update_program_by_id(program_id=created_program.id, updated_program=program_update)
 
         # Verify the update
         assert updated_program.program_name == "test-program-updated", "program name should be updated"

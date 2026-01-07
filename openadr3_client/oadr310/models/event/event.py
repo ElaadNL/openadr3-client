@@ -84,6 +84,15 @@ class EventUpdate(BaseModel):
     intervals: tuple[Interval[EventPayload], ...] | None = None
     """The intervals of the event."""
 
+    duration: timedelta | None = None
+    """The duration of the event.
+
+    The event property 'duration' may be used to augment intervalPeriod definitions to shorten or lengthen the temporal span of an event.
+    For example, event.duration = “P9999Y” indicates the set of intervals repeat indefinitely.
+
+    For additional information related to the usage of this field
+    consult the OpenADR 3.1.0 user guide."""
+
 
 @final
 class NewEvent(Event, CreationGuarded):

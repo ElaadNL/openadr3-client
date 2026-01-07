@@ -162,6 +162,32 @@ class ProgramUpdate(BaseModel):
     targets: tuple[str, ...] | None = None
     """The targets of the program."""
 
+    @model_validator(mode="after")
+    def validate_iso_3166_2(self) -> ProgramUpdate:
+        """
+        Validates that principal_subdivision is iso-3166-2 compliant.
+
+        The principal_subdivision is typically part of the ISO-3166 country code.
+        However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
+        and ISO-3166-2 codes.
+
+        For example, the ISO-3166-1 code for the United States is "US".
+        The ISO-3166-2 code for the state of California is "CA".
+        """
+        if self.principal_subdivision:
+            if not self.country:
+                exc_msg = "principal sub division cannot be set if country is not set."
+                raise ValueError(exc_msg)
+            subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
+
+            principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
+
+            if self.principal_subdivision not in principals_only:
+                exc_msg = f"{self.principal_subdivision} is not a valid ISO 3166-2 division code for the program country {{self.country}}."
+                raise ValueError(exc_msg)
+
+        return self
+
 
 @final
 class NewProgram(Program, CreationGuarded):

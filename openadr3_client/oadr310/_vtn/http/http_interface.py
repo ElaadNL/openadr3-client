@@ -2,6 +2,7 @@ from requests import Session
 
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
 from openadr3_client._common.http.authenticated_session import _BearerAuthenticatedHttpsOnlySession
+from openadr3_client.logging import logger
 
 
 class _BaseHttpInterface:
@@ -48,6 +49,9 @@ class AnonymousHttpInterface(_BaseHttpInterface):
 
         """
         session = Session()
+
+        if not verify_tls_certificate:
+            logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")
         session.verify = verify_tls_certificate
         super().__init__(base_url=base_url, session=session)
 

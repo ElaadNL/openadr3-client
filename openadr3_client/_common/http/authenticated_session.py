@@ -6,6 +6,7 @@ from requests import PreparedRequest, Session
 from requests.auth import AuthBase
 
 from openadr3_client._auth.token_manager import OAuthTokenManager
+from openadr3_client.logging import logger
 
 
 class _BearerAuth(AuthBase):
@@ -63,4 +64,6 @@ class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
         """
         super().__init__()
         self.auth = _BearerAuth(token_manager)
+        if not verify_tls_certificate:
+            logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")
         self.verify = verify_tls_certificate

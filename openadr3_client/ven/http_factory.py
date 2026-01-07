@@ -19,7 +19,7 @@ class VirtualEndNodeHttpClientFactory:
         scopes: list[str] | None = None,
         *,
         verify_vtn_tls_certificate: bool | str = True,
-        version: OADRVersion = OADRVersion.OADR_310,
+        version: OADRVersion,
     ) -> BaseVirtualEndNodeClient:
         """
         Creates a VEN client which uses the HTTP interface of a VTN.

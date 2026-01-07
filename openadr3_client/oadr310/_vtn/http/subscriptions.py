@@ -16,9 +16,10 @@ from openadr3_client.oadr310.models.subscriptions.subscription import (
     ExistingSubscription,
     NewSubscription,
     Object,
+    SubscriptionUpdate,
 )
 
-base_prefix = "subscriptions"
+BASE_PREFIX = "subscriptions"
 
 
 class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, AuthenticatedHttpInterface):
@@ -62,9 +63,9 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, Authent
         if objects:
             query_params |= {"objects": [objects]}
 
-        logger.debug("Subscriptions - Performing get_subscriptions request with query params: %s", query_params)
+        logger.debug(f"Subscriptions - Performing get_subscriptions request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingSubscription])
@@ -80,7 +81,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, Authent
             subscription_id (str): The subscription identifier to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{subscription_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{subscription_id}")
         response.raise_for_status()
 
         return ExistingSubscription.model_validate(response.json())
@@ -103,11 +104,11 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, Authe
 
         """
         with new_subscription.with_creation_guard():
-            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_subscription.model_dump(by_alias=True, mode="json"))
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_subscription.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingSubscription.model_validate(response.json())
 
-    def update_subscription_by_id(self, subscription_id: str, updated_subscription: ExistingSubscription) -> ExistingSubscription:
+    def update_subscription_by_id(self, subscription_id: str, updated_subscription: SubscriptionUpdate) -> ExistingSubscription:
         """
         Update the subscription with the subscription identifier in the VTN.
 
@@ -118,18 +119,14 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, Authe
 
         Args:
             subscription_id (str): The identifier of the subscription to update.
-            updated_subscription (ExistingSubscription): The updated subscription.
+            updated_subscription (SubscriptionUpdate): The updated subscription.
 
         """
-        if subscription_id != updated_subscription.id:
-            exc_msg = "Subscription id does not match subscription id of updated subscription object."
-            raise ValueError(exc_msg)
-
         # No lock on the ExistingSubscription type exists similar to the creation guard of a NewSubscription.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{subscription_id}",
+            f"{self.base_url}/{BASE_PREFIX}/{subscription_id}",
             json=updated_subscription.model_dump(by_alias=True, mode="json"),
         )
         response.raise_for_status()
@@ -143,7 +140,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, Authe
             subscription_id (str): The identifier of the subscription to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{subscription_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{subscription_id}")
         response.raise_for_status()
 
         return DeletedSubscription.model_validate(response.json())

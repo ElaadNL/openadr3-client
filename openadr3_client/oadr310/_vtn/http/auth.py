@@ -5,7 +5,7 @@ from openadr3_client.oadr310._vtn.http.http_interface import AnonymousHttpInterf
 from openadr3_client.oadr310._vtn.interfaces.auth import ReadOnlyAuthInterface
 from openadr3_client.oadr310.models.auth.auth_server import AuthServerInfo
 
-base_prefix = "auth"
+BASE_PREFIX = "auth"
 
 
 class AuthReadOnlyInterface(ReadOnlyAuthInterface, AnonymousHttpInterface):
@@ -24,7 +24,7 @@ class AuthReadOnlyInterface(ReadOnlyAuthInterface, AnonymousHttpInterface):
         """
         logger.debug("Auth - Performing get_auth_server request")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}/server")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/server")
         response.raise_for_status()
 
         return AuthServerInfo.model_validate(response.json())

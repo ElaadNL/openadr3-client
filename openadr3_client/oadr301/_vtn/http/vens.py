@@ -10,7 +10,7 @@ from openadr3_client.oadr301._vtn.interfaces.vens import ReadOnlyVensInterface, 
 from openadr3_client.oadr301.models.ven.resource import DeletedResource, ExistingResource, NewResource
 from openadr3_client.oadr301.models.ven.ven import DeletedVen, ExistingVen, NewVen
 
-base_prefix = "vens"
+BASE_PREFIX = "vens"
 
 
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
@@ -40,9 +40,9 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         if ven_name:
             query_params |= {"venName": ven_name}
 
-        logger.debug("Ven - Performing get_vens request with query params: %s", query_params)
+        logger.debug(f"Ven - Performing get_vens request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingVen])
@@ -58,7 +58,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
             ven_id (str): The ven identifier to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{ven_id}")
         response.raise_for_status()
 
         return ExistingVen.model_validate(response.json())
@@ -91,9 +91,9 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
         if resource_name:
             query_params |= {"resourceName": resource_name}
 
-        logger.debug("Ven - Performing get_ven_resources request with query params: %s", query_params)
+        logger.debug(f"Ven - Performing get_ven_resources request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}/resources", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{ven_id}/resources", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingResource])
@@ -108,7 +108,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
             resource_id (str): The identifier of the resource to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{ven_id}/resources/{resource_id}")
         response.raise_for_status()
 
         return ExistingResource.model_validate(response.json())
@@ -131,7 +131,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
 
         """
         with new_ven.with_creation_guard():
-            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_ven.model_dump(by_alias=True, mode="json"))
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_ven.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingVen.model_validate(response.json())
 
@@ -156,7 +156,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # No lock on the ExistingVen type exists similar to the creation guard of a NewVen.
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
-        response = self.session.put(f"{self.base_url}/{base_prefix}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json"))
+        response = self.session.put(f"{self.base_url}/{BASE_PREFIX}/{ven_id}", json=updated_ven.model_dump(by_alias=True, mode="json"))
         response.raise_for_status()
         return ExistingVen.model_validate(response.json())
 
@@ -168,7 +168,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
             ven_id (str): The identifier of the ven to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{ven_id}")
         response.raise_for_status()
 
         return DeletedVen.model_validate(response.json())
@@ -202,7 +202,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}",
+            f"{self.base_url}/{BASE_PREFIX}/{ven_id}/resources/{resource_id}",
             json=updated_resource.model_dump(by_alias=True, mode="json"),
         )
         response.raise_for_status()
@@ -217,7 +217,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
             resource_id (str): The identifier of the resource to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{ven_id}/resources/{resource_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{ven_id}/resources/{resource_id}")
         response.raise_for_status()
 
         return DeletedResource.model_validate(response.json())
@@ -235,7 +235,7 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
         """
         with new_resource.with_creation_guard():
             response = self.session.post(
-                f"{self.base_url}/{base_prefix}/{ven_id}/resources",
+                f"{self.base_url}/{BASE_PREFIX}/{ven_id}/resources",
                 json=new_resource.model_dump(by_alias=True, mode="json"),
             )
             response.raise_for_status()

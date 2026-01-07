@@ -1,14 +1,14 @@
 from abc import ABC
-from enum import Enum
+from enum import StrEnum
 from typing import Literal, final
 
-from pydantic import BaseModel, Field
+from pydantic import AnyUrl, BaseModel, Field
 
 from openadr3_client.oadr310.models.notifiers.serialization import NotifierSerialization
 
 
 @final
-class MqttNotifierAuthenticationMethod(str, Enum):
+class MqttNotifierAuthenticationMethod(StrEnum):
     """Authentication methods supported by the MQTT notifiers."""
 
     ANONYMOUS = "ANONYMOUS"
@@ -63,7 +63,7 @@ class MqttNotifierBindingObject(BaseModel):
     Contains Details of MQTT binding for messaging protocol support
     """
 
-    uris: list[str] = Field(alias="URIS")
+    uris: list[AnyUrl] = Field(alias="URIS")
     """URIs for connection to MQTT broker."""
 
     serialization: NotifierSerialization = Field(default=NotifierSerialization.JSON)

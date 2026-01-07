@@ -8,6 +8,7 @@ from openadr3_client.oadr310.models.subscriptions.subscription import (
     ExistingSubscription,
     NewSubscription,
     Object,
+    SubscriptionUpdate,
 )
 
 
@@ -26,12 +27,12 @@ class ReadOnlySubscriptionsInterface(ABC):
         Retrieve subscriptions from the VTN.
 
         Args:
-            target (Optional[TargetFilter]): The target to filter on.
-            pagination (Optional[PaginationFilter]): The pagination to apply.
-            program_id (str): The program id to filter on.
-            event_id (str): The event id to filter on.
-            client_name (str): The client name to filter on.
-            objects: (Optional[Tuple[Object, ...]]): The objects to filter on.
+            target: The target to filter on.
+            pagination: The pagination to apply.
+            program_id: The program id to filter on.
+            event_id: The event id to filter on.
+            client_name: The client name to filter on.
+            objects: The objects to filter on.
 
         """
 
@@ -64,7 +65,7 @@ class WriteOnlySubscriptionsInterface(ABC):
         """
 
     @abstractmethod
-    def update_subscription_by_id(self, subscription_id: str, updated_subscription: ExistingSubscription) -> ExistingSubscription:
+    def update_subscription_by_id(self, subscription_id: str, updated_subscription: SubscriptionUpdate) -> ExistingSubscription:
         """
         Update the subscription with the subscription identifier in the VTN.
 
@@ -75,7 +76,7 @@ class WriteOnlySubscriptionsInterface(ABC):
 
         Args:
             subscription_id (str): The identifier of the subscription to update.
-            updated_subscription (ExistingSubscription): The updated subscription.
+            updated_subscription (SubscriptionUpdate): The update to apply to the subscription.
 
         """
 
