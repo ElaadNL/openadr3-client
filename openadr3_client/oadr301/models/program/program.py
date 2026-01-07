@@ -6,7 +6,7 @@ from abc import ABC
 from typing import final
 
 import pycountry
-from pydantic import AnyUrl, AwareDatetime, Field, model_validator
+from pydantic import AnyHttpUrl, AwareDatetime, Field, model_validator
 from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client._models._base_model import BaseModel
@@ -20,7 +20,7 @@ from openadr3_client.oadr301.models.event.event_payload import EventPayloadDescr
 class ProgramDescription(BaseModel):  # type: ignore[call-arg]
     """Class representing a URL object."""
 
-    url: AnyUrl = Field(validation_alias="URL", serialization_alias="URL")
+    url: AnyHttpUrl = Field(validation_alias="URL", serialization_alias="URL")
     """The URL."""
 
 

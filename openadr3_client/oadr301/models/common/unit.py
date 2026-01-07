@@ -1,8 +1,8 @@
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class Unit(str, Enum):
+class Unit(StrEnum):
     """Enumeration of the units allowed by OpenADR 3."""
 
     KWH = "KWH"

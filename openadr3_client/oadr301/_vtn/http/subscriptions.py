@@ -18,7 +18,7 @@ from openadr3_client.oadr301.models.subscriptions.subscription import (
     Object,
 )
 
-base_prefix = "subscriptions"
+BASE_PREFIX = "subscriptions"
 
 
 class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInterface):
@@ -66,9 +66,9 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
         if objects:
             query_params |= {"objects": [objects]}
 
-        logger.debug("Subscriptions - Performing get_subscriptions request with query params: %s", query_params)
+        logger.debug(f"Subscriptions - Performing get_subscriptions request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingSubscription])
@@ -84,7 +84,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
             subscription_id (str): The subscription identifier to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{subscription_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{subscription_id}")
         response.raise_for_status()
 
         return ExistingSubscription.model_validate(response.json())
@@ -107,7 +107,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
 
         """
         with new_subscription.with_creation_guard():
-            response = self.session.post(f"{self.base_url}/{base_prefix}", json=new_subscription.model_dump(by_alias=True, mode="json"))
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_subscription.model_dump(by_alias=True, mode="json"))
             response.raise_for_status()
             return ExistingSubscription.model_validate(response.json())
 
@@ -133,7 +133,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{subscription_id}",
+            f"{self.base_url}/{BASE_PREFIX}/{subscription_id}",
             json=updated_subscription.model_dump(by_alias=True, mode="json"),
         )
         response.raise_for_status()
@@ -147,7 +147,7 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
             subscription_id (str): The identifier of the subscription to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{subscription_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{subscription_id}")
         response.raise_for_status()
 
         return DeletedSubscription.model_validate(response.json())

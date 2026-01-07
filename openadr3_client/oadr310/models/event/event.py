@@ -17,8 +17,8 @@ from openadr3_client.oadr310.models.event.event_payload import EventPayload, Eve
 from openadr3_client.oadr310.models.report.report_payload import ReportDescriptor
 
 
-class Event(ABC, OpenADRResource):
-    """Base class for events."""
+class _EventBase(BaseModel):
+    """Base class containing common properties for Event and EventUpdate."""
 
     program_id: str = Field(alias="programID", min_length=1, max_length=128)
     """Identifier of the program this event belongs to."""
@@ -48,10 +48,14 @@ class Event(ABC, OpenADRResource):
     """The duration of the event.
 
     The event property 'duration' may be used to augment intervalPeriod definitions to shorten or lengthen the temporal span of an event.
-    For example, event.duration = “P9999Y” indicates the set of intervals repeat indefinitely.
+    For example, event.duration = "P9999Y" indicates the set of intervals repeat indefinitely.
 
     For additional information related to the usage of this field
     consult the OpenADR 3.1.0 user guide."""
+
+
+class Event(ABC, OpenADRResource, _EventBase):
+    """Base class for events."""
 
     @property
     def name(self) -> str | None:
@@ -60,29 +64,8 @@ class Event(ABC, OpenADRResource):
 
 
 @final
-class EventUpdate(BaseModel):
+class EventUpdate(_EventBase):
     """Class representing an update to an existing event."""
-
-    program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
-    """Identifier of the program this event belongs to."""
-
-    event_name: str | None = None
-    """The name of the event."""
-
-    priority: NonNegativeInt | None = None
-    """The priority of the event, less is higher priority."""
-
-    targets: tuple[str, ...] | None = None
-    """The targets of the event."""
-
-    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
-    """The payload descriptors of the event."""
-
-    interval_period: IntervalPeriod | None = None
-    """The interval period of the event."""
-
-    intervals: tuple[Interval[EventPayload], ...] | None = None
-    """The intervals of the event."""
 
 
 @final

@@ -20,7 +20,7 @@ class BusinessLogicHttpClientFactory:
         audience: str | None = None,
         *,
         verify_vtn_tls_certificate: bool | str = True,
-        version: OADRVersion = OADRVersion.OADR_310,
+        version: OADRVersion,
     ) -> BaseBusinessLogicClient:
         """
         Creates a business logic client which uses the HTTP interface of a VTN.

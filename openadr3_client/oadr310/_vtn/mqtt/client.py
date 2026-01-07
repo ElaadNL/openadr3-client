@@ -1,5 +1,9 @@
-from paho.mqtt.client import Client
-from paho.mqtt.enums import CallbackAPIVersion
+try:
+    from paho.mqtt.client import Client
+    from paho.mqtt.enums import CallbackAPIVersion
+except ImportError as e:
+    msg = "Usage of the MQTT client requires the 'mqtt' extra. Install it with: pip install 'openadr3-client[mqtt]' or the equivalent in your package manager."
+    raise ImportError(msg) from e
 
 from openadr3_client._auth.token_manager import OAuthTokenManager
 from openadr3_client.logging import logger

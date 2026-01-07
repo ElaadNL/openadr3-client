@@ -9,7 +9,7 @@ from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr310.models.common.interval import Interval
 from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
-from openadr3_client.oadr310.models.event.event import EventUpdate, ExistingEvent, NewEvent
+from openadr3_client.oadr310.models.event.event import EventUpdate, NewEvent
 from openadr3_client.oadr310.models.event.event_payload import EventPayload, EventPayloadType
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import event_in_program_with_targets, new_program, resource_for_ven, ven_with_targets
@@ -73,15 +73,16 @@ def test_update_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTe
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
-    tz_aware_dt = datetime.now(tz=UTC)
-    with pytest.raises(HTTPError, match="400 Client Error"):
+    with pytest.raises(HTTPError, match="404 Client Error"):
         interface.update_event_by_id(
             event_id="fake-event-id",
-            updated_event=ExistingEvent(
-                id="fake-event-id",
+            updated_event=EventUpdate(
                 programID="fake-program",
-                created_date_time=tz_aware_dt,
-                modification_date_time=tz_aware_dt,
+                interval_period=IntervalPeriod(
+                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                    duration=timedelta(minutes=5),
+                    randomize_start=timedelta(seconds=0),
+                ),
                 intervals=(
                     Interval(
                         id=0,
@@ -309,12 +310,20 @@ def test_update_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
 
             # Update the event
             event_update = EventUpdate(
+                programID=created_program.id,
                 event_name="test-event-updated",
                 priority=2,
                 targets=("test-value-updated",),
+                interval_period=IntervalPeriod(
+                    start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                    duration=timedelta(minutes=5),
+                    randomize_start=timedelta(seconds=0),
+                ),
+                intervals=(),
+                duration=timedelta(seconds=0),
             )
 
-            updated_event = interface.update_event_by_id(event_id=created_event.id, updated_event=created_event.update(event_update))
+            updated_event = interface.update_event_by_id(event_id=created_event.id, updated_event=event_update)
 
             # Verify the update
             assert updated_event.event_name == "test-event-updated", "event name should be updated"

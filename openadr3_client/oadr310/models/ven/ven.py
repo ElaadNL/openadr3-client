@@ -9,14 +9,18 @@ from openadr3_client.oadr310.models.common.attribute import Attribute
 from openadr3_client.oadr310.models.common.creation_guarded import CreationGuarded
 
 
-class Ven(ABC, OpenADRResource):
-    """Base class for vens."""
+class _VenBase(BaseModel):
+    """Base class containing common properties for Ven and VenUpdate."""
 
     ven_name: str = Field(min_length=1, max_length=128)
     """The ven name of the ven object."""
 
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the ven."""
+
+
+class Ven(ABC, OpenADRResource, _VenBase):
+    """Base class for vens."""
 
     @property
     def name(self) -> str | None:
@@ -56,14 +60,8 @@ class NewVenBlRequest(NewVen):
     """The object type."""
 
 
-class VenUpdate(ABC, BaseModel):
+class VenUpdate(ABC, _VenBase):
     """Class representing an update to a ven by a VEN client."""
-
-    ven_name: str = Field(min_length=1, max_length=128)
-    """The ven name of the ven object."""
-
-    attributes: tuple[Attribute, ...] | None = None
-    """The attributes of the ven."""
 
 
 @final

@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter
-from openadr3_client.oadr310.models.report.report import DeletedReport, ExistingReport, NewReport
+from openadr3_client.oadr310.models.report.report import DeletedReport, ExistingReport, NewReport, ReportUpdate
 
 
 class ReadOnlyReportsInterface(ABC):
@@ -58,7 +58,7 @@ class WriteOnlyReportsInterface(ABC):
         """
 
     @abstractmethod
-    def update_report_by_id(self, report_id: str, updated_report: ExistingReport) -> ExistingReport:
+    def update_report_by_id(self, report_id: str, updated_report: ReportUpdate) -> ExistingReport:
         """
         Update the report with the report identifier in the VTN.
 
@@ -69,7 +69,7 @@ class WriteOnlyReportsInterface(ABC):
 
         Args:
             report_id (str): The identifier of the report to update.
-            updated_report (ExistingReport): The updated report.
+            updated_report (ReportUpdate): The update to apply to the report.
 
         """
 

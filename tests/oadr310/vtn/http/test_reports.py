@@ -8,7 +8,7 @@ from requests import HTTPError
 from openadr3_client.oadr310._vtn.http.reports import ReportsHttpInterface
 from openadr3_client.oadr310.models.common.interval import Interval
 from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
-from openadr3_client.oadr310.models.report.report import ExistingReport, ReportResource, ReportUpdate
+from openadr3_client.oadr310.models.report.report import ReportResource, ReportUpdate
 from openadr3_client.oadr310.models.report.report_payload import ReportPayload, ReportPayloadType
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import event_in_program_with_targets, new_program, report_from_ven_in_program, ven_with_targets
@@ -59,16 +59,12 @@ def test_update_report_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationT
         verify_tls_certificate=False,  # Self signed certificate used in integration tests.
     )
 
-    tz_aware_dt = datetime.now(tz=UTC)
     with pytest.raises(HTTPError, match="404 Client Error"):
         interface.update_report_by_id(
             report_id="fake-report-id",
-            updated_report=ExistingReport(
-                id="fake-report-id",
+            updated_report=ReportUpdate(
                 eventID="test-event",
                 client_name="test-client",
-                created_date_time=tz_aware_dt,
-                modification_date_time=tz_aware_dt,
                 resources=(
                     ReportResource(
                         resource_name="test-resource",
@@ -255,12 +251,9 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         )
 
         # Update the report
-        report_update = ReportUpdate(
-            client_name=new_ven.ven_name,
-            resources=updated_report_resources,
-        )
+        report_update = ReportUpdate(client_name=new_ven.ven_name, resources=updated_report_resources, eventID=event.id)
 
-        updated_report = interface.update_report_by_id(report_id=created_report.id, updated_report=created_report.update(report_update))
+        updated_report = interface.update_report_by_id(report_id=created_report.id, updated_report=report_update)
 
         # Verify the update
         assert updated_report.id == created_report.id, "Report ID should match"

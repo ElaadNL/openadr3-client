@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class OADRVersion(str, Enum):
+class OADRVersion(StrEnum):
     """The OpenADR Versions supported by this library."""
 
     OADR_301 = "oadr301"

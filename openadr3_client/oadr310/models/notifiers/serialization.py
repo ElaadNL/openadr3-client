@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class NotifierSerialization(str, Enum):
+class NotifierSerialization(StrEnum):
     """Enumeration of the serialization allowed by the notifier."""
 
     JSON = "JSON"

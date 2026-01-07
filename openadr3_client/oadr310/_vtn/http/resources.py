@@ -9,7 +9,7 @@ from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, Ta
 from openadr3_client.oadr310._vtn.interfaces.resources import ReadOnlyResourcesInterface, ReadWriteResourceInterface, WriteOnlyResourcesInterface
 from openadr3_client.oadr310.models.resource.resource import DeletedResource, ExistingResource, NewResource, ResourceUpdate
 
-base_prefix = "resources"
+BASE_PREFIX = "resources"
 
 
 class ResourcesReadOnlyHttpInterface(ReadOnlyResourcesInterface, AuthenticatedHttpInterface):
@@ -49,9 +49,9 @@ class ResourcesReadOnlyHttpInterface(ReadOnlyResourcesInterface, AuthenticatedHt
         if ven_id:
             query_params |= {"venID": ven_id}
 
-        logger.debug("Ven - Performing get_ven_resources request with query params: %s", query_params)
+        logger.debug(f"Ven - Performing get_ven_resources request with query params: {query_params}")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}", params=query_params)
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
         response.raise_for_status()
 
         adapter = TypeAdapter(list[ExistingResource])
@@ -65,7 +65,7 @@ class ResourcesReadOnlyHttpInterface(ReadOnlyResourcesInterface, AuthenticatedHt
             resource_id (str): The identifier of the resource to retrieve.
 
         """
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{resource_id}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{resource_id}")
         response.raise_for_status()
 
         return ExistingResource.model_validate(response.json())
@@ -97,7 +97,7 @@ class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, Authenticated
         # Since calling update with the same object multiple times is an idempotent action that does not
         # result in a state change in the VTN.
         response = self.session.put(
-            f"{self.base_url}/{base_prefix}/{resource_id}",
+            f"{self.base_url}/{BASE_PREFIX}/{resource_id}",
             json=updated_resource.model_dump(by_alias=True, mode="json"),
         )
         response.raise_for_status()
@@ -111,7 +111,7 @@ class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, Authenticated
             resource_id (str): The identifier of the resource to delete.
 
         """
-        response = self.session.delete(f"{self.base_url}/{base_prefix}/{resource_id}")
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{resource_id}")
         response.raise_for_status()
 
         return DeletedResource.model_validate(response.json())
@@ -128,7 +128,7 @@ class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, Authenticated
         """
         with new_resource.with_creation_guard():
             response = self.session.post(
-                f"{self.base_url}/{base_prefix}",
+                f"{self.base_url}/{BASE_PREFIX}",
                 json=new_resource.model_dump(by_alias=True, mode="json"),
             )
             response.raise_for_status()

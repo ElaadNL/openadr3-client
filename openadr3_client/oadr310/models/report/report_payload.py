@@ -1,6 +1,6 @@
 """Contains the domain models related to event payloads."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal, final
 
 from pydantic import Field
@@ -10,7 +10,7 @@ from openadr3_client.oadr310.models.common.unit import Unit
 
 
 @final
-class ReportReadingType(str, Enum):
+class ReportReadingType(StrEnum):
     """Enumeration of the reading types of OpenADR 3."""
 
     DIRECT_READ = "DIRECT_READ"
@@ -44,7 +44,7 @@ class ReportReadingType(str, Enum):
 
 
 @final
-class ReportPayloadType(str, Enum):
+class ReportPayloadType(StrEnum):
     """Enumeration of the report payload types of OpenADR 3."""
 
     READING = "READING"
@@ -119,7 +119,7 @@ class ReportPayloadDescriptor(BasePayloadDescriptor):
 
 
 @final
-class ReportIntervals(str, Enum):
+class ReportIntervals(StrEnum):
     """Indicates VEN report interval options. See User Guide."""
 
     INTERVALS = "INTERVALS"

@@ -14,7 +14,7 @@ from openadr3_client.oadr310._vtn.interfaces.notifiers import (
 from openadr3_client.oadr310.models.notifiers.mqtt.mqtt import MqttTopicInformation
 from openadr3_client.oadr310.models.notifiers.response import NotifierDetails
 
-base_prefix = "notifiers"
+BASE_PREFIX = "notifiers"
 
 
 class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNotifierInterface, AuthenticatedHttpInterface):
@@ -38,7 +38,7 @@ class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNoti
         """
         logger.debug(f"Notifiers - Performing {request_name} request")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}/{url_appendix}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{url_appendix}")
         response.raise_for_status()
 
         return MqttTopicInformation.model_validate(response.json())
@@ -46,7 +46,7 @@ class NotifiersReadOnlyHttpInterface(ReadOnlyNotifierInterface, ReadOnlyMqttNoti
     def get_notifiers(self) -> NotifierDetails:
         logger.debug("Notifiers - Performing get_notifiers request")
 
-        response = self.session.get(f"{self.base_url}/{base_prefix}")
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}")
         response.raise_for_status()
 
         return NotifierDetails.model_validate(response.json())

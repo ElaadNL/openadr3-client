@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr310.models.event.event import DeletedEvent, ExistingEvent, NewEvent
+from openadr3_client.oadr310.models.event.event import DeletedEvent, EventUpdate, ExistingEvent, NewEvent
 
 
 class ReadOnlyEventsInterface(ABC):
@@ -50,7 +50,7 @@ class WriteOnlyEventsInterface(ABC):
         """
 
     @abstractmethod
-    def update_event_by_id(self, event_id: str, updated_event: ExistingEvent) -> ExistingEvent:
+    def update_event_by_id(self, event_id: str, updated_event: EventUpdate) -> ExistingEvent:
         """
         Update the event with the event identifier in the VTN.
 
@@ -61,7 +61,7 @@ class WriteOnlyEventsInterface(ABC):
 
         Args:
             event_id (str): The identifier of the event to update.
-            updated_event (ExistingEvent): The updated event.
+            updated_event (EventUpdate): The update to apply to the event.
 
         """
 

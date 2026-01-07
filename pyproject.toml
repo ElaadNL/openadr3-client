@@ -15,8 +15,6 @@ dependencies = [
     "oauthlib[signedtoken] (>=3.2.2,<4.0.0)",
     "requests (>=2.32.3,<3.0.0)",
     "requests-oauthlib (>=2.0.0,<3.0.0)",
-    "paho-mqtt (>=2.1.0,<3.0.0)",
-    "testcontainers[mqtt] (>=4.13.3,<5.0.0)",
 ]
 
 [project.optional-dependencies]
@@ -25,6 +23,10 @@ pandas = [
     "pandas (>=2.2.3,<3.0.0)",
     "pandera[mypy,pandas] (>=0.26.1,<0.27.0)",
     "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
+]
+# When updating, don't forget to also update the test dependencies.
+mqtt = [
+    "paho-mqtt (>=2.1.0,<3.0.0)",
 ]
 
 [project.urls]
@@ -45,7 +47,7 @@ mypy = "^1.15.0"
 ruff = "^0.13.2"
 pytest = "^8.3.5"
 pytest-cov = "^7.0.0"
-testcontainers = {extras = ["keycloak"], version = "^4.10.0"}
+testcontainers = {extras = ["keycloak", "mqtt"], version = "^4.10.0"}
 pytest-env = "^1.1.5"
 types-oauthlib = "^3.2.0.20250408"
 types-requests-oauthlib = "^2.0.0.20250306"
@@ -57,6 +59,8 @@ bandit = "^1.8.6"
 pandas = "^2.2.3"
 pandera = {extras = ["mypy", "pandas"], version = "^0.26.1"}
 pandas-stubs = "^2.2.3.250308"
+# MQTT dependencies for testing
+paho-mqtt = "^2.1.0"
 
 [tool.taskipy.tasks]
 local-ci = "task check && task format && task mypy && task bandit && task test"

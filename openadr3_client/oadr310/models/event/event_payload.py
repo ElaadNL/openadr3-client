@@ -1,6 +1,6 @@
 """Contains the domain models related to event payloads."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Literal, final
 
 from pydantic import Field
@@ -10,7 +10,7 @@ from openadr3_client.oadr310.models.common.payload import AllowedPayloadInputs, 
 from openadr3_client.oadr310.models.common.unit import Unit
 
 
-class EventPayloadType(str, Enum):
+class EventPayloadType(StrEnum):
     """Enumeration of the event payload types of OpenADR 3."""
 
     SIMPLE = "SIMPLE"
