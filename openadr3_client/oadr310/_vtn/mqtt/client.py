@@ -71,12 +71,25 @@ class MQTTClient(Client):
         # Capture any existing callback and call it as normal.
         existing_cb = self.on_disconnect
 
-        def _on_disconnect_handler(client, userdata, rc, properties=None):  # noqa: ANN001, ANN202
+        def _on_disconnect_handler(*args, **kwargs):  # noqa: ANN202
+            # handle signature differences from mqtt to fetch rc (reason-code) in a safe manner.
+            mqtt_v3_args_count = 3
+            mqtt_v5_minimum_args_count = 4
+
+            if len(args) == mqtt_v3_args_count:
+                # MQTT v3
+                rc = args[2]
+            elif len(args) >= mqtt_v5_minimum_args_count:
+                # MQTT v5
+                rc = args[3]
+            else:
+                rc = None  # defensive fallback
+
             if existing_cb is not None:
-                existing_cb(client, userdata, rc, properties)
+                existing_cb(*args, **kwargs)
 
             # Handle token refresh callback only on unexpected disconnect.
-            if rc != 0:
+            if rc is not None and rc != 0:
                 self._refresh_token_on_disconnect()
 
         self.on_disconnect = _on_disconnect_handler
