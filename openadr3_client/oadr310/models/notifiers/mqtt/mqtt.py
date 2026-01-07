@@ -12,7 +12,7 @@ class MqttNotifierAuthenticationMethod(StrEnum):
     """Authentication methods supported by the MQTT notifiers."""
 
     ANONYMOUS = "ANONYMOUS"
-    OAUTH2_BEARER_TOKEN = "OAUTH2_BEARER_TOKEN"  # noqa: S105
+    OAUTH2_BEARER_TOKEN = "OAUTH2_BEARER_TOKEN"  # noqa: S105 # nosec (False positive by bandit for oauth token)
     CERTIFICATE = "CERTIFICATE"
 
 
