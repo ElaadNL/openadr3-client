@@ -251,11 +251,7 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         )
 
         # Update the report
-        report_update = ReportUpdate(
-            client_name=new_ven.ven_name,
-            resources=updated_report_resources,
-            eventID=event.id
-        )
+        report_update = ReportUpdate(client_name=new_ven.ven_name, resources=updated_report_resources, eventID=event.id)
 
         updated_report = interface.update_report_by_id(report_id=created_report.id, updated_report=report_update)
 
