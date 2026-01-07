@@ -172,7 +172,15 @@ def test_update_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> N
         assert created_program.id is not None, "program should be created successfully"
 
         # Update the program
-        program_update = ProgramUpdate(program_name="test-program-updated", targets=("test-value-updated",))
+        program_update = ProgramUpdate(
+            program_name="test-program-updated",
+            targets=("test-value-updated",),
+            interval_period=IntervalPeriod(
+                start=datetime(2023, 1, 1, 0, 0, 0, tzinfo=UTC),
+                duration=timedelta(minutes=5),
+                randomize_start=timedelta(seconds=0)
+            ),
+        )
 
         updated_program = interface.update_program_by_id(program_id=created_program.id, updated_program=program_update)
 
