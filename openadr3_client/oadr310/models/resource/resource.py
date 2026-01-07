@@ -9,8 +9,8 @@ from openadr3_client.oadr310.models.common.attribute import Attribute
 from openadr3_client.oadr310.models.common.creation_guarded import CreationGuarded
 
 
-class Resource(ABC, OpenADRResource):
-    """Class representing a resource, which is subject to control by a ven."""
+class _ResourceBase(BaseModel):
+    """Base class containing common properties for Resource and ResourceUpdate."""
 
     resource_name: str = Field(min_length=1, max_length=128)
     """The name of the resource."""
@@ -20,6 +20,10 @@ class Resource(ABC, OpenADRResource):
 
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the resource."""
+
+
+class Resource(ABC, OpenADRResource, _ResourceBase):
+    """Class representing a resource, which is subject to control by a ven."""
 
     @property
     def name(self) -> str:
@@ -58,17 +62,8 @@ class NewResourceBlRequest(NewResource):
     Can only be assigned by a BL client, a VTN will reject or ignore targets provided by a VEN client."""
 
 
-class ResourceUpdate(ABC, BaseModel):
+class ResourceUpdate(ABC, _ResourceBase):
     """Class representing an update to a resource."""
-
-    resource_name: str = Field(min_length=1, max_length=128)
-    """The name of the resource."""
-
-    ven_id: str = Field(alias="venID", min_length=1, max_length=128)
-    """The identifier of the ven this resource belongs to."""
-
-    attributes: tuple[Attribute, ...] | None = None
-    """The attributes of the resource."""
 
 
 @final

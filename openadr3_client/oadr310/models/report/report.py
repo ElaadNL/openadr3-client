@@ -45,8 +45,8 @@ class ReportResource(ValidatableModel):
         return intervals
 
 
-class Report(ABC, OpenADRResource):
-    """Base class for reports."""
+class _ReportBase(BaseModel):
+    """Base class containing common properties for Report and ReportUpdate."""
 
     event_id: str = Field(alias="eventID", min_length=1, max_length=128)
     """The event this report is related to."""
@@ -62,6 +62,10 @@ class Report(ABC, OpenADRResource):
 
     resources: tuple[ReportResource, ...]
     """The resources of the report."""
+
+
+class Report(ABC, OpenADRResource, _ReportBase):
+    """Base class for reports."""
 
     @property
     def name(self) -> str | None:
@@ -90,23 +94,8 @@ class NewReport(Report, CreationGuarded):
 
 
 @final
-class ReportUpdate(BaseModel):
+class ReportUpdate(_ReportBase):
     """Class representing an update to a report."""
-
-    event_id: str | None = Field(alias="eventID", default=None, min_length=1, max_length=128)
-    """The event this report is related to."""
-
-    client_name: str | None = Field(min_length=1, max_length=128)
-    """The name of the client this report is related to."""
-
-    report_name: str | None = None
-    """The optional name of the report for use in debugging or UI display."""
-
-    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
-    """The payload descriptors of the report."""
-
-    resources: tuple[ReportResource, ...] | None = None
-    """The resources of the report."""
 
 
 class ServerReport(Report):

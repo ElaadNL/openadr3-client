@@ -82,8 +82,8 @@ class ObjectOperation(ValidatableModel):
         return operations
 
 
-class Subscription(ABC, OpenADRResource):
-    """Base class for subscription objects."""
+class _SubscriptionBase(BaseModel):
+    """Base class containing common properties for Subscription and SubscriptionUpdate."""
 
     client_name: str = Field(min_length=1, max_length=128)
     """The client name of the subscription object."""
@@ -96,11 +96,6 @@ class Subscription(ABC, OpenADRResource):
 
     targets: tuple[str, ...] | None = None
     """The targets of the subscription object."""
-
-    @property
-    def name(self) -> str:
-        """Helper method to get the name field of the model."""
-        return self.client_name
 
     @field_validator("object_operations", mode="after")
     @classmethod
@@ -118,26 +113,23 @@ class Subscription(ABC, OpenADRResource):
         return object_operations
 
 
+class Subscription(ABC, OpenADRResource, _SubscriptionBase):
+    """Base class for subscription objects."""
+
+    @property
+    def name(self) -> str:
+        """Helper method to get the name field of the model."""
+        return self.client_name
+
+
 @final
 class NewSubscription(Subscription, CreationGuarded):
     """Class representing a new subscription not yet pushed to the VTN."""
 
 
 @final
-class SubscriptionUpdate(BaseModel):
+class SubscriptionUpdate(_SubscriptionBase):
     """Class representing an update to a subscription."""
-
-    client_name: str | None = Field(default=None, min_length=1, max_length=128)
-    """The client name of the subscription update."""
-
-    program_id: str | None = Field(alias="programID", default=None, min_length=1, max_length=128)
-    """The program id of the subscription update."""
-
-    object_operations: tuple[ObjectOperation, ...] | None = None
-    """The object operations of the subscription update."""
-
-    targets: tuple[str, ...] | None = None
-    """The targets of the subscription update."""
 
 
 class ServerSubscription(Subscription):

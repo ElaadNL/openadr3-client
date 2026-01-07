@@ -24,8 +24,8 @@ class ProgramDescription(BaseModel):  # type: ignore[call-arg]
     """The URL."""
 
 
-class Program(ABC, OpenADRResource):
-    """Base class for programs."""
+class _ProgramBase(BaseModel):
+    """Base class containing common properties for Program and ProgramUpdate."""
 
     program_name: str = Field(min_length=1, max_length=128)
     """The name of the program.
@@ -78,115 +78,45 @@ class Program(ABC, OpenADRResource):
     attributes: tuple[Attribute, ...] | None = None
     """The attributes of the program."""
 
+    @model_validator(mode="after")
+    def validate_iso_3166_2(self) -> _ProgramBase:
+        """
+        Validates that principal_subdivision is iso-3166-2 compliant.
+
+        The principal_subdivision is typically part of the ISO-3166 country code.
+        However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
+        and ISO-3166-2 codes.
+
+        For example, the ISO-3166-1 code for the United States is "US".
+        The ISO-3166-2 code for the state of California is "CA".
+        """
+        if self.principal_subdivision:
+            if not self.country:
+                exc_msg = "principal sub division cannot be set if country is not set."
+                raise ValueError(exc_msg)
+            subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
+
+            principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
+
+            if self.principal_subdivision not in principals_only:
+                exc_msg = f"{self.principal_subdivision} is not a valid ISO 3166-2 division code for the program country {{self.country}}."
+                raise ValueError(exc_msg)
+
+        return self
+
+
+class Program(ABC, OpenADRResource, _ProgramBase):
+    """Base class for programs."""
+
     @property
     def name(self) -> str:
         """Helper method to get the name field of the model."""
         return self.program_name
 
-    @model_validator(mode="after")
-    def validate_iso_3166_2(self) -> Program:
-        """
-        Validates that principal_subdivision is iso-3166-2 compliant.
-
-        The principal_subdivision is typically part of the ISO-3166 country code.
-        However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
-        and ISO-3166-2 codes.
-
-        For example, the ISO-3166-1 code for the United States is "US".
-        The ISO-3166-2 code for the state of California is "CA".
-        """
-        if self.principal_subdivision:
-            if not self.country:
-                exc_msg = "principal sub division cannot be set if country is not set."
-                raise ValueError(exc_msg)
-            subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
-
-            principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
-
-            if self.principal_subdivision not in principals_only:
-                exc_msg = f"{self.principal_subdivision} is not a valid ISO 3166-2 division code for the program country {{self.country}}."
-                raise ValueError(exc_msg)
-
-        return self
-
 
 @final
-class ProgramUpdate(BaseModel):
+class ProgramUpdate(_ProgramBase):
     """Class representing an update to a program."""
-
-    program_name: str | None = Field(default=None, min_length=1, max_length=128)
-    """The name of the program.
-
-    Must be between 1 and 128 characters long."""
-
-    program_long_name: str | None = None
-    """The optional long name of the program."""
-
-    retailer_name: str | None = None
-    """The optional energy retailer name of the program."""
-
-    retailer_long_name: str | None = None
-    """The optional energy retailer long name of the program."""
-
-    program_type: str | None = None
-    """The optional program type of the program."""
-
-    country: CountryAlpha2 | None = None
-    """The optional alpha-2 country code for the program."""
-
-    principal_subdivision: str | None = None
-    """The optional ISO-3166-2 coding, for example state in the US."""
-
-    interval_period: IntervalPeriod | None = None
-    """The interval period of the program."""
-
-    program_descriptions: tuple[ProgramDescription, ...] | None = None
-    """An optional list of program descriptions for the program.
-
-    The specification of OpenADR 3.0.1. describes the following:
-    List of URLs to human and/or machine-readable content.
-    """
-
-    binding_events: bool | None = None
-    """Whether events inside the program are considered immutable."""
-
-    local_price: bool | None = None
-    """Whether the price of the events is local.
-
-    Typically true if events have been adapted from a grid event.
-    """
-
-    payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
-    """The event payload descriptors of the program."""
-
-    targets: tuple[str, ...] | None = None
-    """The targets of the program."""
-
-    @model_validator(mode="after")
-    def validate_iso_3166_2(self) -> ProgramUpdate:
-        """
-        Validates that principal_subdivision is iso-3166-2 compliant.
-
-        The principal_subdivision is typically part of the ISO-3166 country code.
-        However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
-        and ISO-3166-2 codes.
-
-        For example, the ISO-3166-1 code for the United States is "US".
-        The ISO-3166-2 code for the state of California is "CA".
-        """
-        if self.principal_subdivision:
-            if not self.country:
-                exc_msg = "principal sub division cannot be set if country is not set."
-                raise ValueError(exc_msg)
-            subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
-
-            principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
-
-            if self.principal_subdivision not in principals_only:
-                exc_msg = f"{self.principal_subdivision} is not a valid ISO 3166-2 division code for the program country {{self.country}}."
-                raise ValueError(exc_msg)
-
-        return self
 
 
 @final
