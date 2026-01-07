@@ -1,12 +1,14 @@
 """This module validates that all the defined authentication mechanisms work for connecting to the MQTT broker."""
 
 from urllib.parse import urlparse
+
 import pytest
+from paho.mqtt.enums import MQTTErrorCode
+
 from openadr3_client._auth.token_manager import OAuthTokenManager
 from openadr3_client.oadr310._vtn.mqtt.client import MQTTClient
 from openadr3_client.oadr310.models.notifiers.mqtt.mqtt import MqttNotifierBindingObject
 from tests.openadr310_vtn_test_container import OpenADR310VtnTestContainer
-from paho.mqtt.enums import MQTTErrorCode
 
 
 def test_mqtt_client_anonymous_auth(
