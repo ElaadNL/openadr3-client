@@ -122,10 +122,10 @@ class ExistingVen(ServerVen):
         Update the existing ven with the provided update.
 
         Args:
-            update (VenUpdate): The update to apply to the ven.
+            update: The update to apply to the ven.
 
         Returns:
-            ExistingVen: The updated ven.
+            The updated ven.
 
         """
         current_ven = self.model_dump()

@@ -21,8 +21,8 @@ class MQTTClient(Client):
         Initializes the MQTT client.
 
         Args:
-            mqtt_notifier_binding (MqttNotifierBindingObject): MQTT notifier binding information.
-            oauth_token_manager (OAuthTokenManager | None): The oauth token manager of the MQTT client, defaults to None.
+            mqtt_notifier_binding: MQTT notifier binding information.
+            oauth_token_manager: The oauth token manager of the MQTT client, defaults to None.
 
         """
         super().__init__(callback_api_version=CallbackAPIVersion.VERSION2)
@@ -37,7 +37,7 @@ class MQTTClient(Client):
         Configures the authentication of the MQTT client.
 
         Args:
-            mqtt_notifier_binding (MqttNotifierBindingObject): MQTT notifier binding information.
+            mqtt_notifier_binding: MQTT notifier binding information.
 
         """
         if isinstance(self._mqtt_notifier_binding.authentication, MqttNotifierAuthenticationAnonymous):

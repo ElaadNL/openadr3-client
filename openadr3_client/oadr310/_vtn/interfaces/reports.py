@@ -21,11 +21,11 @@ class ReadOnlyReportsInterface(ABC):
         Retrieve reports from the VTN.
 
         Args:
-            target (TargetFilter): The target to filter on.
-            pagination (PaginationFilter): The pagination to apply.
-            program_id (str): The program id to filter on.
-            event_id (str): The event id to filter on.
-            client_name (str): The client name to filter on.
+            target: The target to filter on.
+            pagination: The pagination to apply.
+            program_id: The program id to filter on.
+            event_id: The event id to filter on.
+            client_name: The client name to filter on.
 
         """
 
@@ -37,7 +37,7 @@ class ReadOnlyReportsInterface(ABC):
         Raises an error if the report could not be found.
 
         Args:
-            report_id (str): The report identifier to retrieve.
+            report_id: The report identifier to retrieve.
 
         """
 
@@ -53,7 +53,7 @@ class WriteOnlyReportsInterface(ABC):
         Returns the created report response from the VTN as an ExistingReport.
 
         Args:
-            new_report (NewReport): The new report to create.
+            new_report: The new report to create.
 
         """
 
@@ -68,8 +68,8 @@ class WriteOnlyReportsInterface(ABC):
         Returns the updated report response from the VTN.
 
         Args:
-            report_id (str): The identifier of the report to update.
-            updated_report (ReportUpdate): The update to apply to the report.
+            report_id: The identifier of the report to update.
+            updated_report: The update to apply to the report.
 
         """
 
@@ -79,7 +79,7 @@ class WriteOnlyReportsInterface(ABC):
         Delete the report with the identifier in the VTN.
 
         Args:
-            report_id (str): The identifier of the report to delete.
+            report_id: The identifier of the report to delete.
 
         """
 

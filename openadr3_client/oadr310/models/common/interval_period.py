@@ -14,10 +14,10 @@ class IntervalPeriod(ValidatableModel):
     A duration of PT0S indicates instantaneous or infinity, depending on payloadType.
 
     Attributes:
-        start (AwareDatetime): The start time of the interval, must be timezone-aware.
-        duration (timedelta): The duration of the interval.
+        start: The start time of the interval, must be timezone-aware.
+        duration: The duration of the interval.
             PT0S indicates instantaneous or infinity, depending on payloadType.
-        randomize_start (timedelta | None): Optional randomization window for the start time.
+        randomize_start: Optional randomization window for the start time.
             None indicates no randomization. Defaults to None.
 
     """

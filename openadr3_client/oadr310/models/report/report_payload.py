@@ -27,11 +27,11 @@ class ReportReadingType(StrEnum):
         Add support for custom report reading type cases.
 
         Args:
-            cls (type[&quot;EventPayloadType&quot;]): The report reading type class.
-            value (Any): The custom enum value to add.
+            cls: The report reading type class.
+            value: The custom enum value to add.
 
         Returns:
-            ReportReadingType: The new report reading type.
+            The new report reading type.
 
         """
         # Create a new enum member dynamically
@@ -78,11 +78,11 @@ class ReportPayloadType(StrEnum):
         Add support for custom report payload cases.
 
         Args:
-            cls (type[&quot;EventPayloadType&quot;]): The report payload type class.
-            value (Any): The custom enum value to add.
+            cls: The report payload type class.
+            value: The custom enum value to add.
 
         Returns:
-            ReportPayloadType: The new report payload type.
+            The new report payload type.
 
         """
         min_length = 1

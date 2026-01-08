@@ -17,7 +17,7 @@ class DictEventIntervalConverter(BaseOutputConverter[list[Interval[EventPayload]
         Convert the event intervals to a list of EventIntervalDictInput.
 
         Args:
-            given_input (list[Interval[EventPayload]]): The event intervals to convert.
+            given_input: The event intervals to convert.
 
         Returns: The converted event intervals.
 
@@ -29,7 +29,7 @@ class DictEventIntervalConverter(BaseOutputConverter[list[Interval[EventPayload]
         Convert the event interval to an EventIntervalDictInput[AllowedPayloadInputs].
 
         Args:
-            interval (Interval[EventPayload]): The event interval to convert.
+            interval: The event interval to convert.
 
         Returns: The converted event interval.
 

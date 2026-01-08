@@ -12,7 +12,7 @@ class BaseVirtualEndNodeClient:
         Initializes the base virtual end node client.
 
         Args:
-            version (OADRVersion): The OpenADR version used by this client.
+            version: The OpenADR version used by this client.
 
         """
         self.version = version

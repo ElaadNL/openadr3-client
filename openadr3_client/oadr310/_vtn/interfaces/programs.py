@@ -15,8 +15,8 @@ class ReadOnlyProgramsInterface(ABC):
         Retrieve programs from the VTN.
 
         Args:
-            target (Optional[TargetFilter]): The target to filter on.
-            pagination (Optional[PaginationFilter]): The pagination to apply.
+            target: The target to filter on.
+            pagination: The pagination to apply.
 
         """
 
@@ -28,7 +28,7 @@ class ReadOnlyProgramsInterface(ABC):
         Raises an error if the program could not be found.
 
         Args:
-            program_id (str): The program identifier to retrieve.
+            program_id: The program identifier to retrieve.
 
         """
 
@@ -55,8 +55,8 @@ class WriteOnlyProgramsInterface(ABC):
         Returns the updated program response from the VTN.
 
         Args:
-            program_id (str): The identifier of the program to update.
-            updated_program (ProgramUpdate): The update to apply to the program.
+            program_id: The identifier of the program to update.
+            updated_program: The update to apply to the program.
 
         """
 
@@ -66,10 +66,10 @@ class WriteOnlyProgramsInterface(ABC):
         Delete the program with the program identifier in the VTN.
 
         Args:
-            program_id (str): The identifier of the program to delete.
+            program_id: The identifier of the program to delete.
 
         Returns:
-            DeletedProgram: The deleted program.
+            The deleted program.
 
         """
 

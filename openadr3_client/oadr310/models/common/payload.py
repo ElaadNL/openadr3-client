@@ -21,8 +21,8 @@ class Point(ValidatableModel):
         Constructs a point.
 
         Args:
-            x (float): The x coordinate.
-            y (float): The y coordinate.
+            x: The x coordinate.
+            y: The y coordinate.
 
         """
         self.x = x
@@ -42,7 +42,7 @@ class _BasePayload[PAYLOAD_TYPE, T: AllowedPayloadInputs](ABC, ValueMap[PAYLOAD_
         Validates that atleast one value must be present inside the payload.
 
         Args:
-            values (tuple[T, ...]): The values of the payload.
+            values: The values of the payload.
 
         Raises:
             ValueError: Raised if the payload does not have one or more values.

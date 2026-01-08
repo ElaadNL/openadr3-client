@@ -15,9 +15,9 @@ class ReadOnlyVensInterface(ABC):
         Retrieve vens from the VTN.
 
         Args:
-            ven_name (Optional[str]): The ven name to filter on.
-            target (Optional[TargetFilter]): The target to filter on.
-            pagination (Optional[PaginationFilter]): The pagination to apply.
+            ven_name: The ven name to filter on.
+            target: The target to filter on.
+            pagination: The pagination to apply.
 
         """
 
@@ -29,7 +29,7 @@ class ReadOnlyVensInterface(ABC):
         Raises an error if the ven could not be found.
 
         Args:
-            ven_id (str): The ven identifier to retrieve.
+            ven_id: The ven identifier to retrieve.
 
         """
 
@@ -45,7 +45,7 @@ class WriteOnlyVensInterface(ABC):
         Returns the created report response from the VTN as an ExistingReport.
 
         Args:
-            new_ven (NewVen): The new ven to create.
+            new_ven: The new ven to create.
 
         """
 
@@ -60,8 +60,8 @@ class WriteOnlyVensInterface(ABC):
         Returns the updated ven response from the VTN.
 
         Args:
-            ven_id (str): The identifier of the ven to update.
-            updated_ven (ExistingVen): The ven update to apply.
+            ven_id: The identifier of the ven to update.
+            updated_ven: The ven update to apply.
 
         """
 
@@ -73,7 +73,7 @@ class WriteOnlyVensInterface(ABC):
         Returns the deleted ven response from the VTN.
 
         Args:
-            ven_id (str): The identifier of the ven to delete.
+            ven_id: The identifier of the ven to delete.
 
         """
 

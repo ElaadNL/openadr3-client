@@ -34,10 +34,10 @@ class PandasEventIntervalConverter(BaseEventIntervalConverter[dict[Hashable, Any
         Validation is done by validating the da taframe against a pandera schema.
 
         Args:
-            df_input (pd.DataFrame): The dataframe to validate.
+            df_input: The dataframe to validate.
 
         Returns:
-            ValidationOutput: The output of the validation.
+            The output of the validation.
 
         """
         try:
@@ -51,10 +51,10 @@ class PandasEventIntervalConverter(BaseEventIntervalConverter[dict[Hashable, Any
         Determines whether the row has an interval period.
 
         Args:
-            row (dict[Hashable, Any]): The row to check for an interval period.
+            row: The row to check for an interval period.
 
         Returns:
-            bool: Whether the row has an interval period.
+            Whether the row has an interval period.
 
         """
         return row.get("start") is not None
@@ -72,7 +72,7 @@ class PandasEventIntervalConverter(BaseEventIntervalConverter[dict[Hashable, Any
         Converts the dataframe to an iterable.
 
         Args:
-            df_input (pd.DataFrame): The dataframe to convert.
+            df_input: The dataframe to convert.
 
         Returns: An iterable of the dataframe, in records orientation.
 

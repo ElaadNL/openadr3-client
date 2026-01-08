@@ -10,7 +10,7 @@ class BaseOutputConverter[InputType, OutputType](ABC):
         Convert the input to the output type.
 
         Args:
-            given_input (InputType): The input to convert.
+            given_input: The input to convert.
 
         Returns: The converted output.
 

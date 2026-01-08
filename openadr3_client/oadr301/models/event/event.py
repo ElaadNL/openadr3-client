@@ -87,7 +87,7 @@ class NewEvent(Event, CreationGuarded):
         Validates that an event has at least one interval defined.
 
         Args:
-            intervals (tuple[Interval, ...]): The intervals of the event.
+            intervals: The intervals of the event.
 
         """
         if len(intervals) == 0:

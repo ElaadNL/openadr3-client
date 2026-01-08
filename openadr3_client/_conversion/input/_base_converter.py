@@ -31,11 +31,11 @@ class BaseEventIntervalConverter[ROWTYPE, INPUTTYPE, OUTPUTTYPE](ABC):
         Convert a single row to the output type.
 
         Args:
-            row_id (int): The id of the row.
-            row (ROWTYPE): The row to convert.
+            row_id: The id of the row.
+            row: The row to convert.
 
         Returns:
-            OUTPUTTYPE: The converted row.
+            The converted row.
 
         """
         ...
@@ -46,10 +46,10 @@ class BaseEventIntervalConverter[ROWTYPE, INPUTTYPE, OUTPUTTYPE](ABC):
         Convert the input to an iterable of rows.
 
         Args:
-            given_input (INPUTTYPE): The input to convert.
+            given_input: The input to convert.
 
         Returns:
-            Iterable[ROWTYPE]: The iterable of rows.
+            The iterable of rows.
 
         """
         ...

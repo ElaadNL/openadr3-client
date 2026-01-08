@@ -15,7 +15,7 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on programs.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for programs.
+            Information on the binding topic names for programs.
 
         """
         ...
@@ -26,10 +26,10 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT binding topic names for operations on a specific program.
 
         Args:
-            program_id (str): The program ID to retrieve binding topics for.
+            program_id: The program ID to retrieve binding topics for.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for the specific program.
+            Information on the binding topic names for the specific program.
 
         """
         ...
@@ -40,7 +40,7 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on events.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for events.
+            Information on the binding topic names for events.
 
         """
         ...
@@ -51,10 +51,10 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT binding topic names for operations on events of a specific program.
 
         Args:
-            program_id (str): The program ID to retrieve binding topics of events for.
+            program_id: The program ID to retrieve binding topics of events for.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for the events belonging to the specified program.
+            Information on the binding topic names for the events belonging to the specified program.
 
         """
         ...
@@ -65,7 +65,7 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on reports.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for reports.
+            Information on the binding topic names for reports.
 
         """
         ...
@@ -76,7 +76,7 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on subscriptions.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for subscriptions.
+            Information on the binding topic names for subscriptions.
 
         """
         ...
@@ -87,7 +87,7 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on vens.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for vens.
+            Information on the binding topic names for vens.
 
         """
         ...
@@ -98,10 +98,10 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT binding topic names for operations on a specific ven.
 
         Args:
-            ven_id (str): The ven ID to retrieve binding topics for.
+            ven_id: The ven ID to retrieve binding topics for.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for the specific ven.
+            Information on the binding topic names for the specific ven.
 
         """
         ...
@@ -112,7 +112,7 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on resources.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for resources.
+            Information on the binding topic names for resources.
 
         """
         ...
@@ -123,10 +123,10 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on events belonging to a specific VEN.
 
         Args:
-            ven_id (str): The ven ID to retrieve binding topics for.
+            ven_id: The ven ID to retrieve binding topics for.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for events of a specific VEN.
+            Information on the binding topic names for events of a specific VEN.
 
         """
         ...
@@ -137,10 +137,10 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on programs belonging to a specific VEN.
 
         Args:
-            ven_id (str): The ven ID to retrieve binding topics for.
+            ven_id: The ven ID to retrieve binding topics for.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for programs of a specific VEN.
+            Information on the binding topic names for programs of a specific VEN.
 
         """
         ...
@@ -151,10 +151,10 @@ class ReadOnlyMqttNotifierInterface(ABC):
         List all MQTT notified topic names for operations on resources belonging to a specific VEN.
 
         Args:
-            ven_id (str): The ven ID to retrieve binding topics for.
+            ven_id: The ven ID to retrieve binding topics for.
 
         Returns:
-            MqttTopicInformation: Information on the binding topic names for resources of a specific VEN.
+            Information on the binding topic names for resources of a specific VEN.
 
         """
         ...

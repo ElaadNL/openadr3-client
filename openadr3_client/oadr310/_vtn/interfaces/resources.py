@@ -21,10 +21,10 @@ class ReadOnlyResourcesInterface(ABC):
         Retrieves a list of resources belonging to the ven with the given ven identifier.
 
         Args:
-            ven_id (Optional[str]): The ven identifier to retrieve.
-            resource_name (Optional[str]): The name of the resource to filter on.
-            target (Optional[TargetFilter]): The target to filter on.
-            pagination (Optional[PaginationFilter]): The pagination to apply.
+            ven_id: The ven identifier to retrieve.
+            resource_name: The name of the resource to filter on.
+            target: The target to filter on.
+            pagination: The pagination to apply.
 
         """
 
@@ -34,7 +34,7 @@ class ReadOnlyResourcesInterface(ABC):
         Retrieves a resource by the resource identifier belonging to the ven with the given ven identifier.
 
         Args:
-            resource_id (str): The identifier of the resource to retrieve.
+            resource_id: The identifier of the resource to retrieve.
 
         """
 
@@ -55,8 +55,8 @@ class WriteOnlyResourcesInterface(ABC):
         Returns the updated resource response from the VTN.
 
         Args:
-            resource_id (str): The identifier of the resource to update.
-            updated_resource (ExistingResource): The resource update to apply.
+            resource_id: The identifier of the resource to update.
+            updated_resource: The resource update to apply.
 
         """
 
@@ -66,7 +66,7 @@ class WriteOnlyResourcesInterface(ABC):
         Delete the resource with the resource identifier in the VTN.
 
         Args:
-            resource_id (str): The identifier of the resource to delete.
+            resource_id: The identifier of the resource to delete.
 
         """
 
@@ -78,7 +78,7 @@ class WriteOnlyResourcesInterface(ABC):
         Returns the created resource response from the VTN as an ExistingResource.
 
         Args:
-            new_resource (NewResource): The new resource to create.
+            new_resource: The new resource to create.
 
         """
 

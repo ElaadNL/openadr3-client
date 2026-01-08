@@ -15,9 +15,9 @@ class ReadOnlyEventsInterface(ABC):
         Retrieve events from the VTN.
 
         Args:
-            target (Optional[TargetFilter]): The target to filter on.
-            pagination (Optional[PaginationFilter]): The pagination to apply.
-            program_id (Optional[str]): The program id to filter on.
+            target: The target to filter on.
+            pagination: The pagination to apply.
+            program_id: The program id to filter on.
 
         """
 
@@ -29,7 +29,7 @@ class ReadOnlyEventsInterface(ABC):
         Raises an error if the event could not be found.
 
         Args:
-            event_id (str): The event identifier to retrieve.
+            event_id: The event identifier to retrieve.
 
         """
 
@@ -45,7 +45,7 @@ class WriteOnlyEventsInterface(ABC):
         Returns the created event response from the VTN as an ExistingEvent.
 
         Args:
-            new_event (NewEvent): The new event to create.
+            new_event: The new event to create.
 
         """
 
@@ -60,8 +60,8 @@ class WriteOnlyEventsInterface(ABC):
         Returns the updated event response from the VTN.
 
         Args:
-            event_id (str): The identifier of the event to update.
-            updated_event (EventUpdate): The update to apply to the event.
+            event_id: The identifier of the event to update.
+            updated_event: The update to apply to the event.
 
         """
 
@@ -71,7 +71,7 @@ class WriteOnlyEventsInterface(ABC):
         Delete the event with the event identifier in the VTN.
 
         Args:
-            event_id (str): The identifier of the event to delete.
+            event_id: The identifier of the event to delete.
 
         """
 

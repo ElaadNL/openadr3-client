@@ -25,11 +25,11 @@ class Unit(StrEnum):
         Add support for custom enum cases.
 
         Args:
-            cls (type[&quot;EventPayloadType&quot;]): The enum class.
-            value (Any): The custom enum value to add.
+            cls: The enum class.
+            value: The custom enum value to add.
 
         Returns:
-            Unit: The new enum type.
+            The new enum type.
 
         """
         # Create a new enum member dynamically

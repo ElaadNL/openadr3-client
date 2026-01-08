@@ -54,11 +54,11 @@ class EventPayloadType(StrEnum):
         Add support for custom event payload cases.
 
         Args:
-            cls (type[&quot;EventPayloadType&quot;]): The event payload type class.
-            value (Any): The custom enum value to add.
+            cls: The event payload type class.
+            value: The custom enum value to add.
 
         Returns:
-            EventPayloadType: The new event payload type.
+            The new event payload type.
 
         """
         min_length = 1

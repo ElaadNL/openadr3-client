@@ -183,10 +183,10 @@ class ExistingProgram(ServerProgram):
         Update the existing program with the provided update.
 
         Args:
-            update (ProgramUpdate): The update to apply to the program.
+            update: The update to apply to the program.
 
         Returns:
-            ExistingProgram: The updated program.
+            The updated program.
 
         """
         current_program = self.model_dump()

@@ -36,7 +36,7 @@ class ReportResource(ValidatableModel):
         Validatest that a resource has atleast one interval defined.
 
         Args:
-            intervals (tuple[Interval[ReportPayload], ...]): The intervals of the resource.
+            intervals: The intervals of the resource.
 
         """
         if len(intervals) == 0:
@@ -83,7 +83,7 @@ class NewReport(Report, CreationGuarded):
         Validates that a report has at least one resource defined.
 
         Args:
-            resources (tuple[ReportResource, ...]): The resources of the report.
+            resources: The resources of the report.
 
         """
         if len(resources) == 0:
@@ -134,10 +134,10 @@ class ExistingReport(ServerReport):
         Update the existing report with the provided update.
 
         Args:
-            update (ReportUpdate): The update to apply to the report.
+            update: The update to apply to the report.
 
         Returns:
-            ExistingReport: The updated report.
+            The updated report.
 
         """
         current_report = self.model_dump()

@@ -44,7 +44,7 @@ class ReadOnlySubscriptionsInterface(ABC):
         Raises an error if the subscription could not be found.
 
         Args:
-            subscription_id (str): The subscription identifier to retrieve.
+            subscription_id: The subscription identifier to retrieve.
 
         """
 
@@ -60,7 +60,7 @@ class WriteOnlySubscriptionsInterface(ABC):
         Returns the created subscription response from the VTN as an ExistingSubscription.
 
         Args:
-            new_subscription (ExistingSubscription): The new subscription to create.
+            new_subscription: The new subscription to create.
 
         """
 
@@ -75,8 +75,8 @@ class WriteOnlySubscriptionsInterface(ABC):
         Returns the updated subscription response from the VTN.
 
         Args:
-            subscription_id (str): The identifier of the subscription to update.
-            updated_subscription (SubscriptionUpdate): The update to apply to the subscription.
+            subscription_id: The identifier of the subscription to update.
+            updated_subscription: The update to apply to the subscription.
 
         """
 
@@ -86,7 +86,7 @@ class WriteOnlySubscriptionsInterface(ABC):
         Delete the subscription with the identifier in the VTN.
 
         Args:
-            subscription_id (str): The identifier of the subscription to delete.
+            subscription_id: The identifier of the subscription to delete.
 
         """
 

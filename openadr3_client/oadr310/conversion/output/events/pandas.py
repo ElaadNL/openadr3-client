@@ -23,7 +23,7 @@ class PandasEventIntervalConverter(BaseOutputConverter[list[Interval[EventPayloa
         Convert the event intervals to a EventIntervalDataFrameSchema.
 
         Args:
-            given_input (list[Interval[EventPayload]]): The event intervals to convert.
+            given_input: The event intervals to convert.
 
         Returns: The converted event intervals to a EventIntervalDataFrameSchema.
 
@@ -73,7 +73,7 @@ class PandasEventIntervalConverter(BaseOutputConverter[list[Interval[EventPayloa
         Ensure that the series is in UTC time zone.
 
         Args:
-            series (pd.Series): The series to ensure is in UTC time zone.
+            series: The series to ensure is in UTC time zone.
 
         Returns: The series in UTC time zone.
 

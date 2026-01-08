@@ -12,7 +12,7 @@ class Interval[PAYLOAD: _BasePayload](ValidatableModel):
     Intervals can have differing allowed payloads based on the OpenADR 3 resource the interval is assigned to.
 
     Args:
-        ValidatableModel (ValidatableModel): The base class for pydantic models of the library.
+        ValidatableModel: The base class for pydantic models of the library.
 
     """
 
@@ -27,7 +27,7 @@ class Interval[PAYLOAD: _BasePayload](ValidatableModel):
         Validates that an interval has one or more payloads.
 
         Args:
-            payloads (tuple[EventPayload, ...]): The payloads of the interval.
+            payloads: The payloads of the interval.
 
         Raises:
             ValueError: Raised if the interval does not have one or more payloads.

@@ -27,10 +27,10 @@ class DictEventIntervalConverter(
         Validates the input to be compatible with event interval conversion.
 
         Args:
-            event_interval_dict_input (Iterable[EventIntervalDictInput[AllowedPayloadInputs]]): The input to validate.
+            event_interval_dict_input: The input to validate.
 
         Returns:
-            ValidationOutput: The output of the validation.
+            The output of the validation.
 
         """
         # Pass the input through a pydantic validator to ensure the input is valid
@@ -52,10 +52,10 @@ class DictEventIntervalConverter(
         Determines whether the row has an interval period.
 
         Args:
-            row (EventIntervalDictInput): The row to check for an interval period.
+            row: The row to check for an interval period.
 
         Returns:
-            bool: Whether the row has an interval period.
+            Whether the row has an interval period.
 
         """
         return row.get("start") is not None

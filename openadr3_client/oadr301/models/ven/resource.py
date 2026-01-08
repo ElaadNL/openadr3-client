@@ -72,10 +72,10 @@ class ExistingResource(ServerResource):
         Update the existing resource with the provided update.
 
         Args:
-            update (ResourceUpdate): The update to apply to the resource.
+            update: The update to apply to the resource.
 
         Returns:
-            ExistingResource: The updated resource.
+            The updated resource.
 
         """
         current_resource = self.model_dump()

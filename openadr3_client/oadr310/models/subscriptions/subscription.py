@@ -58,7 +58,7 @@ class ObjectOperation(ValidatableModel):
         Validates that an object operation has atleast one object defined.
 
         Args:
-            objects (tuple[Object, ...]): The objects of the object operation.
+            objects: The objects of the object operation.
 
         """
         if len(objects) == 0:
@@ -73,7 +73,7 @@ class ObjectOperation(ValidatableModel):
         Validates that an object operation has atleast one operation defined.
 
         Args:
-            operations (tuple[Operation, ...]): The operations of the object operation.
+            operations: The operations of the object operation.
 
         """
         if len(operations) == 0:
@@ -104,7 +104,7 @@ class _SubscriptionBase(BaseModel):
         Validates that a subscription has atleast one object operation defined.
 
         Args:
-            object_operations (tuple[ObjectOperation, ...]): The object operations of the subscription.
+            object_operations: The object operations of the subscription.
 
         """
         if len(object_operations) == 0:
@@ -151,10 +151,10 @@ class ExistingSubscription(ServerSubscription):
         Update the existing subscription with the provided update.
 
         Args:
-            update (SubscriptionUpdate): The update to apply to the subscription.
+            update: The update to apply to the subscription.
 
         Returns:
-            ExistingSubscription: The updated subscription.
+            The updated subscription.
 
         """
         current_subscription = self.model_dump()

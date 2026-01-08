@@ -25,17 +25,17 @@ class VirtualEndNodeHttpClientFactory:
         Creates a VEN client which uses the HTTP interface of a VTN.
 
         Args:
-            vtn_base_url (str): The base URL for the HTTP interface of the VTN.
-            client_id (str): The client id to use to provision an access token from the OAuth authorization server.
-            client_secret (str): The client secret to use to provision an access token from the OAuth authorization server.
-            token_url (str | None): The endpoint to provision access tokens from. Defaults to None. If None, the token URL is discovered by calling
+            vtn_base_url: The base URL for the HTTP interface of the VTN.
+            client_id: The client id to use to provision an access token from the OAuth authorization server.
+            client_secret: The client secret to use to provision an access token from the OAuth authorization server.
+            token_url: The endpoint to provision access tokens from. Defaults to None. If None, the token URL is discovered by calling
             the discover endpoint (introduced in OpenADR 3.1) on the OpenADR VTN.
-            scopes (list[str]): The scopes to request with the token. If empty, no scopes are requested.
-            verify_vtn_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
+            scopes: The scopes to request with the token. If empty, no scopes are requested.
+            verify_vtn_tls_certificate: Whether the VEN verifies the TLS certificate of the VTN.
             Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
             If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
             PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
-            version (OADRVersion): The OpenADR version to use for the VEN client. Defaults to OADR 3.1.0.
+            version: The OpenADR version to use for the VEN client. Defaults to OADR 3.1.0.
 
         """
         # Starting with OpenADR 3.1.0, the token URL can be discovered from the VTN through the discovery endpoint.
