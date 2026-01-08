@@ -246,7 +246,7 @@ def vtn_openadr_310_bl_token(
             scopes=None,
             audience=None,
         ),
-        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_url(),
+        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_anonymous_url(),
     )
 
 
@@ -273,7 +273,7 @@ def vtn_openadr_310_ven_token(
             scopes=None,
             audience=None,
         ),
-        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_url(),
+        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_anonymous_url(),
     )
 
 
@@ -300,5 +300,5 @@ def vtn_openadr_310_ven2_token(
             scopes=None,
             audience=None,
         ),
-        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_url(),
+        mqtt_broker_url=integration_test_openadr310_reference_vtn.get_mqtt_broker_anonymous_url(),
     )

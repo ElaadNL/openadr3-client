@@ -63,7 +63,7 @@ class MQTTClient(Client):
         self.on_connect = lambda _client, _userdata, _flags, rc, _props: logger.info(f"Connected to broker with result code '{rc}'")
         self.on_connect_fail = lambda _client, _userdata: logger.warning("Failed to connect to broker")
         self.on_publish = lambda _client, _userdata, mid, a, _b: logger.debug(f"Published message with mid: {mid}. Reasoncode {a}")
-        self.on_disconnect = lambda client, userdata, rc, properties=None: logger.info("Disconnected from MQTT broker")  # noqa: ARG005
+        self.on_disconnect = lambda client, userdata, _flags, rc, properties=None: logger.info("Disconnected from MQTT broker")  # noqa: ARG005
         self.on_subscribe = lambda _client, _userdata, mid, granted_qos, _properties: logger.debug(f"Subscribed to topic with mid: {mid} and QoS: {granted_qos}")
         self.on_unsubscribe = lambda _client, _userdata, mid, granted_qos, _properties: logger.debug(f"Unsubscribed from topic with mid: {mid} and QoS: {granted_qos}")
 
