@@ -3,7 +3,8 @@ name = "openadr3-client"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Nick van der Burgt",email = "nick.van.der.burgt@elaad.nl"}
+    {name = "Nick van der Burgt",email = "nick.van.der.burgt@elaad.nl"},
+    {name = "Stijn van Houwelingen",email = "stijn.van.houwelingen@elaad.nl"}
 ]
 readme = "README.md"
 license = "Apache-2.0"
