@@ -12,12 +12,12 @@ from openadr3_client.oadr301._vtn.http.events import EventsHttpInterface
 from openadr3_client.oadr301._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.oadr301._vtn.http.reports import ReportsHttpInterface
 from openadr3_client.oadr301._vtn.http.vens import VensHttpInterface
-from openadr3_client.oadr301.models.common.unit import Unit
 from openadr3_client.oadr301.models.event.event import NewEvent
 from openadr3_client.oadr301.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
 from openadr3_client.oadr301.models.program.program import NewProgram
 from openadr3_client.oadr301.models.report.report import ExistingReport, NewReport, ReportResource, ReportUpdate
 from openadr3_client.oadr301.models.report.report_payload import ReportPayload, ReportPayloadType
+from openadr3_client.oadr301.models.unit import Unit
 from openadr3_client.oadr301.models.ven.ven import NewVen
 from tests.conftest import IntegrationTestVTNClient
 

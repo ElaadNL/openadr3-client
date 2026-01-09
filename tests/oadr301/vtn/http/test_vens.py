@@ -8,7 +8,7 @@ from requests import HTTPError
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client.oadr301._vtn.http.vens import VensHttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr301.models.common.target import Target
+from openadr3_client.oadr301.models.target import Target
 from openadr3_client.oadr301.models.ven.resource import ExistingResource, NewResource, ResourceUpdate
 from openadr3_client.oadr301.models.ven.ven import ExistingVen, NewVen, VenUpdate
 from tests.conftest import IntegrationTestVTNClient

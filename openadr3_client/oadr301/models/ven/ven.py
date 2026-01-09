@@ -7,7 +7,7 @@ from openadr3_client._models._base_model import BaseModel
 from openadr3_client._models._validatable_model import OpenADRResource
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client._models.common.creation_guarded import CreationGuarded
-from openadr3_client.oadr301.models.common.target import Target
+from openadr3_client.oadr301.models.target import Target
 from openadr3_client.oadr301.models.ven.resource import Resource
 
 

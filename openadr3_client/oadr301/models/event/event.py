@@ -12,9 +12,9 @@ from openadr3_client._models._validatable_model import OpenADRResource
 from openadr3_client._models.common.creation_guarded import CreationGuarded
 from openadr3_client._models.common.interval import Interval
 from openadr3_client._models.common.interval_period import IntervalPeriod
-from openadr3_client.oadr301.models.common.target import Target
 from openadr3_client.oadr301.models.event.event_payload import EventPayload, EventPayloadDescriptor
 from openadr3_client.oadr301.models.report.report_payload import ReportDescriptor
+from openadr3_client.oadr301.models.target import Target
 
 
 class Event(ABC, OpenADRResource):

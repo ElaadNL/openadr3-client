@@ -11,10 +11,10 @@ from requests.exceptions import HTTPError
 from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr301._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr301.models.common.target import Target
-from openadr3_client.oadr301.models.common.unit import Unit
 from openadr3_client.oadr301.models.event.event_payload import EventPayloadDescriptor, EventPayloadType
 from openadr3_client.oadr301.models.program.program import ExistingProgram, NewProgram, ProgramDescription, ProgramUpdate
+from openadr3_client.oadr301.models.target import Target
+from openadr3_client.oadr301.models.unit import Unit
 from tests.conftest import IntegrationTestVTNClient
 
 

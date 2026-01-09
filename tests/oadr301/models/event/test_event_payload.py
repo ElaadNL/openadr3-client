@@ -1,8 +1,8 @@
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.oadr301.models.common.unit import Unit
 from openadr3_client.oadr301.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType
+from openadr3_client.oadr301.models.unit import Unit
 
 
 def test_event_payload_no_values() -> None:

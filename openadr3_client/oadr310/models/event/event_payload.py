@@ -7,7 +7,7 @@ from pydantic import Field
 from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client._models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
-from openadr3_client.oadr310.models.common.unit import Unit
+from openadr3_client.oadr310.models.unit import Unit
 
 
 class EventPayloadType(StrEnum):
