@@ -5,7 +5,7 @@ from typing import Any, Literal, final
 
 from pydantic import Field
 
-from openadr3_client.oadr310.models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
+from openadr3_client._models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
 from openadr3_client.oadr310.models.common.unit import Unit
 
 

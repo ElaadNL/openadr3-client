@@ -5,9 +5,9 @@ from datetime import UTC, datetime, timedelta
 import pandas as pd
 import pytest
 
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310.conversion.output.events.pandas import PandasEventIntervalConverter
-from openadr3_client.oadr310.models.common.interval import Interval
-from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310.models.event.event_payload import EventPayload, EventPayloadType
 
 

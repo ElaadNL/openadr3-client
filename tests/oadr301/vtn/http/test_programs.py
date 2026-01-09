@@ -8,9 +8,9 @@ from pydantic_extra_types.country import CountryAlpha2
 from pydantic_extra_types.currency_code import ISO4217
 from requests.exceptions import HTTPError
 
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr301._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr301.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr301.models.common.target import Target
 from openadr3_client.oadr301.models.common.unit import Unit
 from openadr3_client.oadr301.models.event.event_payload import EventPayloadDescriptor, EventPayloadType

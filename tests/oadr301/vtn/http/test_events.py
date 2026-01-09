@@ -6,11 +6,11 @@ import pytest
 from pydantic_extra_types.currency_code import ISO4217
 from requests import HTTPError
 
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr301._vtn.http.events import EventsHttpInterface
 from openadr3_client.oadr301._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr301.models.common.interval import Interval
-from openadr3_client.oadr301.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr301.models.common.target import Target
 from openadr3_client.oadr301.models.common.unit import Unit
 from openadr3_client.oadr301.models.event.event import EventUpdate, ExistingEvent, NewEvent

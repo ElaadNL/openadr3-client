@@ -5,7 +5,7 @@ import string
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.oadr310.models.common.interval import Interval
+from openadr3_client._models.common.interval import Interval
 from openadr3_client.oadr310.models.report.report import NewReport, ReportResource
 from openadr3_client.oadr310.models.report.report_payload import ReportPayload, ReportPayloadType
 

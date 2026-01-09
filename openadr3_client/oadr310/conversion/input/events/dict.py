@@ -10,9 +10,9 @@ from openadr3_client._conversion.input._base_converter import (
     BaseEventIntervalConverter,
     ValidationOutput,
 )
-from openadr3_client.oadr310.models.common.interval import Interval
-from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
-from openadr3_client.oadr310.models.common.payload import AllowedPayloadInputs
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
+from openadr3_client._models.common.payload import AllowedPayloadInputs
 from openadr3_client.oadr310.models.event.event_payload import EventPayload
 
 

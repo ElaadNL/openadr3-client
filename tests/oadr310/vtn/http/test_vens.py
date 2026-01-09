@@ -3,9 +3,9 @@
 import pytest
 from requests import HTTPError
 
+from openadr3_client._models.common.attribute import Attribute
 from openadr3_client.oadr310._vtn.http.vens import VensHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr310.models.common.attribute import Attribute
 from openadr3_client.oadr310.models.ven.ven import VenUpdateBlRequest, VenUpdateVenRequest
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import ven_created_by_ven, ven_with_targets

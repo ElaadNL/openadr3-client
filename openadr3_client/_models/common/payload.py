@@ -3,7 +3,7 @@ from abc import ABC
 from pydantic import field_validator
 
 from openadr3_client._models._validatable_model import ValidatableModel
-from openadr3_client.oadr301.models.common.value_map import ValueMap
+from openadr3_client._models.common.value_map import ValueMap
 
 
 class BasePayloadDescriptor(ABC, ValidatableModel):

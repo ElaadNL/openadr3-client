@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from openadr3_client.oadr310.models.common.interval import Interval
+from openadr3_client._models.common.interval import Interval
 
 
 def test_interval_no_payloads() -> None:

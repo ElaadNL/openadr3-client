@@ -5,9 +5,9 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from requests import HTTPError
 
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310._vtn.http.reports import ReportsHttpInterface
-from openadr3_client.oadr310.models.common.interval import Interval
-from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310.models.report.report import ReportResource, ReportUpdate
 from openadr3_client.oadr310.models.report.report_payload import ReportPayload, ReportPayloadType
 from tests.conftest import IntegrationTestVTNClient

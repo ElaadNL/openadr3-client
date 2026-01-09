@@ -5,14 +5,14 @@ from datetime import UTC, datetime, timedelta
 
 from pydantic_extra_types.currency_code import ISO4217
 
+from openadr3_client._models.common.attribute import Attribute
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
 from openadr3_client.oadr310._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.oadr310._vtn.http.reports import ReportsHttpInterface
 from openadr3_client.oadr310._vtn.http.resources import ResourcesHttpInterface
 from openadr3_client.oadr310._vtn.http.vens import VensHttpInterface
-from openadr3_client.oadr310.models.common.attribute import Attribute
-from openadr3_client.oadr310.models.common.interval import Interval
-from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310.models.common.unit import Unit
 from openadr3_client.oadr310.models.event.event import ExistingEvent, NewEvent
 from openadr3_client.oadr310.models.event.event_payload import EventPayload, EventPayloadDescriptor, EventPayloadType

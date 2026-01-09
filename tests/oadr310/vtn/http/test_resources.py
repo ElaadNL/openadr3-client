@@ -3,8 +3,8 @@
 import pytest
 from requests import HTTPError
 
+from openadr3_client._models.common.attribute import Attribute
 from openadr3_client.oadr310._vtn.http.resources import ResourcesHttpInterface
-from openadr3_client.oadr310.models.common.attribute import Attribute
 from openadr3_client.oadr310.models.resource.resource import ResourceUpdateBlRequest
 from tests.conftest import IntegrationTestVTNClient
 from tests.oadr310.generators import resource_for_ven, ven_with_targets

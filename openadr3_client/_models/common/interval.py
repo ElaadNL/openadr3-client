@@ -1,8 +1,8 @@
 from pydantic import field_validator
 
 from openadr3_client._models._validatable_model import ValidatableModel
-from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
-from openadr3_client.oadr310.models.common.payload import _BasePayload
+from openadr3_client._models.common.interval_period import IntervalPeriod
+from openadr3_client._models.common.payload import _BasePayload
 
 
 class Interval[PAYLOAD: _BasePayload](ValidatableModel):

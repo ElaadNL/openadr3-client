@@ -3,8 +3,8 @@
 from collections.abc import Hashable, Iterable
 from typing import Any, final
 
-from openadr3_client.oadr301.models.common.interval import Interval
-from openadr3_client.oadr301.models.common.interval_period import IntervalPeriod
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr301.models.event.event_payload import EventPayload
 
 try:

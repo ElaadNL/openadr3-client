@@ -5,10 +5,10 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from requests import HTTPError
 
+from openadr3_client._models.common.interval import Interval
+from openadr3_client._models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
-from openadr3_client.oadr310.models.common.interval import Interval
-from openadr3_client.oadr310.models.common.interval_period import IntervalPeriod
 from openadr3_client.oadr310.models.event.event import EventUpdate, NewEvent
 from openadr3_client.oadr310.models.event.event_payload import EventPayload, EventPayloadType
 from tests.conftest import IntegrationTestVTNClient
