@@ -364,6 +364,10 @@ To set up the development environment, go through the following steps:
 1. Install [uv](https://docs.astral.sh/uv/). This tool replaces pip, pip-tools, pipx, poetry, pyenv, twine, virtualenv, and more. It also manages your python version, so you don't need tools like pyenv.
 2. `uv sync`
 
+### Pre-commit
+
+This repository includes pre-commit hooks. To install the pre-commit hooks, run `uvx pre-commit`. There is a preference for running pre-commit hooks locally, so that all tooling (CI and pre-commit hooks) use the same environment and tool versions.
+
 ### Development scripts
 
 - To run all linters and formatters with automatic fixes applied
