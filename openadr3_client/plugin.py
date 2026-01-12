@@ -97,7 +97,7 @@ class ValidatorPlugin(ABC):
 
         >>> from typing import Any
         >>> from pydantic_core import InitErrorDetails, PydanticCustomError
-        >>> from openadr3_client.models.event.event import Event
+        >>> from openadr3_client.oadr310.models.event.event import Event
         >>> from openadr3_client.plugin import ValidatorPlugin
 
         >>> def validate_event_name_length(event: Event) -> list[InitErrorDetails] | None:
@@ -157,10 +157,10 @@ class ValidatorPlugin(ABC):
         Testing validation with the plugin:
 
         >>> from openadr3_client.plugin import ValidatorPluginRegistry
-        >>> from openadr3_client.models.event.event import NewEvent, ExistingEvent
-        >>> from openadr3_client.models.common.interval import Interval
-        >>> from openadr3_client.models.common.interval_period import IntervalPeriod
-        >>> from openadr3_client.models.event.event_payload import EventPayload
+        >>> from openadr3_client.oadr310.models.event.event import NewEvent, ExistingEvent
+        >>> from openadr3_client._models.common.interval import Interval
+        >>> from openadr3_client._models.common.interval_period import IntervalPeriod
+        >>> from openadr3_client.oadr310.models.event.event_payload import EventPayload
         >>> from datetime import datetime, timezone, timedelta
 
         >>> # Register the legacy plugin first
@@ -346,7 +346,7 @@ class ValidatorPluginRegistry:
     Example:
         ```python
         from openadr3_client.plugin import ValidatorPluginRegistry, ValidatorPlugin
-        from openadr3_client.models.event.event import Event
+        from openadr3_client.oadr310.models.event.event import Event
 
         ValidatorPluginRegistry.register_plugin(
             MyFirstPlugin.setup(profile_version="1.2")
