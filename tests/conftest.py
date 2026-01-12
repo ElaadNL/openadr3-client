@@ -2,7 +2,7 @@
 
 import logging
 import os
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 from pathlib import Path
 
 import jwt
@@ -28,7 +28,7 @@ OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
 
 
 @pytest.fixture(autouse=True)
-def _clear_validator_plugins() -> None:
+def _clear_validator_plugins() -> Generator[None, None, None]:
     """
     Ensure plugin-based validators don't leak between tests.
 
