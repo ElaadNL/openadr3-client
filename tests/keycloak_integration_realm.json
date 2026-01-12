@@ -1,6 +1,24 @@
 {
   "realm": "integration-test-realm",
   "enabled": true,
+  "clientScopes": [
+    {
+      "name": "test/BL",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "test/VEN",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    }
+  ],
   "clients": [
     {
       "clientId": "test-client-id",
@@ -11,6 +29,12 @@
       "publicClient": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "test/BL",
+        "test/VEN"
+      ],
       "protocolMappers": [
         {
           "name": "custom roles mapper",
@@ -25,6 +49,88 @@
             "access.token.claim": "true"
           }
         },
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "https://integration.test.elaad.nl",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "nbf mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.value": "1745926210",
+            "claim.name": "nbf",
+            "jsonType.label": "long",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "test-ven-1",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "my-client-secret",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "test/VEN"
+      ],
+      "protocolMappers": [
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "https://integration.test.elaad.nl",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "nbf mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.value": "1745926210",
+            "claim.name": "nbf",
+            "jsonType.label": "long",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "test-ven-2",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "my-client-secret",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "test/VEN"
+      ],
+      "protocolMappers": [
         {
           "name": "audience",
           "protocol": "openid-connect",

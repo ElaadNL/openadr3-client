@@ -1,0 +1,122 @@
+"""Implements the communication with the programs interface of an OpenADR 3 VTN."""
+
+from pydantic.type_adapter import TypeAdapter
+
+from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client.logging import logger
+from openadr3_client.oadr310._vtn.http.http_interface import AuthenticatedHttpInterface
+from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
+from openadr3_client.oadr310._vtn.interfaces.programs import (
+    ReadOnlyProgramsInterface,
+    ReadWriteProgramsInterface,
+    WriteOnlyProgramsInterface,
+)
+from openadr3_client.oadr310.models.program.program import DeletedProgram, ExistingProgram, NewProgram, ProgramUpdate
+
+BASE_PREFIX = "programs"
+
+
+class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, AuthenticatedHttpInterface):
+    """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+
+    def get_programs(self, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingProgram, ...]:
+        """
+        Retrieve programs from the VTN.
+
+        Args:
+            target (Optional[TargetFilter]): The target to filter on.
+            pagination (Optional[PaginationFilter]): The pagination to apply.
+
+        """
+        query_params: dict = {}
+
+        if target:
+            query_params |= target.model_dump(by_alias=True, mode="json")
+
+        if pagination:
+            query_params |= pagination.model_dump(by_alias=True, mode="json")
+
+        logger.debug(f"Programs - Performing get_programs request with query params: {query_params}")
+
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}", params=query_params)
+        response.raise_for_status()
+
+        adapter = TypeAdapter(list[ExistingProgram])
+        return tuple(adapter.validate_python(response.json()))
+
+    def get_program_by_id(self, program_id: str) -> ExistingProgram:
+        """
+        Retrieves a program by the program identifier.
+
+        Raises an error if the program could not be found.
+
+        Args:
+            program_id (str): The program identifier to retrieve.
+
+        """
+        response = self.session.get(f"{self.base_url}/{BASE_PREFIX}/{program_id}")
+        response.raise_for_status()
+
+        return ExistingProgram.model_validate(response.json())
+
+
+class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHttpInterface):
+    """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+
+    def create_program(self, new_program: NewProgram) -> ExistingProgram:
+        """
+        Creates a program from the new program.
+
+        Returns the created program response from the VTN as an ExistingProgram.
+        """
+        with new_program.with_creation_guard():
+            response = self.session.post(f"{self.base_url}/{BASE_PREFIX}", json=new_program.model_dump(by_alias=True, mode="json"))
+            response.raise_for_status()
+            return ExistingProgram.model_validate(response.json())
+
+    def update_program_by_id(self, program_id: str, updated_program: ProgramUpdate) -> ExistingProgram:
+        """
+        Update the program with the program identifier in the VTN.
+
+        If the program id does not match the id in the existing program, an error is
+        raised.
+
+        Returns the updated program response from the VTN.
+
+        Args:
+            program_id (str): The identifier of the program to update.
+            updated_program (ProgramUpdate): The update to apply to the program.
+
+        """
+        # No lock on the ExistingProgram type exists similar to the creation guard of a NewProgram
+        # Since calling update with the same object multiple times is an idempotent action that does not
+        # result in a state change in the VTN.
+        response = self.session.put(f"{self.base_url}/{BASE_PREFIX}/{program_id}", json=updated_program.model_dump(by_alias=True, mode="json"))
+        response.raise_for_status()
+        return ExistingProgram.model_validate(response.json())
+
+    def delete_program_by_id(self, program_id: str) -> DeletedProgram:
+        """
+        Delete the program with the program identifier in the VTN.
+
+        Args:
+            program_id (str): The identifier of the program to delete.
+
+        """
+        response = self.session.delete(f"{self.base_url}/{BASE_PREFIX}/{program_id}")
+        response.raise_for_status()
+
+        return DeletedProgram.model_validate(response.json())
+
+
+class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
+    """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
+
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)

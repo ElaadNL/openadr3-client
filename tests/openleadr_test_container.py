@@ -7,14 +7,15 @@ from testcontainers.postgres import PostgresContainer
 
 
 class OpenLeadrVtnTestContainer:
-    """A test container for an OpenLeadr-rs VTN with a PostgreSQL testcontainer dependency."""
+    """A test container for an OpenLeadr-rs VTN (OpenADR 3.0.1) with a PostgreSQL testcontainer dependency."""
 
     def __init__(
         self,
         external_oauth_signing_key_pem_path: str,
         oauth_valid_audiences: str,
+        network: Network | None = None,
         oauth_key_type: str = "RSA",
-        openleadr_rs_image: str = "ghcr.io/openleadr/openleadr-rs:latest",
+        openleadr_rs_image: str = "ghcr.io/openleadr/openleadr-rs:1764056494-6b11907",
         postgres_image: str = "postgres:16",
         vtn_port: int = 3000,
         postgres_port: int = 5432,
@@ -30,6 +31,7 @@ class OpenLeadrVtnTestContainer:
             external_oauth_signing_key_pem_path (str): The path to the external OAuth signing public key in PEM format.
             oauth_valid_audiences (str): The valid audiences for the OAuth token, the provided value must be a
             comma seperated list of valid audiences.
+            network (Network | None, optional): The Docker network to use. If None, a new network will be created.
             oauth_key_type (str, optional): The type of OAuth key. Defaults to "RSA".
             openleadr_rs_image (str, optional): The image to use for the VTN.
             Defaults to "ghcr.io/openleadr/openleadr-rs:latest".
@@ -45,8 +47,12 @@ class OpenLeadrVtnTestContainer:
         self._vtn_port = vtn_port
         self._postgres_port = postgres_port
 
-        # Create a network for the containers to communicate on.
-        self._network = Network()
+        if network is None:
+            self._internal_network = True
+            self._network = Network()
+        else:
+            self._internal_network = False
+            self._network = network
 
         # Initialize PostgreSQL container
         self._postgres = (
@@ -65,6 +71,7 @@ class OpenLeadrVtnTestContainer:
         # Initialize VTN container with the static environment variables.
         self._vtn = (
             DockerContainer(openleadr_rs_image, **kwargs)
+            .with_kwargs(platform="linux/amd64")
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
             .with_volume_mapping(host=external_oauth_signing_key_pem_path, container="/keys/pub-sign-key.pem")
@@ -83,7 +90,9 @@ class OpenLeadrVtnTestContainer:
 
     def start(self) -> Self:
         """Start both containers and wait for them to be ready."""
-        self._network.create()
+        if self._internal_network:
+            # Internal network, so we must create the network manually.
+            self._network.create()
 
         self._postgres.start()
 
@@ -97,9 +106,7 @@ class OpenLeadrVtnTestContainer:
         )
 
         # Configure the VTN with the database URL prior to starting it.
-        self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(
-            LogMessageWaitStrategy("pg_advisory_unlock")
-        ).start()
+        self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(LogMessageWaitStrategy("pg_advisory_unlock")).start()
         return self
 
     def get_base_url(self) -> str:
@@ -110,7 +117,9 @@ class OpenLeadrVtnTestContainer:
         """Stop the openleadr test container and its dependencies."""
         self._vtn.stop()
         self._postgres.stop()
-        self._network.remove()
+        if self._internal_network:
+            # Internal network, so we must remove the network ourselves.
+            self._network.remove()
 
     def __enter__(self) -> Self:
         """Context manager entry."""

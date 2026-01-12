@@ -1,0 +1,166 @@
+"""Contains the domain models related to event payloads."""
+
+from enum import StrEnum
+from typing import Any, Literal, final
+
+from pydantic import Field
+
+from openadr3_client._models.common.payload import AllowedPayloadInputs, BasePayloadDescriptor, _BasePayload
+from openadr3_client.oadr310.models.unit import Unit
+
+
+@final
+class ReportReadingType(StrEnum):
+    """Enumeration of the reading types of OpenADR 3."""
+
+    DIRECT_READ = "DIRECT_READ"
+    ESTIMATED = "ESTIMATED"
+    SUMMED = "SUMMED"
+    MEAN = "MEAN"
+    PEAK = "PEAK"
+    FORECAST = "FORECAST"
+    AVERAGE = "AVERAGE"
+
+    @classmethod
+    def _missing_(cls: type["ReportReadingType"], value: Any) -> "ReportReadingType":  # noqa: ANN401
+        """
+        Add support for custom report reading type cases.
+
+        Args:
+            cls: The report reading type class.
+            value: The custom enum value to add.
+
+        Returns:
+            The new report reading type.
+
+        """
+        # Create a new enum member dynamically
+        new_member = str.__new__(cls, value)
+        new_member._name_ = value
+        new_member._value_ = value
+        # Add it to the enum
+        cls._member_map_[value] = new_member
+        return new_member
+
+
+@final
+class ReportPayloadType(StrEnum):
+    """Enumeration of the report payload types of OpenADR 3."""
+
+    READING = "READING"
+    USAGE = "USAGE"
+    DEMAND = "DEMAND"
+    SETPOINT = "SETPOINT"
+    DELTA_USAGE = "DELTA_USAGE"
+    BASELINE = "BASELINE"
+    OPERATING_STATE = "OPERATING_STATE"
+    UP_REGULATION_AVAILABLE = "UP_REGULATION_AVAILABLE"
+    DOWN_REGULATION_AVAILABLE = "DOWN_REGULATION_AVAILABLE"
+    REGULATION_SETPOINT = "REGULATION_SETPOINT"
+    STORAGE_USABLE_CAPACITY = "STORAGE_USABLE_CAPACITY"
+    STORAGE_CHARGE_LEVEL = "STORAGE_CHARGE_LEVEL"
+    STORAGE_MAX_DISCHARGE_POWER = "STORAGE_MAX_DISCHARGE_POWER"
+    STORAGE_MAX_CHARGE_POWER = "STORAGE_MAX_CHARGE_POWER"
+    SIMPLE_LEVEL = "SIMPLE_LEVEL"
+    USAGE_FORECAST = "USAGE_FORECAST"
+    STORAGE_DISPATCH_FORECAST = "STORAGE_DISPATCH_FORECAST"
+    LOAD_SHED_DELTA_AVAILABLE = "LOAD_SHED_DELTA_AVAILABLE"
+    GENERATION_DELTA_AVAILABLE = "GENERATION_DELTA_AVAILABLE"
+    DATA_QUALITY = "DATA_QUALITY"
+    IMPORT_RESERVATION_CAPACITY = "IMPORT_RESERVATION_CAPACITY"
+    IMPORT_RESERVATION_FEE = "IMPORT_RESERVATION_FEE"
+    EXPORT_RESERVATION_CAPACITY = "EXPORT_RESERVATION_CAPACITY"
+    EXPORT_RESERVATION_FEE = "EXPORT_RESERVATION_FEE"
+
+    @classmethod
+    def _missing_(cls: type["ReportPayloadType"], value: Any) -> "ReportPayloadType":  # noqa: ANN401
+        """
+        Add support for custom report payload cases.
+
+        Args:
+            cls: The report payload type class.
+            value: The custom enum value to add.
+
+        Returns:
+            The new report payload type.
+
+        """
+        min_length = 1
+        max_length = 128
+        if isinstance(value, str) and min_length <= len(value) <= max_length:
+            # Create a new enum member dynamically
+            new_member = str.__new__(cls, value)
+            new_member._name_ = value
+            new_member._value_ = value
+            # Add it to the enum
+            cls._member_map_[value] = new_member
+            return new_member
+
+        exc_msg = f"Invalid report payload value: {value}"
+        raise ValueError(exc_msg)
+
+
+@final
+class ReportPayloadDescriptor(BasePayloadDescriptor):
+    """A description of the payload parameter."""
+
+    payload_type: ReportPayloadType
+    """The type of payload being described."""
+    reading_type: ReportReadingType | None = None
+    """The type of reading being described."""
+    units: Unit | None = None
+    """The units of the payload."""
+    accuracy: float | None = None
+    """The accuracy of the payload values."""
+    confidence: int | None = Field(default=None, ge=0, le=100)
+    """The confidence of the descriptor"""
+    object_type: Literal["REPORT_PAYLOAD_DESCRIPTOR"] = Field(default="REPORT_PAYLOAD_DESCRIPTOR")
+    """The object type of the payload descriptor."""
+
+
+@final
+class ReportIntervals(StrEnum):
+    """Indicates VEN report interval options. See User Guide."""
+
+    INTERVALS = "INTERVALS"
+    SUB_INTERVALS = "SUB_INTERVALS"
+    OPEN_INTERVALS = "OPEN_INTERVALS"
+
+
+@final
+class ReportDescriptor(BasePayloadDescriptor):
+    """An object that may be used to request a report from a VEN."""
+
+    payload_type: ReportPayloadType
+    """The type of payload being described."""
+    reading_type: ReportReadingType | None = None
+    """The type of reading being described."""
+    units: Unit | None = None
+    """The units of measurement."""
+    targets: tuple[str, ...] | None = None
+    """The targets of the report."""
+    aggregate: bool = False
+    """Whether the report should aggregate results from all targeted resources.\n
+
+True if report should aggregate results from all targeted resources. False if report includes results for each resource.
+\nDefaults to False.
+    """
+    start_interval: int = -1
+    """The interval on which to generate a report. -1 indicates generate report at end of last interval."""
+    num_intervals: int = -1
+    """The number of intervals to include in a report. -1 indicates that all intervals are to be included."""
+    historical: bool = True
+    """True indicates report on intervals preceding start_interval. False indicates report on intervals following start_interval (e.g. forecast)."""
+    frequency: int = -1
+    """Number of intervals that elapse between reports. -1 indicates same as num_intervals."""
+    repeat: int = 1
+    """Number of times to repeat report. 1 indicates generate one report. -1 indicates repeat indefinitely."""
+    report_intervals: ReportIntervals = ReportIntervals.INTERVALS
+    """Indicates VEN report interval options. See User Guide.
+
+    Defaults to INTERVALS."""
+
+
+@final
+class ReportPayload[T: AllowedPayloadInputs](_BasePayload[ReportPayloadType, T]):
+    """The type of the report payload."""
