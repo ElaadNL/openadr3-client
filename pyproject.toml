@@ -3,12 +3,12 @@ name = "openadr3-client"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Nick van der Burgt",email = "nick.van.der.burgt@elaad.nl"},
-    {name = "Stijn van Houwelingen",email = "stijn.van.houwelingen@elaad.nl"}
+    { name = "Nick van der Burgt", email = "nick.van.der.burgt@elaad.nl" },
+    { name = "Stijn van Houwelingen", email = "stijn.van.houwelingen@elaad.nl" },
 ]
+requires-python = ">=3.12, <4"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.12, <4"
 dependencies = [
     "pydantic (>=2.11.2,<3.0.0)",
     "pydantic-extra-types (>=2.10.3,<3.0.0)",
@@ -26,9 +26,7 @@ pandas = [
     "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
 ]
 # When updating, don't forget to also update the test dependencies.
-mqtt = [
-    "paho-mqtt (>=2.1.0,<3.0.0)",
-]
+mqtt = ["paho-mqtt (>=2.1.0,<3.0.0)"]
 
 [project.urls]
 Homepage = "https://github.com/ElaadNL/openadr3-client"
@@ -37,31 +35,36 @@ Repository = "https://github.com/ElaadNL/openadr3-client"
 Changelog = "https://github.com/ElaadNL/openadr3-client/releases"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
-packages = [{include = "openadr3_client"}]
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0,<2",
+    "ruff>=0.13.2,<0.14",
+    "pytest>=8.3.5,<9",
+    "pytest-cov>=7.0.0,<8",
+    "testcontainers[keycloak, mqtt]>=4.10.0,<5",
+    "pytest-env>=1.1.5,<2",
+    "types-oauthlib>=3.2.0.20250408,<4",
+    "types-requests-oauthlib>=2.0.0.20250306,<3",
+    "types-requests>=2.32.0.20250328,<3",
+    "pyjwt>=2.10.1,<3",
+    "taskipy>=1.14.1,<2",
+    "bandit>=1.8.6,<2",
+    # Pandas optional dependencies (keep in sync)
+    "pandas (>=2.2.3,<3.0.0)",
+    "pandera[mypy,pandas] (>=0.26.1,<0.27.0)",
+    "pandas-stubs (>=2.2.3.250308,<3.0.0.0)",
+    # MQTT optional dependencies (keep in sync)
+    "paho-mqtt (>=2.1.0,<3.0.0)",
+]
 
-[tool.poetry.group.dev.dependencies]
-mypy = "^1.15.0"
-ruff = "^0.13.2"
-pytest = "^8.3.5"
-pytest-cov = "^7.0.0"
-testcontainers = {extras = ["keycloak", "mqtt"], version = "^4.10.0"}
-pytest-env = "^1.1.5"
-types-oauthlib = "^3.2.0.20250408"
-types-requests-oauthlib = "^2.0.0.20250306"
-types-requests = "^2.32.0.20250328"
-pyjwt = "^2.10.1"
-taskipy = "^1.14.1"
-bandit = "^1.8.6"
-# Pandas dependencies for testing (duplicated from optional-dependencies, don't forget to update when updating the optional-dependencies)
-pandas = "^2.2.3"
-pandera = {extras = ["mypy", "pandas"], version = "^0.26.1"}
-pandas-stubs = "^2.2.3.250308"
-# MQTT dependencies for testing
-paho-mqtt = "^2.1.0"
+[tool.hatch.build.targets.sdist]
+include = ["openadr3_client"]
+
+[tool.hatch.build.targets.wheel]
+include = ["openadr3_client"]
 
 [tool.taskipy.tasks]
 local-ci = "task check && task format && task mypy && task bandit && task test"

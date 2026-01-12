@@ -43,7 +43,7 @@ from openadr3_client.models.program.program import (
 bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
     vtn_base_url="https://vtn.example.com",
     client_id="your_client_id",
-    client_secret="your_client_secret", 
+    client_secret="your_client_secret",
     token_url="https://auth.example.com/token",
     scopes=["read_all", "read_bl", "write_events", "write_programs"]  # Optional: specify required scopes
 )
@@ -206,7 +206,7 @@ dict_iterable_input = [
         # Required fields
         'type': 'SIMPLE',
         'values': [1.0, 2.0],
-        
+
         # Optional fields
         'start': datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),
         'duration': timedelta(hours=1),
@@ -357,19 +357,28 @@ The GAC compliance plugin is a first-party plugin available [here](https://githu
 
 ## Development
 
+### Setup
+
+To set up the development environment, go through the following steps:
+
+1. Install [uv](https://docs.astral.sh/uv/). This tool replaces pip, pip-tools, pipx, poetry, pyenv, twine, virtualenv, and more. It also manages your python version, so you don't need tools like pyenv.
+2. `uv sync`
+
+### Development scripts
+
 - To run all linters and formatters with automatic fixes applied
 ```sh
-poetry run task fix
+uv run task fix
 ```
 
 - To run tests
 ```sh
-poetry run task test
+uv run task test
 ```
 
 - To dry run ci locally (no automatic fixes applied)
 ```sh
-poetry run task local-ci
+uv run task local-ci
 ```
 
 ### Testing
@@ -383,5 +392,5 @@ poetry run task local-ci
 ### Running the tests
 
 1. Have the Docker Deamon running
-2. (`poetry install`)
-3. `poetry run pytest`
+2. (`uv sync`)
+3. `uv run task test`
