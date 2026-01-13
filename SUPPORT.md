@@ -9,7 +9,8 @@ SPDX-License-Identifier: Apache-2.0
 There are a few ways to connect with the `openadr3-client` project:
 
 * submit an issue
-* Open or contribute in [discussions](https://github.com/ElaadNL/openadr3-client/discussions).
+* open or contribute in [discussions](https://github.com/ElaadNL/openadr3-client/discussions).
+* send an email to <foss@elaad.nl>
 
 ## How to ask for help, suggest a feature, or give recommendations
 
