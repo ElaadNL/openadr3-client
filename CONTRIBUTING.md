@@ -124,11 +124,11 @@ Contributions should be submitted as GitHub pull requests. See [Creating a pull 
 Follow this process for a code change and pull request:
 
 1. Create a topic branch in your local repository, following the naming format "feature-[description]". For more information see the Git branching guideline.
-1. Make changes, compile, and test thoroughly. Ensure any install or build dependencies are removed before the end of the layer when doing a build. Code style should match existing style and conventions, and changes should be focused on the topic the pull request will be addressed. For more information see the style guide.
-1. Push commits to your branch.
-1. Create a GitHub pull request from your topic branch.
-1. Pull requests will be reviewed by one of the maintainers who may discuss, offer constructive feedback, request changes, or approve the work. For more information see the Code review guideline.
-1. Upon receiving the sign-off from one of the maintainers you may merge your changes. If you do not have permission to do that, you may request a maintainer to merge it for you.
+2. Make changes, compile, and test thoroughly. Ensure any install or build dependencies are removed before the end of the layer when doing a build. Code style should match existing style and conventions, and changes should be focused on the topic the pull request will be addressed. All style preferences are encoded using Ruff and Mypy. Make sure you follow the recommendations or add an inline noqa with comment for exceptions.
+3. Push commits to your branch.
+4. Create a GitHub pull request from your topic branch.
+5. Pull requests will be reviewed by one of the maintainers who may discuss, offer constructive feedback, request changes, or approve the work. For more information see the Code review guideline.
+6. Upon receiving the sign-off from one of the maintainers you may merge your changes. If you do not have permission to do that, you may request a maintainer to merge it for you.
 
 ## Attribution
 
