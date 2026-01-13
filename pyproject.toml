@@ -84,6 +84,7 @@ format-fix = "ruff format ."
 format-ci = "ruff format --diff --no-cache ."
 bandit = "bandit -c pyproject.toml -r ."
 # Will only add headers to files that are not already licensed.
+# Cannot ignore uv.lock through REUSE.toml, see https://codeberg.org/fsfe/reuse-tool/pulls/1303
 reuse-fix = """
 reuse annotate \
   --license Apache-2.0 \
