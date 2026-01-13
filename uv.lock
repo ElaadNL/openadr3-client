@@ -770,7 +770,7 @@ signedtoken = [
 
 [[package]]
 name = "openadr3-client"
-version = "0.1.0"
+version = "2.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "oauthlib", extra = ["signedtoken"] },

@@ -4,7 +4,7 @@
 
 [project]
 name = "openadr3-client"
-version = "0.1.0"
+version = "2.0.1"
 description = ""
 authors = [
     { name = "Nick van der Burgt", email = "nick.van.der.burgt@elaad.nl" },
