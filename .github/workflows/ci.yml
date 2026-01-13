@@ -82,6 +82,18 @@ jobs:
           name: bandit-log
           path: bandit-logs
 
+      - name: Run reuse
+        run: |
+          mkdir reuse-logs
+          uv run task reuse > reuse-logs/reuse-log.log
+
+      - name: Upload reuse logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reuse-log
+          path: reuse-logs
+
   tests:
     runs-on: ubuntu-latest
     steps:

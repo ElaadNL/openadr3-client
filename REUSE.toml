@@ -1,0 +1,8 @@
+version = 1
+
+# It doesn't make sense to license certificates and keys, so we override the REUSE information.
+[[annotations]]
+path = ["tests/mosquitto/certs/*.crt", "tests/mosquitto/certs/*.csr", "tests/mosquitto/certs/*.srl", "tests/mosquitto/certs/*.pem", "tests/mosquitto/certs/*.key"]
+precedence = "override"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"

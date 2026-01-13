@@ -83,7 +83,7 @@ format-fix = "ruff format ."
 format-ci = "ruff format --diff --no-cache ."
 bandit = "bandit -c pyproject.toml -r ."
 # Will only add headers to files that are not already licensed.
-reuse = """
+reuse-fix = """
 reuse annotate \
   --license Apache-2.0 \
   --copyright "Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>" \
@@ -93,6 +93,7 @@ reuse annotate \
   --skip-existing \
   .
 """
+reuse = "reuse lint"
 test = "pytest --cov --doctest-modules openadr3_client/ tests/"
 
 [tool.ruff]
