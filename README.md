@@ -361,58 +361,6 @@ To see how to create a plugin, see the doc-comment on the ValidatorPlugin class.
 
 The GAC compliance plugin is a first-party plugin available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the Dutch GAC (Grid Aware Charging) specification.
 
-## Development
-
-### Setup
-
-To set up the development environment, go through the following steps:
-
-1. Install [uv](https://docs.astral.sh/uv/). This tool replaces pip, pip-tools, pipx, poetry, pyenv, twine, virtualenv, and more. It also manages your python version, so you don't need tools like pyenv.
-2. `uv sync`
-
-### Pre-commit
-
-This repository includes pre-commit hooks. To install the pre-commit hooks, run `uvx pre-commit`. There is a preference for running pre-commit hooks locally, so that all tooling (CI and pre-commit hooks) use the same environment and tool versions.
-
-### Development scripts
-
-- To run all linters and formatters with automatic fixes applied
-```sh
-uv run task fix
-```
-
-- To run tests
-```sh
-uv run task test
-```
-
-- To dry run ci locally (no automatic fixes applied)
-```sh
-uv run task local-ci
-```
-
-### Testing
-
-#### Prerequisites
-
-- Allow usage of the Docker Socket
-    - MacOS: advanced settings ??
-    - Linux: check if you are part of the Docker user group `groups $USER | grep docker`, otherwise add yourself to it `sudo usermod -aG docker $USER`
-
-### Running the tests
-
-1. Have the Docker Deamon running
-2. (`uv sync`)
-3. `uv run task test`
-
-## Source code headers
-
-Every file containing source code must include copyright and license
-information. This is to help well-intentioned people avoid accidental copying that
-doesn't comply with the license.
-
-To automatically apply the headers, run `uv run task reuse-fix` or `uv run task fix`
-
 ## License
 
 This project is licensed under the Apache-2.0 - see LICENSE for details.

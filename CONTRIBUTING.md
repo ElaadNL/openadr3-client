@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 'Copyright Contributors to the [name_open_source_project] project' 
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # How to contribute
 
 We'd love to accept your patches and contributions to this project. There are just a few guidelines you need to follow.
@@ -10,6 +16,50 @@ You can file bugs against and feature requests for the project via GitHub Issues
 
 This project follows the following [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## Development
+
+### Setup
+
+To set up the development environment, go through the following steps:
+
+1. Install [uv](https://docs.astral.sh/uv/). This tool replaces pip, pip-tools, pipx, poetry, pyenv, twine, virtualenv, and more. It also manages your python version, so you don't need tools like pyenv.
+2. `uv sync`
+
+### Development scripts
+
+- To run all linters and formatters with automatic fixes applied
+```sh
+uv run task fix
+```
+
+- To run tests
+```sh
+uv run task test
+```
+
+- To dry run ci locally (no automatic fixes applied)
+```sh
+uv run task local-ci
+```
+
+### Testing
+
+#### Prerequisites
+
+- Allow usage of the Docker Socket
+    - MacOS: advanced settings ??
+    - Linux: check if you are part of the Docker user group `groups $USER | grep docker`, otherwise add yourself to it `sudo usermod -aG docker $USER`
+
+### Running the tests
+
+1. Have the Docker Deamon running
+2. (`uv sync`)
+3. `uv run task test`
+
+## Pre-commit
+
+This repository includes pre-commit hooks. To install the pre-commit hooks, run `uvx pre-commit`. There is a preference for running pre-commit hooks locally, so that all tooling (CI and pre-commit hooks) use the same environment and tool versions.
+
 ## REUSE compliance and source code headers
 
 All the files in the repository need to be [REUSE compliant](https://reuse.software/).
@@ -18,12 +68,7 @@ If there are files which are not complying, the pipeline will fail the pull requ
 
 This means that every file containing source code must include copyright and license information. This includes any JS/CSS files that you might be serving out to browsers. (This is to help well-intentioned people avoid accidental copying that doesn't comply with the license.)
 
-Apache 2.0 header:
-
-```text
-    SPDX-FileCopyrightText: Copyright Contributors to the <YOUR PROJECT NAME> project <YOUR_PROJECT_EMAIL_ADRESS@alliander.com>
-    SPDX-License-Identifier: Apache-2.0
-```
+To automatically apply the headers, run `uv run task reuse-fix` or `uv run task fix`
 
 ## Git branching
 
@@ -34,7 +79,14 @@ Ideally, this branch is focused on making a specific change in the codebase or d
 1. A short-lived branch
 2. Easy to review due to small changes in each PR
 
-When a feature is finished and approved it is merged back into `develop`.
+When a feature is finished and approved it is merged back into `main`.
+
+New releases are made using Githubs Release feature, by adding a git tag to a commit.
+
+## Commit messages
+
+Commit messages should follow https://www.conventionalcommits.org/en/v1.0.0/
+
 
 ## Signing the Developer Certificate of Origin (DCO)
 
