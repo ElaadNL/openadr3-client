@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 'Copyright Contributors to the [name_open_source_project] project'
+SPDX-FileCopyrightText: 'Copyright Contributors to the openadr3-client project'
 
 SPDX-License-Identifier: Apache-2.0
 -->
