@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """This module validates that all the defined authentication mechanisms work for connecting to the MQTT broker."""
 
 import pytest

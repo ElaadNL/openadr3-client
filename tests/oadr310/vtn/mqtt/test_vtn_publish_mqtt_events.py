@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """This module validates that the VTN publishes messages to the MQTT broker when changes are made in the VTN."""
 
 import json

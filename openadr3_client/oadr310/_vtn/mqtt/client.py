@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 try:
     from paho.mqtt.client import Client
     from paho.mqtt.enums import CallbackAPIVersion

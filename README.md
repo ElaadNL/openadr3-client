@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 [![CodeQL](https://github.com/ElaadNL/openadr3-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/github-code-scanning/codeql)
 [![Python Default CI](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml)
 ![PYPI-DL](https://img.shields.io/pypi/dm/openadr3-client?style=flat)

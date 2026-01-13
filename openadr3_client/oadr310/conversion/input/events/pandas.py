@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Module containing the conversion logic for Pandas dataframes."""
 
 from collections.abc import Hashable, Iterable

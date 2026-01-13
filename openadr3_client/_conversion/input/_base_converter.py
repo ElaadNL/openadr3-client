@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Module containing the base model for the input converter of the openadr3 client."""
 
 from abc import ABC, abstractmethod
