@@ -63,6 +63,7 @@ dev = [
     # MQTT optional dependencies (keep in sync)
     "paho-mqtt (>=2.1.0,<3.0.0)",
     "reuse>=6.2.0",
+    "pre-commit>=4.5.1",
 ]
 
 [tool.hatch.build.targets.sdist]
