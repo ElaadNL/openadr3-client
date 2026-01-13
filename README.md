@@ -398,3 +398,20 @@ uv run task local-ci
 1. Have the Docker Deamon running
 2. (`uv sync`)
 3. `uv run task test`
+
+## Source code headers
+
+Every file containing source code must include copyright and license
+information. This is to help well-intentioned people avoid accidental copying that
+doesn't comply with the license.
+
+To automatically apply the headers, run `uv run task reuse` or `uv run task fix`
+
+## License
+
+This project is licensed under the Apache-2.0 - see LICENSE for details.
+
+## Licenses third-party libraries
+
+This project includes third-party libraries, which are licensed under their own respective Open-Source licenses.
+SPDX-License-Identifier headers are used to show which license is applicable. The concerning license files can be found in the LICENSES directory.

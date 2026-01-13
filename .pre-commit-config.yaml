@@ -49,6 +49,14 @@ repos:
       types: [python]
       stages: [pre-commit]
 
+    - id: reuse
+      name: reuse
+      description: a hook the runs bandit with uv
+      entry: uv run reuse lint-file
+      language: system
+      types: [python]
+      stages: [pre-commit]
+
     - id: uv-lock
       name: uv-lock
       description: "Automatically run 'uv lock' on your project dependencies"
