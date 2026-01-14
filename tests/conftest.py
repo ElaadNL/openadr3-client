@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Module containing fixtures relevant for testing the authentication module."""
 
 import logging
 import os
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 from pathlib import Path
 
 import jwt
@@ -15,6 +19,7 @@ from testcontainers.core.network import Network
 from testcontainers.keycloak import KeycloakContainer
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client.plugin import ValidatorPluginRegistry
 from tests.openadr310_vtn_test_container import OpenADR310VtnTestContainer
 from tests.openleadr_test_container import OpenLeadrVtnTestContainer
 
@@ -24,6 +29,20 @@ logging.basicConfig(level=logging.DEBUG)
 OAUTH_TOKEN_ENDPOINT = os.getenv("OAUTH_TOKEN_ENDPOINT")
 OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
 OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
+
+
+@pytest.fixture(autouse=True)
+def _clear_validator_plugins() -> Generator[None, None, None]:
+    """
+    Ensure plugin-based validators don't leak between tests.
+
+    The `ValidatorPluginRegistry` is global state used by `ValidatableModel`. Some tests (and doctests)
+    register custom validators; without cleanup, those validators can affect unrelated tests.
+    """
+    try:
+        yield
+    finally:
+        ValidatorPluginRegistry.clear_plugins()
 
 
 class IntegrationTestVTNClient:

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 [![CodeQL](https://github.com/ElaadNL/openadr3-client/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/github-code-scanning/codeql)
 [![Python Default CI](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml)
 ![PYPI-DL](https://img.shields.io/pypi/dm/openadr3-client?style=flat)
@@ -43,7 +49,7 @@ from openadr3_client.models.program.program import (
 bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
     vtn_base_url="https://vtn.example.com",
     client_id="your_client_id",
-    client_secret="your_client_secret", 
+    client_secret="your_client_secret",
     token_url="https://auth.example.com/token",
     scopes=["read_all", "read_bl", "write_events", "write_programs"]  # Optional: specify required scopes
 )
@@ -206,7 +212,7 @@ dict_iterable_input = [
         # Required fields
         'type': 'SIMPLE',
         'values': [1.0, 2.0],
-        
+
         # Optional fields
         'start': datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),
         'duration': timedelta(hours=1),
@@ -355,33 +361,11 @@ To see how to create a plugin, see the doc-comment on the ValidatorPlugin class.
 
 The GAC compliance plugin is a first-party plugin available [here](https://github.com/ElaadNL/openadr3-client-gac-compliance) which adds additional domain validation rules to the OpenADR3 domain models to enforce compliance with the Dutch GAC (Grid Aware Charging) specification.
 
-## Development
+## License
 
-- To run all linters and formatters with automatic fixes applied
-```sh
-poetry run task fix
-```
+This project is licensed under the Apache-2.0 - see LICENSE for details.
 
-- To run tests
-```sh
-poetry run task test
-```
+## Licenses third-party libraries
 
-- To dry run ci locally (no automatic fixes applied)
-```sh
-poetry run task local-ci
-```
-
-### Testing
-
-#### Prerequisites
-
-- Allow usage of the Docker Socket
-    - MacOS: advanced settings ??
-    - Linux: check if you are part of the Docker user group `groups $USER | grep docker`, otherwise add yourself to it `sudo usermod -aG docker $USER`
-
-### Running the tests
-
-1. Have the Docker Deamon running
-2. (`poetry install`)
-3. `poetry run pytest`
+This project includes third-party libraries, which are licensed under their own respective Open-Source licenses.
+SPDX-License-Identifier headers are used to show which license is applicable. The concerning license files can be found in the LICENSES directory.

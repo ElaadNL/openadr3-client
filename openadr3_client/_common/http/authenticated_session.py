@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Implementation of a HTTP session which has an associated access token that is send to every request."""
 
 from urllib.parse import urlparse

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
@@ -10,28 +14,59 @@ repos:
     -   id: check-toml
     -   id: check-xml
     -   id: check-yaml
-    -   id: detect-private-key
     -   id: end-of-file-fixer
     -   id: fix-byte-order-marker
     -   id: trailing-whitespace
     -   id: mixed-line-ending
--   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.9
-    hooks:
-        - id: ruff
-        - id: ruff-format
+# Prefer local hooks over repos, to ensure the pyproject.toml version is used
 - repo: local
   hooks:
-    - id: mypy
-      name: mypy
-      description: a hook the runs mypy with poetry
-      entry: poetry run mypy
+    - id: ruff-check
+      name: ruff-check
+      description: a hook the runs ruff check with uv
+      entry: uv run ruff check
       language: system
       types: [python]
       stages: [pre-commit]
--   repo: https://github.com/python-poetry/poetry
-    rev: '2.1.1'
-    hooks:
-    -   id: poetry-check
-    -   id: poetry-lock
-        types: [python]
+
+    - id: ruff-format
+      name: ruff-format
+      description: a hook the runs ruff format with uv
+      entry: uv run ruff format
+      language: system
+      types: [python]
+      stages: [pre-commit]
+
+    - id: mypy
+      name: mypy
+      description: a hook the runs mypy with uv
+      entry: uv run mypy --check-untyped-defs
+      language: system
+      types: [python]
+      stages: [pre-commit]
+
+    - id: bandit
+      name: bandit
+      description: a hook the runs bandit with uv
+      entry: uv run bandit -c pyproject.toml
+      language: system
+      types: [python]
+      stages: [pre-commit]
+
+    - id: reuse
+      name: reuse
+      description: a hook the runs bandit with uv
+      entry: uv run reuse lint-file
+      language: system
+      types: [python]
+      stages: [pre-commit]
+
+    - id: uv-lock
+      name: uv-lock
+      description: "Automatically run 'uv lock' on your project dependencies"
+      entry: uv lock --check
+      language: system
+      files: ^(uv\.lock|pyproject\.toml|uv\.toml)$
+      pass_filenames: false
+      additional_dependencies: []
+      minimum_pre_commit_version: "2.9.2"

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # This workflow will upload a Python Package to PyPI when a release is created
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
 
@@ -22,15 +26,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.x"
+          version: "0.9.22"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
 
       - name: Build release distributions
-        run: |
-          pipx install poetry
-          poetry version ${{ github.event.release.tag_name }}
-          poetry build
+        run: uv build
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4

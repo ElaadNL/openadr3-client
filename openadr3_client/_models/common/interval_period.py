@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """This module implements the common Interval Period used across OpenADR3 resources."""
 
 from datetime import timedelta

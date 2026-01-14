@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
 from openadr3_client._common.http.authenticated_session import BearerAuthenticatedSession
 

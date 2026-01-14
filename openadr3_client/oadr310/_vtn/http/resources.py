@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Implements the communication with the vens interface of an OpenADR 3 VTN."""
 
 from pydantic.type_adapter import TypeAdapter

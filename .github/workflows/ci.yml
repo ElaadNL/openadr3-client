@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Contributors to openadr3-client <https://github.com/ElaadNL/openadr3-client>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: Python Default CI
 
 on:
@@ -9,9 +13,6 @@ on:
       - main
   merge_group:
 
-env:
-  python_version: 3.13
-
 jobs:
   codeqa:
     runs-on: ubuntu-latest
@@ -20,48 +21,60 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ env.python-version }}
+          version: "0.9.22"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
       - id: install_dependencies
-        run: |
-          pipx install poetry
-          poetry check
-          poetry install
+        run: uv sync --locked --all-extras --dev
+
       - name: Run formatter
         run: |
           mkdir format-logs
-          poetry run task format-ci > format-logs/ruff-lint.log
+          uv run task format-ci > format-logs/ruff-lint.log
+
       - name: Upload formatter logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: formatter-log
           path: format-logs
+
       - name: Run linter
         run: |
           mkdir linter-logs
-          poetry run task check-ci > linter-logs/ruff-lint.log
+          uv run task check-ci > linter-logs/ruff-lint.log
+
       - name: Upload linter logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: linter-log
           path: linter-logs
+
       - name: Run type checker
         run: |
           mkdir mypy-logs
-          poetry run task mypy > mypy-logs/mypy-log.log
+          uv run task mypy > mypy-logs/mypy-log.log
+
       - name: Upload mypy logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: mypy-log
           path: mypy-logs
+
       - name: Run bandit
         run: |
           mkdir bandit-logs
-          poetry run task bandit > bandit-logs/bandit-log.log
+          uv run task bandit > bandit-logs/bandit-log.log
+
       - name: Upload bandit logs
         if: failure()
         uses: actions/upload-artifact@v4
@@ -69,21 +82,38 @@ jobs:
           name: bandit-log
           path: bandit-logs
 
+      - name: Run reuse
+        run: |
+          mkdir reuse-logs
+          uv run task reuse > reuse-logs/reuse-log.log
+
+      - name: Upload reuse logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reuse-log
+          path: reuse-logs
 
   tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ env.python-version }}
+          version: "0.9.22"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
       - id: install_dependencies
-        run: |
-          pipx install poetry
-          poetry check
-          poetry install
+        run: uv sync --locked --all-extras --dev
+
       - id: run_tests
-        run: poetry run python -m pytest --cov . --cov-report xml
+        run: uv run pytest --cov . --cov-report xml
+
       - name: Upload test coverage xml as artifact
         uses: actions/upload-artifact@v4
         with:
