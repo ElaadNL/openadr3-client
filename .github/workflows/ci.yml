@@ -13,12 +13,12 @@ on:
       - main
   merge_group:
 
+permissions:
+  contents: read
+
 jobs:
   codeqa:
     runs-on: ubuntu-latest
-    permissions:
-      # Required for all workflows (bandit)
-      security-events: write
     steps:
       - uses: actions/checkout@v4
 
