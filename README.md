@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0
 [![Python Default CI](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml/badge.svg)](https://github.com/ElaadNL/openadr3-client/actions/workflows/ci.yml)
 ![PYPI-DL](https://img.shields.io/pypi/dm/openadr3-client?style=flat)
 [![image](https://img.shields.io/pypi/v/openadr3-client?label=pypi)](https://pypi.python.org/pypi/openadr3-client)
-[![Python Versions](https://img.shields.io/pypi/pyversions/openadr3-client)](https://pypi.python.org/pypi/openadr3-client)
+![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FElaadNL%2Fopenadr3-client%2Frefs%2Fheads%2Fmain%2Fpyproject.toml)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
