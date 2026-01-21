@@ -46,7 +46,7 @@ build-backend = "hatchling.build"
 dev = [
     "mypy>=1.15.0,<2",
     "ruff>=0.13.2,<0.15",
-    "pytest>=8.3.5,<9",
+    "pytest>=8.3.5,<10",
     "pytest-cov>=7.0.0,<8",
     "testcontainers[keycloak, mqtt]>=4.10.0,<5",
     "pytest-env>=1.1.5,<2",
@@ -139,7 +139,7 @@ ignore = [
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 env = [
     "OAUTHLIB_INSECURE_TRANSPORT=1",
     "OAUTH_TOKEN_ENDPOINT=http://localhost:47005/realms/integration-test-realm/protocol/openid-connect/token",
