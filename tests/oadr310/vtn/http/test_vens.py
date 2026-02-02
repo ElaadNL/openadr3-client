@@ -246,7 +246,12 @@ def test_get_vens_ven_can_only_see_associated_ven_object(vtn_openadr_310_bl_toke
     ven_name = "my-ven-name-target-ven-allowed"
     ven_name_2 = "my-ven-name-target-ven-allowed-2"
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
+        ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name=ven_name,
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=("test-target-1",),
+        ) as my_ven,
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-testting"),
     ):
         vens_visible_to_ven = interface.get_vens(ven_name=None, target=None, pagination=None)
@@ -292,7 +297,12 @@ def test_delete_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
     ven_name = "my-ven-name-target-ven-to-delete"
     ven_name_2 = "my-ven-name-target-ven-not-owned"
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
+        ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name=ven_name,
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=("test-target-1",),
+        ) as my_ven,
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test"),
     ):
         # Delete the ven associated with the client.
@@ -346,7 +356,12 @@ def test_update_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
     ven_name = "my-ven-name-target-ven-to-update"
     ven_name_2 = "my-ven-name-target-ven-not-owned-for-update"
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
+        ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name=ven_name,
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=("test-target-1",),
+        ) as my_ven,
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test"),
     ):
         update = VenUpdateVenRequest(ven_name="new-ven-name-updated-by-ven")

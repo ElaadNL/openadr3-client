@@ -12,7 +12,7 @@ from testcontainers.core.network import Network
 from testcontainers.mqtt import MosquittoContainer
 
 
-class OpenADR310VtnTestContainer:
+class OpenADR310RefImplementationVtnTestContainer:
     """A test container for an OpenADR 3.1.0 VTN."""
 
     def __init__(

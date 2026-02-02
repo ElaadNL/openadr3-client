@@ -17,6 +17,78 @@
         "include.in.token.scope": "true",
         "display.on.consent.screen": "false"
       }
+    },
+    {
+      "name": "read_all",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "read_targets",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "read_ven_objects",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "write_programs",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "write_events",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "write_reports",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "write_subscriptions",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "write_vens",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "write_users",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
     }
   ],
   "clients": [
@@ -33,22 +105,18 @@
         "profile",
         "email",
         "test/BL",
-        "test/VEN"
+        "test/VEN",
+        "read_all",
+        "read_targets",
+        "read_ven_objects",
+        "write_programs",
+        "write_events",
+        "write_reports",
+        "write_subscriptions",
+        "write_vens",
+        "write_users"
       ],
       "protocolMappers": [
-        {
-          "name": "custom roles mapper",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-hardcoded-claim-mapper",
-          "config": {
-            "claim.value": "[\n  {\"role\": \"AnyBusiness\"},\n  {\"role\": \"VenManager\"},\n  {\"role\": \"VEN\", \"id\": \"0\"}\n]",
-            "claim.name": "roles",
-            "jsonType.label": "JSON",
-            "userinfo.token.claim": "true",
-            "id.token.claim": "true",
-            "access.token.claim": "true"
-          }
-        },
         {
           "name": "audience",
           "protocol": "openid-connect",
@@ -87,7 +155,12 @@
       "defaultClientScopes": [
         "profile",
         "email",
-        "test/VEN"
+        "test/VEN",
+        "read_targets",
+        "read_ven_objects",
+        "write_reports",
+        "write_subscriptions",
+        "write_vens"
       ],
       "protocolMappers": [
         {
@@ -128,7 +201,12 @@
       "defaultClientScopes": [
         "profile",
         "email",
-        "test/VEN"
+        "test/VEN",
+        "read_targets",
+        "read_ven_objects",
+        "write_reports",
+        "write_subscriptions",
+        "write_vens"
       ],
       "protocolMappers": [
         {

@@ -15,11 +15,12 @@ class OpenLeadrVtnTestContainer:
 
     def __init__(
         self,
-        external_oauth_signing_key_pem_path: str,
+        openleadr_rs_image: str,
+        oauth_jwks_url: str,
         oauth_valid_audiences: str,
+        oauth_token_url: str,
         network: Network | None = None,
         oauth_key_type: str = "RSA",
-        openleadr_rs_image: str = "ghcr.io/openleadr/openleadr-rs:1764056494-6b11907",
         postgres_image: str = "postgres:16",
         vtn_port: int = 3000,
         postgres_port: int = 5432,
@@ -32,9 +33,10 @@ class OpenLeadrVtnTestContainer:
         Initialize the VTN test container with its PostgreSQL dependency.
 
         Args:
-            external_oauth_signing_key_pem_path (str): The path to the external OAuth signing public key in PEM format.
+            oauth_jwks_url (str): The OAuth server JWKS URL. Used by OpenLEADR-rs to validate JWT signatures.
             oauth_valid_audiences (str): The valid audiences for the OAuth token, the provided value must be a
             comma seperated list of valid audiences.
+            oauth_token_url (str): The OAuth token endpoint URL. Required by OpenLEADR-rs, also when `OAUTH_TYPE=EXTERNAL`.
             network (Network | None, optional): The Docker network to use. If None, a new network will be created.
             oauth_key_type (str, optional): The type of OAuth key. Defaults to "RSA".
             openleadr_rs_image (str, optional): The image to use for the VTN.
@@ -78,11 +80,11 @@ class OpenLeadrVtnTestContainer:
             .with_kwargs(platform="linux/amd64")
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
-            .with_volume_mapping(host=external_oauth_signing_key_pem_path, container="/keys/pub-sign-key.pem")
             .with_env(key="OAUTH_TYPE", value="EXTERNAL")
             .with_env(key="OAUTH_VALID_AUDIENCES", value=oauth_valid_audiences)
             .with_env(key="OAUTH_KEY_TYPE", value=oauth_key_type)
-            .with_env(key="OAUTH_PEM", value="/keys/pub-sign-key.pem")
+            .with_env(key="OAUTH_JWKS_LOCATION", value=oauth_jwks_url)
+            .with_env(key="OAUTH_TOKEN_URL", value=oauth_token_url)
             .with_env(key="PG_PORT", value=self._postgres.port)
             .with_env(key="PG_DB", value=postgres_db)
             .with_env(key="PG_USER", value=postgres_user)
@@ -137,3 +139,42 @@ class OpenLeadrVtnTestContainer:
     ) -> None:
         """Context manager exit."""
         self.stop()
+
+
+class OpenAdr301VtnTestContainer(OpenLeadrVtnTestContainer):
+    """A test container for an OpenADR 3.0.1 VTN."""
+
+    def __init__(
+        self,
+        oauth_jwks_url: str,
+        oauth_valid_audiences: str,
+        oauth_token_url: str,
+        network: Network | None = None,
+    ) -> None:
+        super().__init__(
+            openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:0.1.2",
+            oauth_jwks_url=oauth_jwks_url,
+            oauth_valid_audiences=oauth_valid_audiences,
+            oauth_token_url=oauth_token_url,
+            network=network,
+        )
+
+
+class OpenAdr310VtnTestContainer(OpenLeadrVtnTestContainer):
+    """A test container for an OpenADR 3.1.0 VTN."""
+
+    def __init__(
+        self,
+        oauth_jwks_url: str,
+        oauth_valid_audiences: str,
+        oauth_token_url: str,
+        network: Network | None = None,
+    ) -> None:
+        # TODO(Stijn van Houwelingen): update to latest release once out of development.  # noqa: FIX002, TD003
+        super().__init__(
+            openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:1769690654-06c15ea",
+            oauth_jwks_url=oauth_jwks_url,
+            oauth_valid_audiences=oauth_valid_audiences,
+            oauth_token_url=oauth_token_url,
+            network=network,
+        )

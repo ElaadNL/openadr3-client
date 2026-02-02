@@ -147,7 +147,7 @@ def test_update_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
         resource_update = ResourceUpdateBlRequest(
             resource_name="test-resource-updated-name",
             attributes=(Attribute(type="test-attribute-updated", values=("test-value-updated",)),),
-            clientID=created_resource.client_id,
+            clientID=created_ven.client_id,
             targets=("test-target-updated",),
             venID=created_resource.ven_id,
         )
