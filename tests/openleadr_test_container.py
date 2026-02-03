@@ -2,12 +2,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import threading
+from collections import deque
 from types import TracebackType
 from typing import Any, Self
 
+import docker.errors
 from testcontainers.core.container import DockerContainer, LogMessageWaitStrategy
 from testcontainers.core.network import Network
 from testcontainers.postgres import PostgresContainer
+
+_LOG_BUFFER_MAX_LINES = 5_000
 
 
 class OpenLeadrVtnTestContainer:
@@ -52,6 +57,9 @@ class OpenLeadrVtnTestContainer:
         """
         self._vtn_port = vtn_port
         self._postgres_port = postgres_port
+        self._log_stop_event = threading.Event()
+        self._vtn_log_lines: deque[str] = deque(maxlen=_LOG_BUFFER_MAX_LINES)
+        self._vtn_log_thread: threading.Thread | None = None
 
         if network is None:
             self._internal_network = True
@@ -94,6 +102,39 @@ class OpenLeadrVtnTestContainer:
             .with_env(key="RUST_LOG", value="trace")
         )
 
+    def _start_vtn_log_capture(self) -> None:
+        """Capture VTN logs into an in-memory ring buffer."""
+        if self._vtn_log_thread is not None:
+            return
+
+        wrapped = self._vtn.get_wrapped_container()
+
+        def _run() -> None:
+            try:
+                for chunk in wrapped.logs(stream=True, follow=True, stdout=True, stderr=True):
+                    if self._log_stop_event.is_set():
+                        break
+                    chunk_bytes = chunk if isinstance(chunk, bytes | bytearray) else str(chunk).encode("utf-8", errors="replace")
+                    text = chunk_bytes.decode("utf-8", errors="replace")
+                    for line in text.splitlines():
+                        if self._log_stop_event.is_set():
+                            break
+                        self._vtn_log_lines.append(line)
+            except (docker.errors.DockerException, OSError):
+                # Container may be removed/stopped while following logs.
+                return
+
+        self._vtn_log_thread = threading.Thread(target=_run, name="openleadr-rs-vtn-logs", daemon=True)
+        self._vtn_log_thread.start()
+
+    def get_vtn_log_tail(self, max_lines: int = 500) -> list[str]:
+        """Return the last N captured VTN log lines (best-effort)."""
+        if max_lines <= 0:
+            return []
+        if max_lines >= len(self._vtn_log_lines):
+            return list(self._vtn_log_lines)
+        return list(self._vtn_log_lines)[-max_lines:]
+
     def start(self) -> Self:
         """Start both containers and wait for them to be ready."""
         if self._internal_network:
@@ -113,6 +154,7 @@ class OpenLeadrVtnTestContainer:
 
         # Configure the VTN with the database URL prior to starting it.
         self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(LogMessageWaitStrategy("pg_advisory_unlock")).start()
+        self._start_vtn_log_capture()
         return self
 
     def get_base_url(self) -> str:
@@ -121,6 +163,7 @@ class OpenLeadrVtnTestContainer:
 
     def stop(self) -> None:
         """Stop the openleadr test container and its dependencies."""
+        self._log_stop_event.set()
         self._vtn.stop()
         self._postgres.stop()
         if self._internal_network:

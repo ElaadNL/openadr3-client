@@ -64,6 +64,7 @@ dev = [
     "paho-mqtt (>=2.1.0,<3.0.0)",
     "reuse>=6.2.0",
     "pre-commit>=4.5.1",
+    "types-docker>=7.1.0.20260109",
 ]
 
 [tool.hatch.build.targets.sdist]

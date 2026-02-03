@@ -6,7 +6,8 @@
 
 import logging
 import os
-from collections.abc import Generator, Iterable
+from collections.abc import Callable, Generator, Iterable
+from typing import Any, cast
 
 import jwt
 import pytest
@@ -20,6 +21,55 @@ from tests.openleadr_test_container import OpenAdr301VtnTestContainer, OpenAdr31
 
 # Set up logging for the testcontainers package
 logging.basicConfig(level=logging.DEBUG)
+
+_CONTAINER_LOG_TAIL_LINES = 15
+_FAILURE_LOG_SOURCES: list[tuple[str, Callable[[int], list[str]]]] = []
+
+
+def _dump_container_logs_for_failure(*, failing_test: str) -> None:
+    """Dump captured container logs into pytest's captured Python logs (on failure only)."""
+    container_logger = logging.getLogger("tests.container_logs")
+
+    if not _FAILURE_LOG_SOURCES:
+        return
+
+    container_logger.error("[container_logs] === Container logs for failing test: %s ===", failing_test)
+    for name, tail_fn in _FAILURE_LOG_SOURCES:
+        try:
+            lines = tail_fn(_CONTAINER_LOG_TAIL_LINES)
+        except Exception:
+            container_logger.exception("[container_logs] %s: failed to retrieve logs", name)
+            continue
+
+        if not lines:
+            container_logger.error("[container_logs] %s: <no logs captured>", name)
+            continue
+
+        container_logger.error("[container_logs] %s: last %d lines", name, len(lines))
+        for line in lines:
+            container_logger.error("[container_logs] %s | %s", name, line)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[object]) -> Generator[None, None, None]:
+    """Expose test outcome info to fixtures via `request.node.rep_*`."""
+    del call
+    outcome = yield
+    rep = cast("Any", outcome).get_result()
+    setattr(item, f"rep_{rep.when}", rep)
+
+
+@pytest.fixture(autouse=True)
+def _dump_container_logs_on_failure(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    """On test failure, dump tail logs from registered containers via `logging`."""
+    yield
+
+    rep_setup = getattr(request.node, "rep_setup", None)
+    rep_call = getattr(request.node, "rep_call", None)
+    failed = bool(getattr(rep_setup, "failed", False) or getattr(rep_call, "failed", False))
+    if failed:
+        _dump_container_logs_for_failure(failing_test=request.node.nodeid)
+
 
 KEYCLOAK_REALM_NAME = "integration-test-realm"
 
@@ -229,6 +279,7 @@ def integration_test_openadr301_vtn_client(
         oauth_token_url=KEYCLOAK_INTERNAL_TOKEN_URL,
         network=integration_test_docker_network,
     ) as vtn_container:
+        _FAILURE_LOG_SOURCES.append(("openleadr-rs-vtn-301", vtn_container.get_vtn_log_tail))
         yield IntegrationTestVTNClient(
             base_url=vtn_container.get_base_url(),
             config=OAuthTokenManagerConfig(
@@ -275,6 +326,7 @@ def integration_test_openadr310_vtn_client(
         oauth_token_url=KEYCLOAK_INTERNAL_TOKEN_URL,
         network=integration_test_docker_network,
     ) as vtn_container:
+        _FAILURE_LOG_SOURCES.append(("openleadr-rs-vtn-310", vtn_container.get_vtn_log_tail))
         yield IntegrationTestVTNClient(
             base_url=vtn_container.get_base_url(),
             config=OAuthTokenManagerConfig(
@@ -302,6 +354,7 @@ def integration_test_openadr310_reference_vtn(
         oauth_jwks_url=KEYCLOAK_INTERNAL_JWKS_URL,
         network=integration_test_docker_network,
     ) as vtn_container:
+        _FAILURE_LOG_SOURCES.append(("oadr310-ref-vtn", vtn_container.get_vtn_log_tail))
         yield vtn_container
 
 

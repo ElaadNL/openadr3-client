@@ -808,6 +808,7 @@ dev = [
     { name = "ruff" },
     { name = "taskipy" },
     { name = "testcontainers", extra = ["keycloak"] },
+    { name = "types-docker" },
     { name = "types-oauthlib" },
     { name = "types-requests" },
     { name = "types-requests-oauthlib" },
@@ -845,6 +846,7 @@ dev = [
     { name = "ruff", specifier = ">=0.13.2,<0.15" },
     { name = "taskipy", specifier = ">=1.14.1,<2" },
     { name = "testcontainers", extras = ["keycloak", "mqtt"], specifier = ">=4.10.0,<5" },
+    { name = "types-docker", specifier = ">=7.1.0.20260109" },
     { name = "types-oauthlib", specifier = ">=3.2.0.20250408,<4" },
     { name = "types-requests", specifier = ">=2.32.0.20250328,<3" },
     { name = "types-requests-oauthlib", specifier = ">=2.0.0.20250306,<3" },
@@ -1529,12 +1531,38 @@ wheels = [
 ]
 
 [[package]]
+name = "types-docker"
+version = "7.1.0.20260109"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "types-paramiko" },
+    { name = "types-requests" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/54/08/ffef2a8e29e9e22c724f9c1b22563c0938c3ab3fa728ff5b966465e12b93/types_docker-7.1.0.20260109.tar.gz", hash = "sha256:b36ef355ec9ba8bf29bcc4e32cc61dd9138ce4d8352c599c8fbc65f1a3e87b57", size = 32551, upload-time = "2026-01-09T03:21:49.238Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/0d/cdf37dcd0cd4c942a1634daf3ae3a99833791c7a316bff4d4ce04a30652e/types_docker-7.1.0.20260109-py3-none-any.whl", hash = "sha256:001a5a377d3fb287b7279cf4265b8ba3857e7d4203a16ab03e6e512f68f2f3d4", size = 47216, upload-time = "2026-01-09T03:21:48.059Z" },
+]
+
+[[package]]
 name = "types-oauthlib"
 version = "3.3.0.20250822"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6a/6e/d08033f562053c459322333c46baa8cf8d2d8c18f30d46dd898c8fd8df77/types_oauthlib-3.3.0.20250822.tar.gz", hash = "sha256:2cd41587dd80c199e4230e3f086777e9ae525e89579c64afe5e0039ab09be9de", size = 25700, upload-time = "2025-08-22T03:02:41.378Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/18/4b/00593b8b5d055550e1fcb9af2c42fa11b0a90bf16a94759a77bc1c3c0c72/types_oauthlib-3.3.0.20250822-py3-none-any.whl", hash = "sha256:b7f4c9b9eed0e020f454e0af800b10e93dd2efd196da65744b76910cce7e70d6", size = 48800, upload-time = "2025-08-22T03:02:40.427Z" },
+]
+
+[[package]]
+name = "types-paramiko"
+version = "4.0.0.20250822"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b7/b8/c6ff3b10c2f7b9897650af746f0dc6c5cddf054db857bc79d621f53c7d22/types_paramiko-4.0.0.20250822.tar.gz", hash = "sha256:1b56b0cbd3eec3d2fd123c9eb2704e612b777e15a17705a804279ea6525e0c53", size = 28730, upload-time = "2025-08-22T03:03:43.262Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/79/a1/b3774ed924a66ee2c041224d89c36f0c21f4f6cf75036d6ee7698bf8a4b9/types_paramiko-4.0.0.20250822-py3-none-any.whl", hash = "sha256:55bdb14db75ca89039725ec64ae3fa26b8d57b6991cfb476212fa8f83a59753c", size = 38833, upload-time = "2025-08-22T03:03:42.072Z" },
 ]
 
 [[package]]
