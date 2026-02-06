@@ -14,10 +14,26 @@ SPDX-License-Identifier: Apache-2.0
 
 # OpenADR3 Client
 
-This library provides two main interfaces for interacting with OpenADR3 (Open Automated Demand Response) systems:
+openadr3-client provides Python clients for OpenADR 3 that implement the Business Logic (BL) and Virtual End Node (VEN) roles. It lets you integrate with OpenADR Virtual Top Nodes (VTNs) using typed, validated models and convenient higher-level abstractions.
 
-1. Business Logic (BL) Client - For VTN operators (for example, DSOs).
-2. Virtual End Node (VEN) Client - For end users (for example, device operators).
+Features include:
+
+- **OpenADR 3.0.1 and 3.1.0 support**: Choose the protocol version explicitly via the client factories (`version=OADRVersion.OADR_301` / `version=OADRVersion.OADR_310`).
+- **Two first-class client roles**:
+  - **BL client**: VTN/operator workflows (create/update Programs and Events, read Reports/VENs/Subscriptions).
+  - **VEN client**: VEN/device workflows (read Programs/Events, manage VEN registration, Subscriptions, and Reports).
+- **OAuth2 client-credentials auth with token caching**: Built-in OAuth token manager (requests `scopes`/`audience`), caches tokens, refreshes them automatically.
+  - **OpenADR 3.1.0 token discovery**: If `token_url=None` and `version=OADR_310`, the BL/VEN HTTP factories can discover the token endpoint via the VTN discovery/auth server endpoint.
+- **HTTP + TLS controls**: HTTP clients built on `requests`, with configurable TLS verification (`verify_vtn_tls_certificate=True/False/custom CA bundle`).
+- **Typed, validated domain models**: Pydantic v2 models with strong typing (`py.typed`) and runtime validation aligned with the spec.
+  - **Immutable models + safe updates**: Models are frozen; resource updates are done via `Existing{Resource}.update(...)`.
+  - **Flexible enums**: Use predefined enum cases (e.g. `Unit.KWH`) or construct custom spec-compliant values (e.g. `Unit("CUSTOM_UNIT")`).
+  - **Creation guard**: `New{Resource}` objects are one-shot to prevent accidental double-creation.
+- **Validator plugin system**: Register additional validation rules via `ValidatorPluginRegistry` (for example, our [plugin for the Dutch Grid Aware Charging profile](github.com/ElaadNL/openadr3-client-gac-compliance/)).
+- **Event interval conversions**:
+  - **Typed dict format**: Convert event intervals to/from `TypedDict`-validated Python dictionaries.
+  - **Pandas DataFrame format (optional)**: Convert to/from `pandas` DataFrames validated with `pandera` (`pip install 'openadr3-client[pandas]'`).
+- **OpenADR 3.1.0 MQTT notifier support (optional)**: MQTT client + notifier models for VTN notifiers (`pip install 'openadr3-client[mqtt]'`).
 
 ## Business Logic (BL) Client
 
@@ -44,6 +60,7 @@ from openadr3_client.models.program.program import (
     NewProgram,
     Target,
 )
+from openadr3_client.version import OADRVersion
 
 # Initialize the client with the required OAuth configuration.
 bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
@@ -51,7 +68,8 @@ bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
     client_id="your_client_id",
     client_secret="your_client_secret",
     token_url="https://auth.example.com/token",
-    scopes=["read_all", "read_bl", "write_events", "write_programs"]  # Optional: specify required scopes
+    scopes=["read_all", "read_bl", "write_events", "write_programs"],  # Optional: specify required scopes
+    version=OADRVersion.OADR_310,
 )
 
 # Create a new program (NewProgram allows for more properties, this is just a simple example).
@@ -115,6 +133,7 @@ The VEN client is designed for end users and device operators to receive and pro
 
 ```python
 from openadr3_client.ven.http_factory import VirtualEndNodeHttpClientFactory
+from openadr3_client.version import OADRVersion
 
 # Initialize the client with the required OAuth configuration.
 ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(
@@ -122,7 +141,8 @@ ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(
     client_id="your_client_id",
     client_secret="your_client_secret",
     token_url="https://auth.example.com/token",
-    scopes=["read_all", "write_reports", "read_targets", "read_ven_objects"]  # Optional: specify required scopes
+    scopes=["read_all", "write_reports", "read_targets", "read_ven_objects"],  # Optional: specify required scopes
+    version=OADRVersion.OADR_310,
 )
 
 # Search for events inside the VTN.
@@ -369,3 +389,15 @@ This project is licensed under the Apache-2.0 - see LICENSE for details.
 
 This project includes third-party libraries, which are licensed under their own respective Open-Source licenses.
 SPDX-License-Identifier headers are used to show which license is applicable. The concerning license files can be found in the LICENSES directory.
+
+---
+
+## About ElaadNL
+
+OpenADRGUI is built by ElaadNL, with the goal of using it for both internal projects as well as those of stakeholders.
+
+ElaadNL is a Dutch research institute founded and funded by the Dutch District Service Operators (DSOs). ElaadNL was originally tasked by the DSOs to kickstart and foster the adoption of Electric Vehicles by installing the first Dutch charging stations, as well as monitoring the effects EVs have on the grid.
+
+A major result of this pioneering work, was the creation of the Open Charge Point Protocol (OCPP), which today is the de-facto standard for CPOs to communicate with and manage their chargepoints. The protocol is now managed in a spin-off organization: the Open Charge Alliance, which is still closely connected with ElaadNL.
+
+Whereas ElaadNL initially focused mainly on EVs, it has now expanded its mandate to include residential energy use with the goal of increasing the adoption of demand response measures. The reason for this move is to improve efficient use of the resources of the DSO in order to reduce grid congestion, which is a major problem challenge for the Dutch DSOs as well as society as a whole.
