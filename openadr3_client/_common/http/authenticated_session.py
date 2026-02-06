@@ -4,6 +4,7 @@
 
 """Implementation of a HTTP session which has an associated access token that is send to every request."""
 
+import os
 from urllib.parse import urlparse
 
 from requests import PreparedRequest, Session
@@ -37,7 +38,11 @@ class HTTPSOnlySession(Session):
 
     def request(self, method, url, *args, **kwargs):  # noqa: ANN001, ANN202
         parsed = urlparse(url)
-        if parsed.scheme != "https":
+        allow_insecure_http = os.getenv("OPENADR3_ALLOW_INSECURE_HTTP", "").strip().lower() in {"true"}
+
+        if allow_insecure_http:
+            logger.warning("HTTPS is enforced in the OpenADR 3.1.0 standard. Only use this in development or test environments, never in production.")
+        if parsed.scheme != "https" and not allow_insecure_http:
             msg = f"Starting with openADR 3.1, HTTPS is enforced. HTTP requests are not allowed: {url}"
             raise ValueError(msg)
         return super().request(method, url, *args, **kwargs)

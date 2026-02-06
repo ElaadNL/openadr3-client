@@ -139,7 +139,8 @@ def test_create_event_invalid_program(vtn_openadr_310_bl_token: IntegrationTestV
     with pytest.raises(HTTPError) as e:
         _ = interface.create_event(new_event=event)
 
-    assert "program_id does not refer to an existing program" in e.value.response.text
+    assert e.value.response is not None
+    assert e.value.response.status_code == 409
 
 
 def test_create_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -369,7 +370,12 @@ def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNCl
 
         targets = ("ven-target",)
 
-        with ven_with_targets(vtn_openadr_310_bl_token, ven_name="targeted-ven", client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=targets):
+        with ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name="targeted-ven",
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=targets,
+        ):
             event_name = "targeted-event"
             intervals = (
                 Interval(
@@ -436,7 +442,7 @@ def test_ven_with_resource_target_gets_targeted_events(vtn_openadr_310_ven_token
             ven_with_targets(
                 vtn_openadr_310_bl_token,
                 ven_name="ven-with-resource-target",
-                client_id_of_ven=vtn_openadr_310_ven_token.config.client_id,
+                client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
             ) as ven,
             resource_for_ven(
                 vtn_client=vtn_openadr_310_bl_token,
@@ -488,7 +494,12 @@ def test_ven_should_not_see_other_targeted_events(vtn_openadr_310_ven_token: Int
 
         targets = ("ven-target",)
 
-        with ven_with_targets(vtn_openadr_310_bl_token, ven_name="not-targeted-ven", client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=targets):
+        with ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name="not-targeted-ven",
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=targets,
+        ):
             intervals = (
                 Interval(
                     id=0,

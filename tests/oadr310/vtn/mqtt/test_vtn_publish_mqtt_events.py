@@ -14,7 +14,7 @@ from tests.oadr310.vtn.mqtt.generators import with_mqtt_client
 
 
 def test_retrieve_mqtt_message_when_changes_are_made_in_vtn(
-    vtn_openadr_310_bl_token: IntegrationTestVTNClient,
+    vtn_openadr_310_bl_token_reference: IntegrationTestVTNClient,
     certificate_mqtt_notifier_binding_object: MqttNotifierBindingObject,
 ) -> None:
     """Verifies that MQTT messages are published by the VTN when changes occur in the VTN."""
@@ -24,10 +24,10 @@ def test_retrieve_mqtt_message_when_changes_are_made_in_vtn(
         received_messages.append(msg)
 
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name="my-ven", client_id_of_ven="client-id", targets=("test-target",)) as my_ven,
-        new_program(vtn_openadr_310_bl_token, program_name="test-program-mqtt-receive-fail") as created_program,
+        ven_with_targets(vtn_openadr_310_bl_token_reference, ven_name="my-ven", client_id_of_ven="client-id", targets=("test-target",)) as my_ven,
+        new_program(vtn_openadr_310_bl_token_reference, program_name="test-program-mqtt-receive-fail") as created_program,
         event_in_program_with_targets(
-            vtn_openadr_310_bl_token, program=created_program, intervals=(), event_name="test-event-mqtt-requuest-fail", targets=("test-target",)
+            vtn_openadr_310_bl_token_reference, program=created_program, intervals=(), event_name="test-event-mqtt-requuest-fail", targets=("test-target",)
         ) as my_event,
         with_mqtt_client(notifier_binding=certificate_mqtt_notifier_binding_object, on_message=on_message) as mqtt_client,
     ):

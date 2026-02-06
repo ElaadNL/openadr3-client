@@ -7,6 +7,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
 
+from pydantic import ValidationError
 from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client._models.common.attribute import Attribute
@@ -132,7 +133,25 @@ def resource_for_ven(
         targets=targets,
     )
 
-    created_resource = interface.create_resource(new_resource=resource)
+    try:
+        created_resource = interface.create_resource(new_resource=resource)
+    except ValidationError as e:
+        # The dev VTN can create the resource but might omit required fields (e.g. `clientID`) in the response.
+        # That raises here, before we reach `yield`, so we do best-effort cleanup.
+        # We extract the id from the error payload and delete the resource if it exists.
+        resource_id: str | None = None
+        for err in e.errors():
+            payload = err.get("input")
+            if isinstance(payload, dict):
+                rid = payload.get("id")
+                if isinstance(rid, str) and rid:
+                    resource_id = rid
+                    break
+        if isinstance(resource_id, str) and resource_id:
+            # Call the normal interface; suppress parsing failures in the delete response.
+            with contextlib.suppress(Exception):
+                interface.delete_resource_by_id(resource_id=resource_id)
+        raise
 
     try:
         yield created_resource
