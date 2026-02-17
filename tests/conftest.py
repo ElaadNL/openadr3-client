@@ -202,7 +202,7 @@ def integration_test_vtn_client(
     with OpenLeadrVtnTestContainer(
         external_oauth_signing_key_pem_path=integration_test_oauth_client.public_signing_key_pem_path,
         oauth_valid_audiences="https://integration.test.elaad.nl,",
-        openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:latest",
+        openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:0.1.2",
         network=integration_test_docker_network,
     ) as vtn_container:
         yield IntegrationTestVTNClient(
