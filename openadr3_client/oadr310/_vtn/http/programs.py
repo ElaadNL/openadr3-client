@@ -23,8 +23,8 @@ BASE_PREFIX = "programs"
 class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def get_programs(self, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingProgram, ...]:
         """
@@ -70,8 +70,8 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, AuthenticatedHttp
 class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def create_program(self, new_program: NewProgram) -> ExistingProgram:
         """
@@ -122,5 +122,5 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, AuthenticatedHt
 class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)

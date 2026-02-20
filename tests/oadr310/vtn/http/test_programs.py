@@ -25,7 +25,8 @@ def test_get_programs_no_programs_in_vtn(vtn_openadr_310_bl_token: IntegrationTe
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_programs(target=None, pagination=None)
@@ -38,7 +39,8 @@ def test_get_program_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTes
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -50,7 +52,8 @@ def test_delete_program_by_id_non_existent(vtn_openadr_310_bl_token: Integration
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -62,7 +65,8 @@ def test_update_program_by_id_non_existent(vtn_openadr_310_bl_token: Integration
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -102,7 +106,8 @@ def test_get_programs_with_parameters(vtn_openadr_310_bl_token: IntegrationTestV
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     targets_of_program1 = ("test-target-1",)
@@ -135,7 +140,8 @@ def test_delete_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> N
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     # Create a program to delete
@@ -169,7 +175,8 @@ def test_update_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> N
     interface = ProgramsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_client=vtn_openadr_310_bl_token, program_name="test-program-to-update", targets=("test-target-1",)) as created_program:

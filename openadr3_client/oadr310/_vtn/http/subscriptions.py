@@ -29,8 +29,8 @@ BASE_PREFIX = "subscriptions"
 class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def get_subscriptions(
         self,
@@ -94,8 +94,8 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, Authent
 class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def create_subscription(self, new_subscription: NewSubscription) -> ExistingSubscription:
         """
@@ -153,5 +153,5 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, Authe
 class SubscriptionsHttpInterface(ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface):
     """Implements the read and write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)

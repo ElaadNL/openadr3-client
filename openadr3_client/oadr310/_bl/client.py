@@ -164,6 +164,7 @@ def get_oadr310_bl_client(
     config: OAuthTokenManagerConfig,
     *,
     verify_vtn_tls_certificate: bool | str = True,
+    allow_insecure_http: bool = False,
 ) -> BusinessLogicClient:
     """
     Creates the OpenADR 3.1.0 business logic client.
@@ -175,6 +176,7 @@ def get_oadr310_bl_client(
         Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
         If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
         PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+        allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
     Returns:
         BusinessLogicClient: The business logic client instance.
@@ -190,27 +192,42 @@ def get_oadr310_bl_client(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
         ),
         programs=ProgramsHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
         ),
         reports=ReportsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
         ),
         vens=VensHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
         ),
         subscriptions=SubscriptionsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
         ),
-        notifiers=NotifiersReadOnlyHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
-        resources=ResourcesHttpInterface(base_url=vtn_base_url, config=config, verify_tls_certificate=verify_vtn_tls_certificate),
+        notifiers=NotifiersReadOnlyHttpInterface(
+            base_url=vtn_base_url,
+            config=config,
+            verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
+        ),
+        resources=ResourcesHttpInterface(
+            base_url=vtn_base_url,
+            config=config,
+            verify_tls_certificate=verify_vtn_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
+        ),
     )

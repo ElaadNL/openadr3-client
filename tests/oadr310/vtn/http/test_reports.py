@@ -23,7 +23,8 @@ def test_get_reports_no_reports_in_vtn(vtn_openadr_310_bl_token: IntegrationTest
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_reports(pagination=None, program_id=None, event_id=None, client_name=None)
@@ -36,7 +37,8 @@ def test_get_report_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTest
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -48,7 +50,8 @@ def test_delete_report_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationT
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -60,7 +63,8 @@ def test_update_report_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationT
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -121,7 +125,8 @@ def test_get_reports_with_parameters(vtn_openadr_310_bl_token: IntegrationTestVT
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     report_resources = (
@@ -177,7 +182,8 @@ def test_delete_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     report_resources = (
@@ -216,7 +222,8 @@ def test_update_report(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
     interface = ReportsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     report_resources = (

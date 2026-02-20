@@ -19,7 +19,8 @@ def test_get_ven_resources_no_resources(vtn_openadr_310_bl_token: IntegrationTes
     interface = ResourcesHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     resources = interface.get_resources()
@@ -32,7 +33,8 @@ def test_get_ven_resource_by_id_non_existent(vtn_openadr_310_bl_token: Integrati
     interface = ResourcesHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -44,7 +46,8 @@ def test_delete_ven_resource_by_id_non_existent(vtn_openadr_310_bl_token: Integr
     interface = ResourcesHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -56,7 +59,8 @@ def test_delete_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
     interface = ResourcesHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with (
@@ -97,7 +101,8 @@ def test_update_ven_resource_by_id_non_existent(vtn_openadr_310_bl_token: Integr
     interface = ResourcesHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with (
@@ -125,7 +130,8 @@ def test_update_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
     interface = ResourcesHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with (

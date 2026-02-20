@@ -4,7 +4,6 @@
 
 """Implementation of a HTTP session which has an associated access token that is send to every request."""
 
-import os
 from urllib.parse import urlparse
 
 from requests import PreparedRequest, Session
@@ -36,13 +35,16 @@ class _BearerAuth(AuthBase):
 class HTTPSOnlySession(Session):
     """Session that rejects all non HTTPS requests."""
 
+    def __init__(self, *, allow_insecure_http: bool = False) -> None:
+        super().__init__()
+        self._allow_insecure_http = allow_insecure_http
+
     def request(self, method, url, *args, **kwargs):  # noqa: ANN001, ANN202
         parsed = urlparse(url)
-        allow_insecure_http = os.getenv("OPENADR3_ALLOW_INSECURE_HTTP", "").strip().lower() in {"true"}
 
-        if allow_insecure_http:
+        if self._allow_insecure_http:
             logger.warning("HTTPS is enforced in the OpenADR 3.1.0 standard. Only use this in development or test environments, never in production.")
-        if parsed.scheme != "https" and not allow_insecure_http:
+        if parsed.scheme != "https" and not self._allow_insecure_http:
             msg = f"Starting with openADR 3.1, HTTPS is enforced. HTTP requests are not allowed: {url}"
             raise ValueError(msg)
         return super().request(method, url, *args, **kwargs)
@@ -59,7 +61,7 @@ class BearerAuthenticatedSession(Session):
 class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
     """Session that includes a bearer token and requires HTTPS in all requests made through it."""
 
-    def __init__(self, token_manager: OAuthTokenManager, *, verify_tls_certificate: bool | str = True) -> None:
+    def __init__(self, token_manager: OAuthTokenManager, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
         """
         Initializes the Bearer Authenticated Session.
 
@@ -69,9 +71,10 @@ class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
             Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
             If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
             PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
-        """
-        super().__init__()
+        """  # noqa: E501
+        super().__init__(allow_insecure_http=allow_insecure_http)
         self.auth = _BearerAuth(token_manager)
         if not verify_tls_certificate:
             logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")

@@ -44,7 +44,8 @@ def ven_created_by_ven(vtn_client: IntegrationTestVTNClient, ven_name: str) -> G
     ven_interface = VensHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.)
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     ven = NewVenVenRequest(
@@ -79,7 +80,8 @@ def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, client
     ven_interface = VensHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.)
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     ven = NewVenBlRequest(
@@ -122,7 +124,8 @@ def resource_for_ven(
     interface = ResourcesHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     resource = NewResourceBlRequest(
@@ -175,7 +178,8 @@ def new_program(vtn_client: IntegrationTestVTNClient, program_name: str, targets
     program_interface = ProgramsHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
     program = NewProgram(
         program_name=program_name,
@@ -219,7 +223,8 @@ def event_in_program_with_targets(
     interface = EventsHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     event = NewEvent(
@@ -267,7 +272,8 @@ def report_from_ven_in_program(
     interface = ReportsHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     report = NewReport(

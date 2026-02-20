@@ -105,16 +105,13 @@ OPENLEADR_RS_VEN_SCOPES = [
 
 
 @pytest.fixture(scope="session", autouse=True)
-def _allow_insecure_http_for_openadr31_tests() -> None:
+def _configure_integration_test_environment() -> None:
     """
-    Allow HTTP in OpenADR 3.1 integration tests.
+    Configure environment for integration tests.
 
-    OpenADR 3.1 requires HTTPS, but the OpenLEADR-rs VTN integration test container runs HTTP.
-    This opt-in flag keeps production behavior unchanged while allowing local integration testing.
+    Keycloak may add default scopes beyond the ones explicitly requested.
+    oauthlib treats this as a warning by default; relax it for integration tests.
     """
-    os.environ.setdefault("OPENADR3_ALLOW_INSECURE_HTTP", "true")
-    # Keycloak may add default scopes beyond the ones explicitly requested.
-    # oauthlib treats this as a warning by default; relax it for integration tests.
     os.environ.setdefault("OAUTHLIB_RELAX_TOKEN_SCOPE", "1")
 
 
@@ -146,6 +143,7 @@ class IntegrationTestVTNClient:
         config: OAuthTokenManagerConfig,
         mqtt_broker_url: str | None = None,
         openadr_client_id: str | None = None,
+        allow_insecure_http: bool = False,  # noqa: FBT001, FBT002
     ) -> None:
         """
         Initializes the IntegrationTestOAuthClient.
@@ -155,11 +153,13 @@ class IntegrationTestVTNClient:
             config (OAuthTokenManagerConfig): The OAuth token manager configuration.
             mqtt_broker_url (str | None): The MQTT broker URL to use for communication with the VTN.
             openadr_client_id (str | None): OpenADR clientID to use for association checks (defaults to OAuth client_id).
+            allow_insecure_http (bool): Whether to allow plain HTTP requests to the VTN. Defaults to False.
 
         """
         self.vtn_base_url = base_url
         self.config = config
         self.mqtt_broker_url = mqtt_broker_url
+        self.allow_insecure_http = allow_insecure_http
         # Some VTNs (e.g. OpenLEADR-rs) use the OAuth token `sub` claim as OpenADR clientID.
         # This can differ from the OAuth client_id used for client_credentials.
         self.openadr_client_id = openadr_client_id or config.client_id
@@ -336,6 +336,7 @@ def integration_test_openadr310_vtn_client(
                 scopes=OPENLEADR_RS_BL_SCOPES,
                 audience=None,
             ),
+            allow_insecure_http=True,
         )
 
 
@@ -402,6 +403,7 @@ def vtn_openadr_310_ven_token(
         base_url=integration_test_openadr310_vtn_client.vtn_base_url,
         config=config,
         openadr_client_id=_openadr_client_id_from_oauth(config),
+        allow_insecure_http=True,
     )
 
 
@@ -432,6 +434,7 @@ def vtn_openadr_310_ven2_token(
         base_url=integration_test_openadr310_vtn_client.vtn_base_url,
         config=config,
         openadr_client_id=_openadr_client_id_from_oauth(config),
+        allow_insecure_http=True,
     )
 
 
