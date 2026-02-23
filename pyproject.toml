@@ -98,6 +98,7 @@ reuse annotate \
 """
 reuse = "reuse lint"
 test = "pytest --cov --doctest-modules openadr3_client/ tests/"
+test-profile = "pytest --cov --doctest-modules openadr3_client/ tests/ --durations 50"
 
 [tool.ruff]
 line-length = 175
@@ -141,6 +142,9 @@ ignore = [
 exclude_dirs = ["tests", ".venv"]
 
 [tool.pytest]
+# https://github.com/zupo/awesome-pytest-speedup?tab=readme-ov-file
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib"]
 env = [
     "OAUTHLIB_INSECURE_TRANSPORT=1",
     "OAUTH_TOKEN_ENDPOINT=http://localhost:47005/realms/integration-test-realm/protocol/openid-connect/token",
