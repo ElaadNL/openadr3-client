@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import threading
+import uuid
 from collections import deque
 from types import TracebackType
 from typing import Any, Self
@@ -60,6 +61,9 @@ class OpenLeadrVtnTestContainer:
         self._log_stop_event = threading.Event()
         self._vtn_log_lines: deque[str] = deque(maxlen=_LOG_BUFFER_MAX_LINES)
         self._vtn_log_thread: threading.Thread | None = None
+        # Unique alias so multiple VTN instances on the same Docker network don't
+        # share a "vtndb" DNS entry and accidentally resolve to each other's Postgres.
+        self._postgres_alias = f"vtndb-{uuid.uuid4().hex[:8]}"
 
         if network is None:
             self._internal_network = True
@@ -78,7 +82,7 @@ class OpenLeadrVtnTestContainer:
                 dbname=postgres_db,
             )
             .with_network(self._network)
-            .with_network_aliases("vtndb")
+            .with_network_aliases(self._postgres_alias)
             .waiting_for(LogMessageWaitStrategy("database system is ready to accept connections"))
         )
 
@@ -148,7 +152,7 @@ class OpenLeadrVtnTestContainer:
         vtn_db_url = (
             self._postgres.get_connection_url(driver=None)
             .replace("postgresql", "postgres")
-            .replace("localhost", "vtndb")
+            .replace("localhost", self._postgres_alias)
             .replace(str(self._postgres.get_exposed_port(self._postgres_port)), "5432")
         )
 
