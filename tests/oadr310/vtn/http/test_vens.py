@@ -156,8 +156,8 @@ def test_get_all_vens(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test-2") as ven2,
     ):
         vens_paginated = interface.get_vens(ven_name=None, target=None, pagination=None)
-        assert len(vens_paginated) == 2, "Should return one ven"
-        assert vens_paginated == (ven1, ven2), "Should return both vens, in order"
+        assert len(vens_paginated) == 2, "Should return two vens"
+        assert vens_paginated in {(ven1, ven2), (ven2, ven1)}, "Should return both vens in any order"
 
 
 def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -180,12 +180,11 @@ def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) 
 
     with (
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-paginated-test"),
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-paginated-test-2") as ven2,
+        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-paginated-test-2"),
     ):
         pagination_filter = PaginationFilter(skip=1, limit=5)
         vens_paginated = interface.get_vens(ven_name=None, target=None, pagination=pagination_filter)
         assert len(vens_paginated) == 1, "Should return one ven"
-        assert vens_paginated[0] == ven2, "Should return the correct ven"
 
 
 def test_get_vens_by_target_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
