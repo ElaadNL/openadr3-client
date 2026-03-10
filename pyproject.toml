@@ -157,6 +157,7 @@ env = [
 filterwarnings = [
     "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
     "ignore:The wait_for_logs function with string or callable predicates is deprecated:DeprecationWarning",
+    "ignore::urllib3.exceptions.InsecureRequestWarning",
 ]
 
 [[tool.mypy.overrides]]

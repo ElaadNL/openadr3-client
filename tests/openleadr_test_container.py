@@ -219,7 +219,7 @@ class OpenAdr310VtnTestContainer(OpenLeadrVtnTestContainer):
     ) -> None:
         # TODO(Stijn van Houwelingen): update to latest release once out of development.  # noqa: FIX002, TD003
         super().__init__(
-            openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:1769690654-06c15ea",
+            openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:1773132988-ca27a00",
             oauth_jwks_url=oauth_jwks_url,
             oauth_valid_audiences=oauth_valid_audiences,
             oauth_token_url=oauth_token_url,
