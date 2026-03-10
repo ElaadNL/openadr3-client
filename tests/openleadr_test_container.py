@@ -217,9 +217,9 @@ class OpenAdr310VtnTestContainer(OpenLeadrVtnTestContainer):
         oauth_token_url: str,
         network: Network | None = None,
     ) -> None:
-        # TODO(Stijn van Houwelingen): update to latest release once out of development.  # noqa: FIX002, TD003
+        # TODO(https://github.com/OpenLEADR/openleadr-rs/pull/313#issuecomment-4031389477): change to stable release once this is resolved.  # noqa: FIX002
         super().__init__(
-            openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:1773132988-ca27a00",
+            openleadr_rs_image="ghcr.io/openleadr/openleadr-rs:v0.2.0-rc2",
             oauth_jwks_url=oauth_jwks_url,
             oauth_valid_audiences=oauth_valid_audiences,
             oauth_token_url=oauth_token_url,
