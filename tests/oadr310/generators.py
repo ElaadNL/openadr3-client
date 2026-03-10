@@ -7,6 +7,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
 
+from pydantic import ValidationError
 from pydantic_extra_types.currency_code import ISO4217
 
 from openadr3_client._models.common.attribute import Attribute
@@ -43,7 +44,8 @@ def ven_created_by_ven(vtn_client: IntegrationTestVTNClient, ven_name: str) -> G
     ven_interface = VensHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.)
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     ven = NewVenVenRequest(
@@ -78,7 +80,8 @@ def ven_with_targets(vtn_client: IntegrationTestVTNClient, ven_name: str, client
     ven_interface = VensHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.)
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     ven = NewVenBlRequest(
@@ -121,7 +124,8 @@ def resource_for_ven(
     interface = ResourcesHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     resource = NewResourceBlRequest(
@@ -132,7 +136,25 @@ def resource_for_ven(
         targets=targets,
     )
 
-    created_resource = interface.create_resource(new_resource=resource)
+    try:
+        created_resource = interface.create_resource(new_resource=resource)
+    except ValidationError as e:
+        # The dev VTN can create the resource but might omit required fields (e.g. `clientID`) in the response.
+        # That raises here, before we reach `yield`, so we do best-effort cleanup.
+        # We extract the id from the error payload and delete the resource if it exists.
+        resource_id: str | None = None
+        for err in e.errors():
+            payload = err.get("input")
+            if isinstance(payload, dict):
+                rid = payload.get("id")
+                if isinstance(rid, str) and rid:
+                    resource_id = rid
+                    break
+        if isinstance(resource_id, str) and resource_id:
+            # Call the normal interface; suppress parsing failures in the delete response.
+            with contextlib.suppress(Exception):
+                interface.delete_resource_by_id(resource_id=resource_id)
+        raise
 
     try:
         yield created_resource
@@ -156,7 +178,8 @@ def new_program(vtn_client: IntegrationTestVTNClient, program_name: str, targets
     program_interface = ProgramsHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
     program = NewProgram(
         program_name=program_name,
@@ -200,7 +223,8 @@ def event_in_program_with_targets(
     interface = EventsHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     event = NewEvent(
@@ -248,7 +272,8 @@ def report_from_ven_in_program(
     interface = ReportsHttpInterface(
         base_url=vtn_client.vtn_base_url,
         config=vtn_client.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=vtn_client.allow_insecure_http,
     )
 
     report = NewReport(

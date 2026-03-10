@@ -30,7 +30,7 @@ from tests.oadr310.vtn.mqtt.generators import with_mqtt_client
 
 @pytest.mark.skip(reason="Object privacy on MQTT broker not yet implemented in OpenADR 3.1 reference vtn...")
 def test_dont_receive_mqtt_message_not_assigned_to_ven(
-    vtn_openadr_310_bl_token: IntegrationTestVTNClient,
+    vtn_openadr_310_bl_token_reference: IntegrationTestVTNClient,
     certificate_mqtt_notifier_binding_object: MqttNotifierBindingObject,
 ) -> None:
     """Verifies that an MQTT message not assigned to a VEN cannot be read by subscribing to that VENs personal topic in the MQTT broker."""
@@ -42,9 +42,11 @@ def test_dont_receive_mqtt_message_not_assigned_to_ven(
         message_received.set()
 
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name="my-ven", client_id_of_ven="client-id", targets=()) as my_ven,
-        new_program(vtn_openadr_310_bl_token, program_name="test-program-mqtt-receive-fail") as created_program,
-        event_in_program_with_targets(vtn_openadr_310_bl_token, program=created_program, intervals=(), event_name="test-event-mqtt-requuest-fail", targets=("test-target",)),
+        ven_with_targets(vtn_openadr_310_bl_token_reference, ven_name="my-ven", client_id_of_ven="client-id", targets=()) as my_ven,
+        new_program(vtn_openadr_310_bl_token_reference, program_name="test-program-mqtt-receive-fail") as created_program,
+        event_in_program_with_targets(
+            vtn_openadr_310_bl_token_reference, program=created_program, intervals=(), event_name="test-event-mqtt-requuest-fail", targets=("test-target",)
+        ),
         with_mqtt_client(notifier_binding=certificate_mqtt_notifier_binding_object, on_message=on_message) as mqtt_client,
     ):
         mqtt_client.subscribe(f"/ven/{my_ven.id}")
@@ -56,7 +58,7 @@ def test_dont_receive_mqtt_message_not_assigned_to_ven(
 
 @pytest.mark.skip(reason="Object privacy on MQTT broker not yet implemented in OpenADR 3.1 reference vtn...")
 def test_retrieve_mqtt_message_assigned_to_ven(
-    vtn_openadr_310_bl_token: IntegrationTestVTNClient,
+    vtn_openadr_310_bl_token_reference: IntegrationTestVTNClient,
     certificate_mqtt_notifier_binding_object: MqttNotifierBindingObject,
 ) -> None:
     """Verifies that an MQTT message assigned to a VEN can be read by subscribing to that VENs personal topic in the MQTT broker."""
@@ -68,9 +70,11 @@ def test_retrieve_mqtt_message_assigned_to_ven(
         message_received.set()
 
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name="my-ven", client_id_of_ven="client-id", targets=("test-target",)) as my_ven,
-        new_program(vtn_openadr_310_bl_token, program_name="test-program-mqtt-receive-fail") as created_program,
-        event_in_program_with_targets(vtn_openadr_310_bl_token, program=created_program, intervals=(), event_name="test-event-mqtt-requuest-fail", targets=("test-target",)),
+        ven_with_targets(vtn_openadr_310_bl_token_reference, ven_name="my-ven", client_id_of_ven="client-id", targets=("test-target",)) as my_ven,
+        new_program(vtn_openadr_310_bl_token_reference, program_name="test-program-mqtt-receive-fail") as created_program,
+        event_in_program_with_targets(
+            vtn_openadr_310_bl_token_reference, program=created_program, intervals=(), event_name="test-event-mqtt-requuest-fail", targets=("test-target",)
+        ),
         with_mqtt_client(notifier_binding=certificate_mqtt_notifier_binding_object, on_message=on_message) as mqtt_client,
     ):
         mqtt_client.subscribe(f"/ven/{my_ven.id}")

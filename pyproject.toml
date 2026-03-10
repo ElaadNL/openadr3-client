@@ -64,6 +64,7 @@ dev = [
     "paho-mqtt (>=2.1.0,<3.0.0)",
     "reuse>=6.2.0",
     "pre-commit>=4.5.1",
+    "types-docker>=7.1.0.20260109",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -97,6 +98,7 @@ reuse annotate \
 """
 reuse = "reuse lint"
 test = "pytest --cov --doctest-modules openadr3_client/ tests/"
+test-profile = "pytest --cov --doctest-modules openadr3_client/ tests/ --durations 50"
 
 [tool.ruff]
 line-length = 175
@@ -140,6 +142,9 @@ ignore = [
 exclude_dirs = ["tests", ".venv"]
 
 [tool.pytest]
+# https://github.com/zupo/awesome-pytest-speedup?tab=readme-ov-file
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib"]
 env = [
     "OAUTHLIB_INSECURE_TRANSPORT=1",
     "OAUTH_TOKEN_ENDPOINT=http://localhost:47005/realms/integration-test-realm/protocol/openid-connect/token",
@@ -152,6 +157,7 @@ env = [
 filterwarnings = [
     "ignore:The @wait_container_is_ready decorator is deprecated:DeprecationWarning",
     "ignore:The wait_for_logs function with string or callable predicates is deprecated:DeprecationWarning",
+    "ignore::urllib3.exceptions.InsecureRequestWarning",
 ]
 
 [[tool.mypy.overrides]]

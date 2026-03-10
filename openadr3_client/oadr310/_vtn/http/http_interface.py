@@ -69,6 +69,7 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
         config: OAuthTokenManagerConfig,
         *,
         verify_tls_certificate: bool | str = True,
+        allow_insecure_http: bool = False,
     ) -> None:
         """
         Initializes the client with a specified base URL.
@@ -80,7 +81,12 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
             Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
             If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
             PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
-        """
-        authenticated_session = _BearerAuthenticatedHttpsOnlySession(token_manager=OAuthTokenManager(config), verify_tls_certificate=verify_tls_certificate)
+        """  # noqa: E501
+        authenticated_session = _BearerAuthenticatedHttpsOnlySession(
+            token_manager=OAuthTokenManager(config),
+            verify_tls_certificate=verify_tls_certificate,
+            allow_insecure_http=allow_insecure_http,
+        )
         super().__init__(base_url=base_url, session=authenticated_session)

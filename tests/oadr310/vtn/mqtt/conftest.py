@@ -2,6 +2,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+"""
+MQTT integration test fixtures.
+
+NOTE: These fixtures intentionally depend on the OpenADR 3.1 reference VTN container because our MQTT
+tests validate VTN-originated MQTT publishes. OpenLEADR-rs is used for the HTTP integration tests.
+
+TODO: Switch these fixtures to OpenLEADR-rs once it supports MQTT notifications end-to-end.
+"""
+
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -16,7 +25,7 @@ from openadr3_client.oadr310.models.notifiers.mqtt.mqtt import (
     MqttNotifierBindingObject,
 )
 from tests.conftest import IntegrationTestOAuthClient
-from tests.openadr310_vtn_test_container import OpenADR310VtnTestContainer
+from tests.openadr310_vtn_test_container import OpenADR310RefImplementationVtnTestContainer
 
 
 @pytest.fixture(scope="session")
@@ -43,7 +52,7 @@ def oauth_token_manager_mqtt(integration_test_oauth_client: IntegrationTestOAuth
 
 
 @pytest.fixture(scope="session")
-def anonymous_mqtt_notifier_binding_object(integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer) -> MqttNotifierBindingObject:
+def anonymous_mqtt_notifier_binding_object(integration_test_openadr310_reference_vtn: OpenADR310RefImplementationVtnTestContainer) -> MqttNotifierBindingObject:
     """
     A MQTT notifier binding object which is configured with anonymous authentication.
 
@@ -68,7 +77,7 @@ def oauth_mqtt_notifier_binding_object() -> MqttNotifierBindingObject:
 
 
 @pytest.fixture(scope="session")
-def certificate_mqtt_notifier_binding_object(integration_test_openadr310_reference_vtn: OpenADR310VtnTestContainer) -> MqttNotifierBindingObject:
+def certificate_mqtt_notifier_binding_object(integration_test_openadr310_reference_vtn: OpenADR310RefImplementationVtnTestContainer) -> MqttNotifierBindingObject:
     """
     A MQTT notifier binding object which is configured with certificate authentication.
 

@@ -19,8 +19,8 @@ BASE_PREFIX = "resources"
 class ResourcesReadOnlyHttpInterface(ReadOnlyResourcesInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the resources HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def get_resources(
         self,
@@ -78,8 +78,8 @@ class ResourcesReadOnlyHttpInterface(ReadOnlyResourcesInterface, AuthenticatedHt
 class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the resources HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def update_resource_by_id(self, resource_id: str, updated_resource: ResourceUpdate) -> ExistingResource:
         """
@@ -142,5 +142,5 @@ class ResourcesWriteOnlyHttpInterface(WriteOnlyResourcesInterface, Authenticated
 class ResourcesHttpInterface(ReadWriteResourceInterface, ResourcesReadOnlyHttpInterface, ResourcesWriteOnlyHttpInterface):
     """Implements the read and write communication with the resources HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)

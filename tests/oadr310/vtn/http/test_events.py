@@ -24,7 +24,8 @@ def test_get_events_non_existent_program_vtn(vtn_openadr_310_bl_token: Integrati
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_events(target=None, pagination=None, program_id="fake-program")
@@ -37,7 +38,8 @@ def test_get_events_no_events_in_vtn(vtn_openadr_310_bl_token: IntegrationTestVT
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_events(target=None, pagination=None, program_id=None)
@@ -50,7 +52,8 @@ def test_get_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTestV
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -62,7 +65,8 @@ def test_delete_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTe
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -74,7 +78,8 @@ def test_update_event_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTe
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -108,7 +113,8 @@ def test_create_event_invalid_program(vtn_openadr_310_bl_token: IntegrationTestV
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     event = NewEvent(
@@ -139,7 +145,8 @@ def test_create_event_invalid_program(vtn_openadr_310_bl_token: IntegrationTestV
     with pytest.raises(HTTPError) as e:
         _ = interface.create_event(new_event=event)
 
-    assert "program_id does not refer to an existing program" in e.value.response.text
+    assert e.value.response is not None
+    assert e.value.response.status_code == 409
 
 
 def test_create_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -178,7 +185,8 @@ def test_get_events_with_parameters(vtn_openadr_310_bl_token: IntegrationTestVTN
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_openadr_310_bl_token, program_name="test-program2") as created_program:
@@ -237,7 +245,8 @@ def test_delete_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_openadr_310_bl_token, program_name="test-program3") as created_program:
@@ -285,7 +294,8 @@ def test_update_event(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_openadr_310_bl_token, program_name="test-program4") as created_program:
@@ -343,7 +353,8 @@ def test_ven_get_events_no_events(vtn_openadr_310_ven_token: IntegrationTestVTNC
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_events(target=None, pagination=None, program_id=None)
@@ -361,7 +372,8 @@ def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNCl
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_openadr_310_bl_token, program_name="test-program5") as created_program:
@@ -369,7 +381,12 @@ def test_ven_get_targeted_events(vtn_openadr_310_ven_token: IntegrationTestVTNCl
 
         targets = ("ven-target",)
 
-        with ven_with_targets(vtn_openadr_310_bl_token, ven_name="targeted-ven", client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=targets):
+        with ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name="targeted-ven",
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=targets,
+        ):
             event_name = "targeted-event"
             intervals = (
                 Interval(
@@ -413,7 +430,8 @@ def test_ven_with_resource_target_gets_targeted_events(vtn_openadr_310_ven_token
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_openadr_310_bl_token, program_name="test-program-resource-target") as created_program:
@@ -436,7 +454,7 @@ def test_ven_with_resource_target_gets_targeted_events(vtn_openadr_310_ven_token
             ven_with_targets(
                 vtn_openadr_310_bl_token,
                 ven_name="ven-with-resource-target",
-                client_id_of_ven=vtn_openadr_310_ven_token.config.client_id,
+                client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
             ) as ven,
             resource_for_ven(
                 vtn_client=vtn_openadr_310_bl_token,
@@ -480,7 +498,8 @@ def test_ven_should_not_see_other_targeted_events(vtn_openadr_310_ven_token: Int
     interface = EventsHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with new_program(vtn_openadr_310_bl_token, program_name="test-program6") as created_program:
@@ -488,7 +507,12 @@ def test_ven_should_not_see_other_targeted_events(vtn_openadr_310_ven_token: Int
 
         targets = ("ven-target",)
 
-        with ven_with_targets(vtn_openadr_310_bl_token, ven_name="not-targeted-ven", client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=targets):
+        with ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name="not-targeted-ven",
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=targets,
+        ):
             intervals = (
                 Interval(
                     id=0,

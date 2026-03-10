@@ -19,8 +19,8 @@ BASE_PREFIX = "vens"
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def get_vens(self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingVen, ...]:
         """
@@ -70,8 +70,8 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterfac
 class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def create_ven(self, new_ven: NewVen) -> ExistingVen:
         """
@@ -126,5 +126,5 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):
     """Implements the read and write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)

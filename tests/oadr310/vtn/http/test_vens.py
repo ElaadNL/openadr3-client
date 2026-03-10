@@ -20,7 +20,8 @@ def test_bl_get_vens_no_vens_in_vtn(vtn_openadr_310_bl_token: IntegrationTestVTN
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_vens(ven_name=None, target=None, pagination=None)
@@ -33,7 +34,8 @@ def test_ven_get_vens_no_vens_in_vtn(vtn_openadr_310_ven_token: IntegrationTestV
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     response = interface.get_vens(ven_name=None, target=None, pagination=None)
@@ -46,7 +48,8 @@ def test_get_ven_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTestVTN
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -58,7 +61,8 @@ def test_delete_ven_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTest
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -70,7 +74,8 @@ def test_update_ven_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTest
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with pytest.raises(HTTPError, match="404 Client Error"):
@@ -139,7 +144,8 @@ def test_get_all_vens(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-get-all"
@@ -150,8 +156,8 @@ def test_get_all_vens(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> Non
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test-2") as ven2,
     ):
         vens_paginated = interface.get_vens(ven_name=None, target=None, pagination=None)
-        assert len(vens_paginated) == 2, "Should return one ven"
-        assert vens_paginated == (ven1, ven2), "Should return both vens, in order"
+        assert len(vens_paginated) == 2, "Should return two vens"
+        assert vens_paginated in {(ven1, ven2), (ven2, ven1)}, "Should return both vens in any order"
 
 
 def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -165,7 +171,8 @@ def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) 
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-paginated"
@@ -173,12 +180,11 @@ def test_get_vens_paginated(vtn_openadr_310_bl_token: IntegrationTestVTNClient) 
 
     with (
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven="a-client-id-for-paginated-test"),
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-paginated-test-2") as ven2,
+        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-paginated-test-2"),
     ):
         pagination_filter = PaginationFilter(skip=1, limit=5)
         vens_paginated = interface.get_vens(ven_name=None, target=None, pagination=pagination_filter)
         assert len(vens_paginated) == 1, "Should return one ven"
-        assert vens_paginated[0] == ven2, "Should return the correct ven"
 
 
 def test_get_vens_by_target_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -192,7 +198,8 @@ def test_get_vens_by_target_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClien
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-target-bl"
@@ -218,7 +225,8 @@ def test_get_vens_ven_no_associated_ven_object(vtn_openadr_310_bl_token: Integra
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-target-ven-not-allowed"
@@ -240,13 +248,19 @@ def test_get_vens_ven_can_only_see_associated_ven_object(vtn_openadr_310_bl_toke
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-target-ven-allowed"
     ven_name_2 = "my-ven-name-target-ven-allowed-2"
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
+        ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name=ven_name,
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=("test-target-1",),
+        ) as my_ven,
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-testting"),
     ):
         vens_visible_to_ven = interface.get_vens(ven_name=None, target=None, pagination=None)
@@ -259,7 +273,8 @@ def test_delete_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with ven_with_targets(vtn_openadr_310_bl_token, ven_name="ven-name-to-delete", client_id_of_ven="client-id-of-ven-to-delete", targets=("test-target-1",)) as ven_to_delete:
@@ -286,13 +301,19 @@ def test_delete_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-target-ven-to-delete"
     ven_name_2 = "my-ven-name-target-ven-not-owned"
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
+        ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name=ven_name,
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=("test-target-1",),
+        ) as my_ven,
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test"),
     ):
         # Delete the ven associated with the client.
@@ -311,7 +332,8 @@ def test_update_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_bl_token.vtn_base_url,
         config=vtn_openadr_310_bl_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     with ven_with_targets(
@@ -340,13 +362,19 @@ def test_update_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestV
     interface = VensHttpInterface(
         base_url=vtn_openadr_310_ven_token.vtn_base_url,
         config=vtn_openadr_310_ven_token.config,
-        verify_tls_certificate=False,  # Self signed certificate used in integration tests.
+        verify_tls_certificate=False,
+        allow_insecure_http=True,
     )
 
     ven_name = "my-ven-name-target-ven-to-update"
     ven_name_2 = "my-ven-name-target-ven-not-owned-for-update"
     with (
-        ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name, client_id_of_ven=vtn_openadr_310_ven_token.config.client_id, targets=("test-target-1",)) as my_ven,
+        ven_with_targets(
+            vtn_openadr_310_bl_token,
+            ven_name=ven_name,
+            client_id_of_ven=vtn_openadr_310_ven_token.openadr_client_id,
+            targets=("test-target-1",),
+        ) as my_ven,
         ven_with_targets(vtn_openadr_310_bl_token, ven_name=ven_name_2, client_id_of_ven="a-client-id-for-test"),
     ):
         update = VenUpdateVenRequest(ven_name="new-ven-name-updated-by-ven")

@@ -3,16 +3,21 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import re
+import threading
+from collections import deque
 from pathlib import Path
 from types import TracebackType
 from typing import Any, Self
 
+import docker.errors
 from testcontainers.core.container import DockerContainer, LogMessageWaitStrategy
 from testcontainers.core.network import Network
 from testcontainers.mqtt import MosquittoContainer
 
+_LOG_BUFFER_MAX_LINES = 5_000
 
-class OpenADR310VtnTestContainer:
+
+class OpenADR310RefImplementationVtnTestContainer:
     """A test container for an OpenADR 3.1.0 VTN."""
 
     def __init__(
@@ -37,6 +42,9 @@ class OpenADR310VtnTestContainer:
 
         """
         self._vtn_port = vtn_port
+        self._log_stop_event = threading.Event()
+        self._vtn_log_lines: deque[str] = deque(maxlen=_LOG_BUFFER_MAX_LINES)
+        self._vtn_log_thread: threading.Thread | None = None
 
         # Configure the MQTT ports for the listeners which are configured in mosquitto.conf
         # This cannot be provided dynamically at runtime, since the mosquitto.conf must reflect the correct ports.
@@ -88,6 +96,38 @@ class OpenADR310VtnTestContainer:
             .waiting_for(LogMessageWaitStrategy(re.compile(r".*ListStore\.__init__\(\).*"), re.DOTALL))
         )
 
+    def _start_vtn_log_capture(self) -> None:
+        """Capture VTN logs into an in-memory ring buffer."""
+        if self._vtn_log_thread is not None:
+            return
+
+        wrapped = self._vtn.get_wrapped_container()
+
+        def _run() -> None:
+            try:
+                for chunk in wrapped.logs(stream=True, follow=True, stdout=True, stderr=True):
+                    if self._log_stop_event.is_set():
+                        break
+                    chunk_bytes = chunk if isinstance(chunk, bytes | bytearray) else str(chunk).encode("utf-8", errors="replace")
+                    text = chunk_bytes.decode("utf-8", errors="replace")
+                    for line in text.splitlines():
+                        if self._log_stop_event.is_set():
+                            break
+                        self._vtn_log_lines.append(line)
+            except (docker.errors.DockerException, OSError):
+                return
+
+        self._vtn_log_thread = threading.Thread(target=_run, name="oadr310-ref-vtn-logs", daemon=True)
+        self._vtn_log_thread.start()
+
+    def get_vtn_log_tail(self, max_lines: int = 500) -> list[str]:
+        """Return the last N captured VTN log lines (best-effort)."""
+        if max_lines <= 0:
+            return []
+        if max_lines >= len(self._vtn_log_lines):
+            return list(self._vtn_log_lines)
+        return list(self._vtn_log_lines)[-max_lines:]
+
     def start(self) -> Self:
         """Start both containers and wait for them to be ready."""
         if self._internal_network:
@@ -101,6 +141,7 @@ class OpenADR310VtnTestContainer:
             "MQTT_CLIENT_BROKER_HOST", "mqttbroker"
         ).with_env("MQTT_CLIENT_BROKER_PORT", self._mqtt.MQTT_PORT).start()
 
+        self._start_vtn_log_capture()
         return self
 
     def get_base_url(self) -> str:
@@ -117,6 +158,7 @@ class OpenADR310VtnTestContainer:
 
     def stop(self) -> None:
         """Stop the openleadr test container and its dependencies."""
+        self._log_stop_event.set()
         self._vtn.stop()
         self._mqtt.stop()
         if self._internal_network:
