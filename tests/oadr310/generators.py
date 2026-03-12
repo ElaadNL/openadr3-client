@@ -29,12 +29,13 @@ from tests.conftest import IntegrationTestVTNClient
 
 
 @contextmanager
-def ven_created_by_ven(vtn_client: IntegrationTestVTNClient, ven_name: str) -> Generator[ExistingVen, None, None]:
+def ven_created_by_ven(vtn_client: IntegrationTestVTNClient, bl_client: IntegrationTestVTNClient, ven_name: str) -> Generator[ExistingVen, None, None]:
     """
     Helper function to create a ven in the VTN for testing purposes.
 
     Args:
         vtn_client (IntegrationTestVTNClient): vtn client configuration.
+        bl_client (IntegrationTestVTNClient): bl client configuration, used to delete the ven afterward.
         ven_name (str): The ven name of the ven to create.
 
     Yields:
@@ -59,6 +60,12 @@ def ven_created_by_ven(vtn_client: IntegrationTestVTNClient, ven_name: str) -> G
     finally:
         # Do not fail if deletion fails, which can occur if the ven is manually deleted in a test.
         with contextlib.suppress(Exception):
+            ven_interface = VensHttpInterface(
+                base_url=bl_client.vtn_base_url,
+                config=bl_client.config,
+                verify_tls_certificate=False,
+                allow_insecure_http=bl_client.allow_insecure_http,
+            )
             ven_interface.delete_ven_by_id(ven_id=created_ven.id)
 
 
