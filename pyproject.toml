@@ -4,7 +4,7 @@
 
 [project]
 name = "openadr3-client"
-version = "2.0.3"
+dynamic = ["version"]
 description = ""
 authors = [
     { name = "Nick van der Burgt", email = "nick.van.der.burgt@elaad.nl" },
@@ -39,8 +39,14 @@ Repository = "https://github.com/ElaadNL/openadr3-client"
 Changelog = "https://github.com/ElaadNL/openadr3-client/releases"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "openadr3_client/_version.py"
 
 [dependency-groups]
 dev = [

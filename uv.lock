@@ -767,7 +767,6 @@ signedtoken = [
 
 [[package]]
 name = "openadr3-client"
-version = "2.0.3"
 source = { editable = "." }
 dependencies = [
     { name = "oauthlib", extra = ["signedtoken"] },
@@ -824,7 +823,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.3,<3.0.0" },
     { name = "requests-oauthlib", specifier = ">=2.0.0,<3.0.0" },
 ]
-provides-extras = ["pandas", "mqtt"]
+provides-extras = ["mqtt", "pandas"]
 
 [package.metadata.requires-dev]
 dev = [
