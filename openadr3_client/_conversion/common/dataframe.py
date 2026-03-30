@@ -23,8 +23,8 @@ class EventIntervalDataFrameSchema(pa.DataFrameModel):
     randomize_start: Series[Timedelta] | None = pa.Field(nullable=True)
 
     # EventPayload fields (flattened)
-    type: Series[str]  # Enum type not directly supported with pandera, but pydantic will validate this later on.
-    values: Series[pa.Object]  # Type validation will be done by pydantic later.
+    type: Series[str] = pa.Field()  # Enum type not directly supported with pandera, but pydantic will validate this later on.
+    values: Series[pa.Object] = pa.Field()  # Type validation will be done by pydantic later.
 
     class Config:
         strict = "filter"  # Filter out any columns not specified in the schema here.

@@ -10,7 +10,7 @@ authors = [
     { name = "Nick van der Burgt", email = "nick.van.der.burgt@elaad.nl" },
     { name = "Stijn van Houwelingen", email = "stijn.van.houwelingen@elaad.nl" },
 ]
-requires-python = ">=3.12, <4"
+requires-python = ">=3.12, <3.15"
 readme = "README.md"
 license = "Apache-2.0"
 dependencies = [
