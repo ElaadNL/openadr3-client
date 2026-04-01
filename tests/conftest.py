@@ -27,7 +27,9 @@ _FAILURE_LOG_SOURCES: list[tuple[str, Callable[[int], list[str]]]] = []
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
+    """Adds pytest options for the OpenADR 3.1.0 version."""
     parser.addoption("--openleadr-310-version", default="v0.2.0-rc2", dest="openleadr-310-version")
+
 
 def _dump_container_logs_for_failure(*, failing_test: str) -> None:
     """Dump captured container logs into pytest's captured Python logs (on failure only)."""
@@ -330,7 +332,7 @@ def integration_test_openadr310_vtn_client(
         oauth_valid_audiences="https://integration.test.elaad.nl,",
         oauth_token_url=KEYCLOAK_INTERNAL_TOKEN_URL,
         network=integration_test_docker_network,
-        version=pytestconfig.getoption("openleadr-310-version")
+        version=pytestconfig.getoption("openleadr-310-version"),
     ) as vtn_container:
         _FAILURE_LOG_SOURCES.append(("openleadr-rs-vtn-310", vtn_container.get_vtn_log_tail))
         yield IntegrationTestVTNClient(
