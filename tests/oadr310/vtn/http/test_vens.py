@@ -103,7 +103,7 @@ def test_create_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
 
 
 def test_create_ven_ven(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
-    """Test to validate that creating a ven in a VTN works correctly for a VEN. The BL token is required to delete the VEN afterward"""
+    """Test to validate that creating a ven in a VTN works correctly for a VEN. The BL token is required to delete the VEN afterward."""
     ven_name = "ven-created-by-ven"
 
     with ven_created_by_ven(vtn_client=vtn_openadr_310_ven_token, bl_client=vtn_openadr_310_bl_token, ven_name=ven_name) as created_ven:
@@ -111,7 +111,6 @@ def test_create_ven_ven(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn
         assert created_ven.ven_name == ven_name, "ven name should match"
         assert created_ven.attributes is None, "attributes should match"
         assert created_ven.targets == (), "targets should match"
-
 
 
 def test_create_ven_duplicate_name(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
@@ -288,6 +287,7 @@ def test_delete_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         # Verify the ven is deleted
         with pytest.raises(HTTPError, match="404 Client Error"):
             _ = interface.get_ven_by_id(ven_id=ven_to_delete.id)
+
 
 @pytest.mark.skip(reason="OpenLEADR does not support deleting your own VEN object")
 def test_delete_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestVTNClient, vtn_openadr_310_ven_token: IntegrationTestVTNClient) -> None:
