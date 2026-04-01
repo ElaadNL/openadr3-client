@@ -151,3 +151,4 @@ cython_debug/
 
 # Default pytest output
 test-output.xml
+_version.py
