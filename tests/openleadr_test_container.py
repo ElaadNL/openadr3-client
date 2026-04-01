@@ -215,7 +215,7 @@ class OpenAdr310VtnTestContainer(OpenLeadrVtnTestContainer):
         oauth_jwks_url: str,
         oauth_valid_audiences: str,
         oauth_token_url: str,
-        version: str = "v0.2.0-rc2",
+        version: str,
         network: Network | None = None,
     ) -> None:
         # TODO(https://github.com/OpenLEADR/openleadr-rs/pull/313#issuecomment-4031389477): change to stable release once this is resolved.  # noqa: FIX002
