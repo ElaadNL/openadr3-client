@@ -14,7 +14,7 @@ class Unit(StrEnum):
     GHG = "GHG"
     Volts = "VOLTS"
     Amps = "AMPS"
-    Celcius = "CELCIUS"
+    Celsius = "CELSIUS"
     Fahrenheit = "FAHRENHEIT"
     Percent = "PERCENT"
     KW = "KW"
