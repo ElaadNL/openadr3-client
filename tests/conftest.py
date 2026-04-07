@@ -97,7 +97,7 @@ OPENLEADR_RS_BL_SCOPES = [
     "write_events",
     "write_reports",
     "write_subscriptions",
-    "write_vens",
+    "write_vens_bl",
     "write_users",
 ]
 OPENLEADR_RS_VEN_SCOPES = [
