@@ -83,6 +83,14 @@
       }
     },
     {
+      "name": "write_vens_bl",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
       "name": "write_users",
       "protocol": "openid-connect",
       "attributes": {
@@ -114,6 +122,7 @@
         "write_reports",
         "write_subscriptions",
         "write_vens",
+        "write_vens_bl",
         "write_users"
       ],
       "protocolMappers": [

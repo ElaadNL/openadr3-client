@@ -102,11 +102,11 @@ def test_create_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
         assert created_ven.targets == ven_targets_assigned_by_bl, "targets should match"
 
 
-def test_create_ven_ven(vtn_openadr_310_ven_token: IntegrationTestVTNClient) -> None:
-    """Test to validate that creating a ven in a VTN works correctly for a BL."""
+def test_create_ven_ven(vtn_openadr_310_ven_token: IntegrationTestVTNClient, vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> None:
+    """Test to validate that creating a ven in a VTN works correctly for a VEN. The BL token is required to delete the VEN afterward."""
     ven_name = "ven-created-by-ven"
 
-    with ven_created_by_ven(vtn_client=vtn_openadr_310_ven_token, ven_name=ven_name) as created_ven:
+    with ven_created_by_ven(vtn_client=vtn_openadr_310_ven_token, bl_client=vtn_openadr_310_bl_token, ven_name=ven_name) as created_ven:
         assert created_ven.id is not None, "ven should be created successfully."
         assert created_ven.ven_name == ven_name, "ven name should match"
         assert created_ven.attributes is None, "attributes should match"
@@ -289,6 +289,7 @@ def test_delete_ven_bl(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> No
             _ = interface.get_ven_by_id(ven_id=ven_to_delete.id)
 
 
+@pytest.mark.skip(reason="OpenLEADR does not support deleting your own VEN object")
 def test_delete_associated_ven_by_ven(vtn_openadr_310_bl_token: IntegrationTestVTNClient, vtn_openadr_310_ven_token: IntegrationTestVTNClient) -> None:
     """
     Test that validates a VEN can only delete its own VEN object associated with the client.
