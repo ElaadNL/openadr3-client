@@ -26,6 +26,11 @@ _CONTAINER_LOG_TAIL_LINES = 15
 _FAILURE_LOG_SOURCES: list[tuple[str, Callable[[int], list[str]]]] = []
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Adds pytest options for the OpenADR 3.1.0 version."""
+    parser.addoption("--openleadr-310-version", default="v0.2.0-rc2", dest="openleadr-310-version")
+
+
 def _dump_container_logs_for_failure(*, failing_test: str) -> None:
     """Dump captured container logs into pytest's captured Python logs (on failure only)."""
     container_logger = logging.getLogger("tests.container_logs")
@@ -306,6 +311,7 @@ def integration_test_vtn_client(integration_test_openadr301_vtn_client: Integrat
 def integration_test_openadr310_vtn_client(
     integration_test_docker_network: Network,
     integration_test_oauth_client: IntegrationTestOAuthClient,
+    pytestconfig: pytest.Config,
 ) -> Iterable[IntegrationTestVTNClient]:
     """
     A testcontainers openleadr-vtn (OpenADR 3.1.0) fixture which is initialized once per test run.
@@ -315,6 +321,7 @@ def integration_test_openadr310_vtn_client(
     Args:
         integration_test_docker_network (Network): The docker network to which the keycloak container will be connected.
         integration_test_oauth_client (IntegrationTestOAuthClient): OAuth client for retrieving access tokens (Keycloak).
+        pytestconfig (pytest.Config): The pytest configuration object.
 
     Yields:
         Iterable[OpenAdr310VtnTestContainer]: The integration test vtn client.
@@ -325,6 +332,7 @@ def integration_test_openadr310_vtn_client(
         oauth_valid_audiences="https://integration.test.elaad.nl,",
         oauth_token_url=KEYCLOAK_INTERNAL_TOKEN_URL,
         network=integration_test_docker_network,
+        version=pytestconfig.getoption("openleadr-310-version"),
     ) as vtn_container:
         _FAILURE_LOG_SOURCES.append(("openleadr-rs-vtn-310", vtn_container.get_vtn_log_tail))
         yield IntegrationTestVTNClient(
