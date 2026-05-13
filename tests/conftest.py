@@ -231,7 +231,7 @@ def integration_test_auth_server(integration_test_docker_network: Network) -> It
     # Hardcoded to a port so we dont have to deal with runtime environment value
     # changes, and can simply set it inside pyproject.toml before hand.
     with (
-        KeycloakContainer()
+        KeycloakContainer(image="quay.io/keycloak/keycloak:26.6.1")
         .with_env("KC_HEALTH_ENABLED", "true")
         .with_network(integration_test_docker_network)
         .with_network_aliases("keycloak")
