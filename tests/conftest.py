@@ -232,6 +232,7 @@ def integration_test_auth_server(integration_test_docker_network: Network) -> It
     # changes, and can simply set it inside pyproject.toml before hand.
     with (
         KeycloakContainer()
+        .with_env("KC_HEALTH_ENABLED", "true")
         .with_network(integration_test_docker_network)
         .with_network_aliases("keycloak")
         .with_bind_ports(8080, 47005)
