@@ -861,7 +861,7 @@ dev = [
     { name = "taskipy", specifier = ">=1.14.1,<2" },
     { name = "testcontainers", extras = ["keycloak", "mqtt"], specifier = ">=4.10.0,<5" },
     { name = "types-docker", specifier = ">=7.1.0.20260109" },
-    { name = "types-oauthlib", specifier = ">=3.2.0.20250408,<4" },
+    { name = "types-oauthlib", specifier = ">=3.3.0.20260518,<4" },
     { name = "types-requests", specifier = ">=2.33.0.20260518,<3" },
     { name = "types-requests-oauthlib", specifier = ">=2.0.0.20250306,<3" },
 ]
@@ -1564,11 +1564,11 @@ wheels = [
 
 [[package]]
 name = "types-oauthlib"
-version = "3.3.0.20260324"
+version = "3.3.0.20260518"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/91/38/543938f86d81bd6a78b8c355fe81bb8da0a26e4c28addfe3443e38a683d2/types_oauthlib-3.3.0.20260324.tar.gz", hash = "sha256:3c4cc07fa33886f881682237c1e445c5f1778b44efea118f4c1e4ede82cb52f2", size = 26030, upload-time = "2026-03-24T04:06:30.898Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4f/b9/272610e9b91ce274bd50a34ef9793a1a6e6666fe1acc97462ed5df11e262/types_oauthlib-3.3.0.20260518.tar.gz", hash = "sha256:b713f6c32a0e544d165afed6b953780d99ef6997a6b6ddc07491f72bdaf5307b", size = 26126, upload-time = "2026-05-18T06:02:13.485Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/60/26f0ddade4b2bb17b3d8f3ebaac436e5487caec28831da3d7ea309fe93b9/types_oauthlib-3.3.0.20260324-py3-none-any.whl", hash = "sha256:d24662033b04f4d50a2f1fed04c1b43ff2554aa037c1dafa0424f87100a46ccd", size = 48984, upload-time = "2026-03-24T04:06:29.696Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/64/8890a1bd403dc90711c15298e1054d72e8865967d169abaf30fb93a750f6/types_oauthlib-3.3.0.20260518-py3-none-any.whl", hash = "sha256:7e35e6e8731e49fc131fb0a94b5e473ac70722dd039c308501de2a5c137ed024", size = 48964, upload-time = "2026-05-18T06:02:12.098Z" },
 ]
 
 [[package]]
