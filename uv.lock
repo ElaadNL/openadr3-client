@@ -863,7 +863,7 @@ dev = [
     { name = "types-docker", specifier = ">=7.1.0.20260109" },
     { name = "types-oauthlib", specifier = ">=3.2.0.20250408,<4" },
     { name = "types-requests", specifier = ">=2.33.0.20260518,<3" },
-    { name = "types-requests-oauthlib", specifier = ">=2.0.0.20250306,<3" },
+    { name = "types-requests-oauthlib", specifier = ">=2.0.0.20260518,<3" },
 ]
 
 [[package]]
@@ -1606,15 +1606,15 @@ wheels = [
 
 [[package]]
 name = "types-requests-oauthlib"
-version = "2.0.0.20260402"
+version = "2.0.0.20260518"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "types-oauthlib" },
     { name = "types-requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4a/2d/a5814d5c791efd9475ba41b4901b8074d6c421053bd23f27df01c4262089/types_requests_oauthlib-2.0.0.20260402.tar.gz", hash = "sha256:81d30a3e35dcbcd5c7f3a9cee17c74410d0001585f6a0b9d6963ce317433edef", size = 11097, upload-time = "2026-04-02T04:22:42.764Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ba/46/4ec142a7092ef6c2b7ba9e54768dfec183c96e3ff91790e30eb0796e61e5/types_requests_oauthlib-2.0.0.20260518.tar.gz", hash = "sha256:734f0c71c647aa5fe2718992a85e62138386b5b4cd19f40c3e5aaa2892076edd", size = 11227, upload-time = "2026-05-18T06:08:01.176Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/43/567fa9f31fc120f584aa2d621c1a139129de58ab2ffe5fff843032d66a80/types_requests_oauthlib-2.0.0.20260402-py3-none-any.whl", hash = "sha256:483637466e61017d49df8b8e622ad081cc63560d729269375117236b9d50e481", size = 14344, upload-time = "2026-04-02T04:22:41.924Z" },
+    { url = "https://files.pythonhosted.org/packages/87/6a/c9248922e77af1ae051110d4f3252dd82ac688c68563a3d4075dbd13dc68/types_requests_oauthlib-2.0.0.20260518-py3-none-any.whl", hash = "sha256:086cebd125808af81e41795ccf09a002dcc4523920a155e8926fdae98c4a0a90", size = 14326, upload-time = "2026-05-18T06:08:00.281Z" },
 ]
 
 [[package]]
