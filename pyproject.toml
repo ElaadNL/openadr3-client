@@ -51,13 +51,13 @@ version-file = "openadr3_client/_version.py"
 [dependency-groups]
 dev = [
     "mypy>=2.1.0,<3",
-    "ruff>=0.15.12,<0.16",
+    "ruff>=0.15.13,<0.16",
     "pytest>=9.0.3,<10",
     "pytest-cov>=7.0.0,<8",
     "testcontainers[keycloak, mqtt]>=4.14.2,<5",
     "pytest-env>=1.1.5,<2",
     "types-oauthlib>=3.3.0.20260518,<4",
-    "types-requests-oauthlib>=2.0.0.20260508,<3",
+    "types-requests-oauthlib>=2.0.0.20260518,<3",
     "types-requests>=2.33.0.20260518,<3",
     "pyjwt>=2.12.0,<3",
     "taskipy>=1.14.1,<2",
@@ -70,7 +70,7 @@ dev = [
     "paho-mqtt (>=2.1.0,<3.0.0)",
     "reuse>=6.2.0",
     "pre-commit>=4.6.0",
-    "types-docker>=7.1.0.20260512",
+    "types-docker>=7.1.0.20260518",
 ]
 
 [tool.hatch.build.targets.sdist]
