@@ -10,6 +10,7 @@ import pytest
 from requests import HTTPError
 
 from openadr3_client._models.common.attribute import Attribute
+from openadr3_client._models.common.value_map_collection import ValuesMap
 from openadr3_client.oadr301._vtn.http.vens import VensHttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr301.models.target import Target
@@ -68,8 +69,8 @@ def test_update_ven_by_id_non_existent(integration_test_vtn_client: IntegrationT
                 ven_name="test-ven",
                 created_date_time=tz_aware_dt,
                 modification_date_time=tz_aware_dt,
-                attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-                targets=(Target(type="test-target", values=("test-value",)),),
+                attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+                targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
             ),
         )
 
@@ -83,8 +84,8 @@ def test_create_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
 
     ven = NewVen(
         ven_name="test-ven",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
 
     response = interface.create_ven(new_ven=ven)
@@ -145,8 +146,8 @@ def test_delete_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
     # First create a ven
     ven = NewVen(
         ven_name="test-ven-with-resource-to-delete",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
@@ -162,8 +163,8 @@ def test_delete_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
         resource = NewResource(
             resource_name="test-resource",
             venID=created_ven.id,
-            attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-            targets=(Target(type="test-target", values=("test-value",)),),
+            attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+            targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
         )
         created_resource = interface.create_ven_resource(ven_id=created_ven.id, new_resource=resource)
         assert created_resource.id is not None, "resource should be created successfully"
@@ -198,8 +199,8 @@ def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
     # First create a ven
     ven = NewVen(
         ven_name="test-ven-with-with-non-existent-resource",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
@@ -223,8 +224,8 @@ def test_update_ven_resource_by_id_non_existent(integration_test_vtn_client: Int
                     venID=created_ven.id,
                     created_date_time=tz_aware_dt,
                     modification_date_time=tz_aware_dt,
-                    attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-                    targets=(Target(type="test-target", values=("test-value",)),),
+                    attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+                    targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
                 ),
             )
     finally:
@@ -241,8 +242,8 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
     # First create a ven
     ven = NewVen(
         ven_name="test-ven-with-resource-to-update",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
@@ -252,8 +253,8 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
         resource = NewResource(
             resource_name="test-resource",
             venID=created_ven.id,
-            attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-            targets=(Target(type="test-target", values=("test-value",)),),
+            attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+            targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
         )
 
         created_resource = interface.create_ven_resource(ven_id=created_ven.id, new_resource=resource)
@@ -261,8 +262,8 @@ def test_update_ven_resource_by_id(integration_test_vtn_client: IntegrationTestV
 
         resource_update = ResourceUpdate(
             resource_name="test-resource-updated-name",
-            attributes=(Attribute(type="test-attribute-updated", values=("test-value-updated",)),),
-            targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
+            attributes=ValuesMap([Attribute(type="test-attribute-updated", values=("test-value-updated",))]),
+            targets=ValuesMap([Target(type="test-target-updated", values=("test-value-updated",))]),
         )
 
         updated_resource = interface.update_ven_resource_by_id(
@@ -299,8 +300,8 @@ def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClie
     # First create a ven
     ven = NewVen(
         ven_name="test-ven-with-resource",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
@@ -309,8 +310,8 @@ def test_create_ven_resource(integration_test_vtn_client: IntegrationTestVTNClie
     resource = NewResource(
         resource_name="test-resource",
         venID=created_ven.id,
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
 
     response = interface.create_ven_resource(ven_id=created_ven.id, new_resource=resource)
@@ -335,16 +336,16 @@ def test_create_ven_duplicate_name(integration_test_vtn_client: IntegrationTestV
     # First create a ven
     ven = NewVen(
         ven_name="test-ven-duplicate",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
 
     ven2 = NewVen(
         ven_name="test-ven-duplicate",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
 
     try:
@@ -365,13 +366,13 @@ def test_get_vens_with_parameters(integration_test_vtn_client: IntegrationTestVT
     # Create two vens with different names and targets
     ven1 = NewVen(
         ven_name="test-ven-1",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target-1", values=("test-value-1",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target-1", values=("test-value-1",))]),
     )
     ven2 = NewVen(
         ven_name="test-ven-2",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target-2", values=("test-value-2",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target-2", values=("test-value-2",))]),
     )
     created_ven1 = interface.create_ven(new_ven=ven1)
     created_ven2 = interface.create_ven(new_ven=ven2)
@@ -411,8 +412,8 @@ def test_delete_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     # Create a ven to delete
     ven = NewVen(
         ven_name="test-ven-to-delete",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
@@ -449,8 +450,8 @@ def test_update_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
     # Create a ven to update
     ven = NewVen(
         ven_name="test-ven-to-update",
-        attributes=(Attribute(type="test-attribute", values=("test-value",)),),
-        targets=(Target(type="test-target", values=("test-value",)),),
+        attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
+        targets=ValuesMap([Target(type="test-target", values=("test-value",))]),
     )
     created_ven = interface.create_ven(new_ven=ven)
     assert created_ven.id is not None, "ven should be created successfully"
@@ -459,8 +460,8 @@ def test_update_ven(integration_test_vtn_client: IntegrationTestVTNClient) -> No
         # Update the ven
         ven_update = VenUpdate(
             ven_name="test-ven-updated",
-            attributes=(Attribute(type="test-attribute-updated", values=("test-value-updated",)),),
-            targets=(Target(type="test-target-updated", values=("test-value-updated",)),),
+            attributes=ValuesMap([Attribute(type="test-attribute-updated", values=("test-value-updated",))]),
+            targets=ValuesMap([Target(type="test-target-updated", values=("test-value-updated",))]),
         )
 
         updated_ven = interface.update_ven_by_id(ven_id=created_ven.id, updated_ven=created_ven.update(ven_update))

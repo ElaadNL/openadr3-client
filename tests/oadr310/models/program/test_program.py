@@ -8,9 +8,11 @@ import string
 
 import pytest
 from pydantic import ValidationError
-from pydantic_extra_types.country import CountryAlpha2
 
+from openadr3_client._models.common.attribute import Attribute
+from openadr3_client._models.common.value_map_collection import ValuesMap
 from openadr3_client.oadr310.models.program.program import NewProgram
+from openadr3_client.oadr310.models.program.program_attribute import ProgramAttributeType
 
 
 def test_new_program_creation_guard() -> None:
@@ -47,41 +49,87 @@ def test_new_program_empty_program_name() -> None:
         _ = NewProgram(program_name="")
 
 
-def test_new_program_country_code_invalid() -> None:
+def test_new_program_country_attribute_invalid() -> None:
     """
-    Test that validates that a country code of a program must be ISO 3166-1 alpha-2 compliant.
+    Test that validates that a COUNTRY attribute must be ISO 3166-1 alpha-2 compliant.
 
-    This test tries to use an invalid alpha-2 country code.
+    This test tries to use an invalid alpha-2 country code as attribute value.
     """
-    with pytest.raises(ValidationError, match="Invalid country alpha2 code"):
-        # TODO(Stijn van Houwelingen): remove all type: ignores once issue is fixed # noqa: FIX002
-        # https://github.com/pydantic/pydantic-extra-types/issues/316
-        _ = NewProgram(program_name="test-program", country="UT")  # type: ignore[arg-type]
+    with pytest.raises(ValidationError):
+        _ = NewProgram(
+            program_name="test-program",
+            attributes=ValuesMap([Attribute(type=ProgramAttributeType.COUNTRY, values=("UT",))]),
+        )
 
 
-def test_new_program_country_code_valid() -> None:
+def test_new_program_country_attribute_valid() -> None:
+    """Test that validates that a COUNTRY attribute accepts a valid ISO 3166-1 alpha-2 code."""
+    _ = NewProgram(
+        program_name="test-program",
+        attributes=ValuesMap([Attribute(type=ProgramAttributeType.COUNTRY, values=("NL",))]),
+    )
+
+
+def test_new_program_division_attribute_invalid() -> None:
     """
-    Test that validates that a country code of a program must be ISO 3166-1 alpha-2 compliant.
+    Test that validates that a PRINCIPAL_SUBDIVISION attribute must be ISO 3166-2 compliant.
 
-    This test tries to use a valid alpha-2 country code.
+    This test tries to use an invalid subdivision code.
     """
-    _ = NewProgram(program_name="test-program", country="NL")  # type: ignore[arg-type]
+    with pytest.raises(ValidationError, match="is not a valid ISO 3166-2 division code for country"):
+        _ = NewProgram(
+            program_name="test-program",
+            attributes=ValuesMap(
+                [
+                    Attribute(type=ProgramAttributeType.COUNTRY, values=("NL",)),
+                    Attribute(type=ProgramAttributeType.PRINCIPAL_SUBDIVISION, values=("NL-UI",)),
+                ]
+            ),
+        )
 
 
-def test_new_program_division_invalid() -> None:
-    """
-    Test that validates that a principal_subdivision of a program must be ISO-3166-2 compliant.
+def test_new_program_division_attribute_valid() -> None:
+    """Test that validates that a PRINCIPAL_SUBDIVISION attribute accepts a valid ISO 3166-2 code."""
+    _ = NewProgram(
+        program_name="test-program",
+        attributes=ValuesMap(
+            [
+                Attribute(type=ProgramAttributeType.COUNTRY, values=("NL",)),
+                Attribute(type=ProgramAttributeType.PRINCIPAL_SUBDIVISION, values=("NB",)),
+            ]
+        ),
+    )
 
-    This test tries to use an invalid alpha-2 country code.
-    """
-    with pytest.raises(ValidationError, match="is not a valid ISO 3166-2 division code for the program country"):
-        _ = NewProgram(program_name="test-program", country=CountryAlpha2("NL"), principal_subdivision="NL-UI")
+
+def test_new_program_subdivision_without_country_raises() -> None:
+    """Test that PRINCIPAL_SUBDIVISION attribute without COUNTRY attribute raises a validation error."""
+    with pytest.raises(ValidationError, match="PRINCIPAL_SUBDIVISION attribute cannot be set if COUNTRY attribute is not set"):
+        _ = NewProgram(
+            program_name="test-program",
+            attributes=ValuesMap([Attribute(type=ProgramAttributeType.PRINCIPAL_SUBDIVISION, values=("NB",))]),
+        )
 
 
-def test_new_program_division_valid() -> None:
-    """
-    Test that validates that a principal_subdivision of a program must be ISO-3166-2 compliant.
+def test_new_program_binding_events_boolean_valid() -> None:
+    """Test that BINDING_EVENTS attribute accepts a boolean value."""
+    _ = NewProgram(
+        program_name="test-program",
+        attributes=ValuesMap([Attribute(type=ProgramAttributeType.BINDING_EVENTS, values=(True,))]),
+    )
 
-    This test tries to use a valid ISO-3166-2 province.
-    """
-    _ = NewProgram(program_name="test-program", country=CountryAlpha2("NL"), principal_subdivision="NB")
+
+def test_new_program_binding_events_non_boolean_raises() -> None:
+    """Test that BINDING_EVENTS attribute with a non-boolean value raises a validation error."""
+    with pytest.raises(ValidationError, match="BINDING_EVENTS attribute values must be boolean"):
+        _ = NewProgram(
+            program_name="test-program",
+            attributes=ValuesMap([Attribute(type=ProgramAttributeType.BINDING_EVENTS, values=("true",))]),
+        )
+
+
+def test_new_program_custom_attribute_type() -> None:
+    """Test that custom (non-standard) attribute types are accepted."""
+    _ = NewProgram(
+        program_name="test-program",
+        attributes=ValuesMap([Attribute(type=ProgramAttributeType("MY_CUSTOM_ATTR"), values=("value",))]),
+    )

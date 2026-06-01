@@ -11,6 +11,8 @@ from openadr3_client._models._base_model import BaseModel
 from openadr3_client._models._validatable_model import OpenADRResource
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client._models.common.creation_guarded import CreationGuarded
+from openadr3_client._models.common.value_map_collection import ValuesMap
+from openadr3_client._models.common.ven_resource_attribute_type import VenResourceAttributeType
 
 
 class _ResourceBase(BaseModel):
@@ -22,7 +24,7 @@ class _ResourceBase(BaseModel):
     ven_id: str = Field(alias="venID", min_length=1, max_length=128)
     """The identifier of the ven this resource belongs to."""
 
-    attributes: tuple[Attribute, ...] | None = None
+    attributes: ValuesMap[VenResourceAttributeType, Attribute] | None = None
     """The attributes of the resource."""
 
 

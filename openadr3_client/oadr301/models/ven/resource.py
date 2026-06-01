@@ -11,7 +11,10 @@ from openadr3_client._models._base_model import BaseModel
 from openadr3_client._models._validatable_model import OpenADRResource
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client._models.common.creation_guarded import CreationGuarded
+from openadr3_client._models.common.value_map_collection import ValuesMap
+from openadr3_client._models.common.ven_resource_attribute_type import VenResourceAttributeType
 from openadr3_client.oadr301.models.target import Target
+from openadr3_client.oadr301.models.target_type import TargetType
 
 
 class Resource(ABC, OpenADRResource):
@@ -23,10 +26,10 @@ class Resource(ABC, OpenADRResource):
     ven_id: str = Field(alias="venID", min_length=1, max_length=128)
     """The identifier of the ven this resource belongs to."""
 
-    attributes: tuple[Attribute, ...] | None = None
+    attributes: ValuesMap[VenResourceAttributeType, Attribute] | None = None
     """The attributes of the resource."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: ValuesMap[TargetType, Target] | None = None
     """The targets of the resource."""
 
     @property
@@ -50,10 +53,10 @@ class ResourceUpdate(BaseModel):
     ven_id: str | None = Field(alias="venID", default=None, min_length=1, max_length=128)
     """The identifier of the ven this resource belongs to."""
 
-    attributes: tuple[Attribute, ...] | None = None
+    attributes: ValuesMap[VenResourceAttributeType, Attribute] | None = None
     """The attributes of the resource."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: ValuesMap[TargetType, Target] | None = None
     """The targets of the resource."""
 
 

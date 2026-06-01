@@ -13,6 +13,8 @@ from pydantic_extra_types.currency_code import ISO4217
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client._models.common.interval import Interval
 from openadr3_client._models.common.interval_period import IntervalPeriod
+from openadr3_client._models.common.value_map_collection import ValuesMap
+from openadr3_client._models.common.ven_resource_attribute_type import VenResourceAttributeType
 from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
 from openadr3_client.oadr310._vtn.http.programs import ProgramsHttpInterface
 from openadr3_client.oadr310._vtn.http.reports import ReportsHttpInterface
@@ -113,7 +115,7 @@ def resource_for_ven(
     ven_id: str,
     resource_name: str,
     client_id_of_resource: str,
-    attributes: tuple[Attribute, ...] | None = None,
+    attributes: ValuesMap[VenResourceAttributeType, Attribute] | None = None,
     targets: tuple[str, ...] | None = None,
 ) -> Generator[ExistingResource, None, None]:
     """
