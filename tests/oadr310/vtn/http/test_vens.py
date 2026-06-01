@@ -8,6 +8,7 @@ import pytest
 from requests import HTTPError
 
 from openadr3_client._models.common.attribute import Attribute
+from openadr3_client._models.common.value_map_collection import ValuesMap
 from openadr3_client.oadr310._vtn.http.vens import VensHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.filters import PaginationFilter, TargetFilter
 from openadr3_client.oadr310.models.ven.ven import VenUpdateBlRequest, VenUpdateVenRequest
@@ -83,7 +84,7 @@ def test_update_ven_by_id_non_existent(vtn_openadr_310_bl_token: IntegrationTest
             ven_id="fake-ven-id",
             updated_ven=VenUpdateBlRequest(
                 ven_name="test-ven",
-                attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+                attributes=ValuesMap([Attribute(type="test-attribute", values=("test-value",))]),
                 targets=("test-value",),
                 clientID="non-existent-client-id",
             ),

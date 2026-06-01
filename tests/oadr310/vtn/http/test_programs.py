@@ -89,15 +89,8 @@ def test_create_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> N
     with new_program(vtn_client=vtn_openadr_310_bl_token, program_name="test-program", targets=targets_of_program) as program:
         assert program.id is not None, "program should be created successfully."
         assert program.program_name == "test-program", "program name should match"
-        assert program.program_long_name is None, "program long name should match"
-        assert program.retailer_name is None, "retailer name should match"
-        assert program.retailer_long_name is None, "retailer long name should match"
-        assert program.program_type is None, "program type should match"
-        assert program.country is None, "country should match"
-        assert program.principal_subdivision is None, "principal subdivision should match"
+        assert program.attributes is None, "attributes should be None by default"
         assert program.program_descriptions is None, "program descriptions should match"
-        assert program.binding_events is None, "binding events should match"
-        assert program.local_price is None, "local price should match"
         assert program.targets == targets_of_program, "targets should be empty"
 
 
@@ -153,12 +146,7 @@ def test_delete_program(vtn_openadr_310_bl_token: IntegrationTestVTNClient) -> N
 
         assert deleted_program.id == created_program.id, "program ID should match"
         assert deleted_program.program_name == created_program.program_name, "program name should match"
-        assert deleted_program.program_long_name == created_program.program_long_name, "program long name should match"
-        assert deleted_program.retailer_name == created_program.retailer_name, "retailer name should match"
-        assert deleted_program.retailer_long_name == created_program.retailer_long_name, "retailer long name should match"
-        assert deleted_program.program_type == created_program.program_type, "program type should match"
-        assert deleted_program.country == created_program.country, "country should match"
-        assert deleted_program.principal_subdivision == created_program.principal_subdivision, "principal subdivision should match"
+        assert deleted_program.attributes == created_program.attributes, "attributes should match"
         assert deleted_program.created_date_time == created_program.created_date_time, "created date time should match"
         assert deleted_program.modification_date_time == created_program.modification_date_time, "modification date time should match"
         assert deleted_program.interval_period == created_program.interval_period, "interval period should match"

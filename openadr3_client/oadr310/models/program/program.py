@@ -10,7 +10,7 @@ from abc import ABC
 from typing import final
 
 import pycountry
-from pydantic import AnyUrl, AwareDatetime, Field, model_validator
+from pydantic import AnyUrl, AwareDatetime, Field, TypeAdapter, model_validator
 from pydantic_extra_types.country import CountryAlpha2
 
 from openadr3_client._models._base_model import BaseModel
@@ -18,7 +18,43 @@ from openadr3_client._models._validatable_model import OpenADRResource
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client._models.common.creation_guarded import CreationGuarded
 from openadr3_client._models.common.interval_period import IntervalPeriod
+from openadr3_client._models.common.value_map_collection import ValuesMap
 from openadr3_client.oadr310.models.event.event_payload import EventPayloadDescriptor
+from openadr3_client.oadr310.models.program.program_attribute import ProgramAttributeType
+
+
+def _validate_binding_events(attributes: ValuesMap) -> None:  # type: ignore[type-arg]
+    attr = attributes.get_by_type(ProgramAttributeType.BINDING_EVENTS)
+    if attr is None:
+        return
+    for val in attr.values:
+        if not isinstance(val, bool):
+            exc_msg = f"BINDING_EVENTS attribute values must be boolean, got: {type(val).__name__}"
+            raise ValueError(exc_msg)  # noqa: TRY004
+
+
+def _validate_country_subdivision(attributes: ValuesMap[ProgramAttributeType]) -> None:  # type: ignore[type-arg]
+    country_attr = attributes.get_by_type(ProgramAttributeType.COUNTRY)
+    subdivision_attr = attributes.get_by_type(ProgramAttributeType.PRINCIPAL_SUBDIVISION)
+
+    if country_attr is not None:
+        TypeAdapter(CountryAlpha2).validate_python(country_attr.values[0])
+
+    if subdivision_attr is None:
+        return
+
+    if country_attr is None:
+        exc_msg = "PRINCIPAL_SUBDIVISION attribute cannot be set if COUNTRY attribute is not set."
+        raise ValueError(exc_msg)
+
+    country = country_attr.values[0]
+    subdivisions_of_country = pycountry.subdivisions.get(country_code=country) or []
+    principals_only = [s.code.split("-")[-1] for s in subdivisions_of_country]
+
+    for subdivision in subdivision_attr.values:
+        if subdivision not in principals_only:
+            exc_msg = f"{subdivision} is not a valid ISO 3166-2 division code for country {country}."
+            raise ValueError(exc_msg)
 
 
 class ProgramDescription(BaseModel):  # type: ignore[call-arg]
@@ -36,24 +72,6 @@ class _ProgramBase(BaseModel):
 
     Must be between 1 and 128 characters long."""
 
-    program_long_name: str | None = None
-    """The optional long name of the program."""
-
-    retailer_name: str | None = None
-    """The optional energy retailer name of the program."""
-
-    retailer_long_name: str | None = None
-    """The optional energy retailer long name of the program."""
-
-    program_type: str | None = None
-    """The optional program type of the program."""
-
-    country: CountryAlpha2 | None = None
-    """The optional alpha-2 country code for the program."""
-
-    principal_subdivision: str | None = None
-    """The optional ISO-3166-2 coding, for example state in the US."""
-
     interval_period: IntervalPeriod | None = None
     """The interval period of the program."""
 
@@ -64,48 +82,22 @@ class _ProgramBase(BaseModel):
     List of URLs to human and/or machine-readable content.
     """
 
-    binding_events: bool | None = None
-    """Whether events inside the program are considered immutable."""
-
-    local_price: bool | None = None
-    """Whether the price of the events is local.
-
-    Typically true if events have been adapted from a grid event.
-    """
-
     payload_descriptors: tuple[EventPayloadDescriptor, ...] | None = None
     """The event payload descriptors of the program."""
 
     targets: tuple[str, ...] | None = None
     """The targets of the program."""
 
-    attributes: tuple[Attribute, ...] | None = None
+    attributes: ValuesMap[ProgramAttributeType, Attribute] | None = None
     """The attributes of the program."""
 
     @model_validator(mode="after")
-    def validate_iso_3166_2(self) -> _ProgramBase:
-        """
-        Validates that principal_subdivision is iso-3166-2 compliant.
-
-        The principal_subdivision is typically part of the ISO-3166 country code.
-        However, OpenADR has opted to split this ISO-3166 code into the ISO-3166-1
-        and ISO-3166-2 codes.
-
-        For example, the ISO-3166-1 code for the United States is "US".
-        The ISO-3166-2 code for the state of California is "CA".
-        """
-        if self.principal_subdivision:
-            if not self.country:
-                exc_msg = "principal sub division cannot be set if country is not set."
-                raise ValueError(exc_msg)
-            subdivisions_of_country = pycountry.subdivisions.get(country_code=self.country)
-
-            principals_only = [subdivision.code.split("-")[-1] for subdivision in subdivisions_of_country]
-
-            if self.principal_subdivision not in principals_only:
-                exc_msg = f"{self.principal_subdivision} is not a valid ISO 3166-2 division code for the program country {{self.country}}."
-                raise ValueError(exc_msg)
-
+    def validate_attributes(self) -> _ProgramBase:
+        """Validate program-specific attribute constraints."""
+        if not self.attributes:
+            return self
+        _validate_binding_events(self.attributes)
+        _validate_country_subdivision(self.attributes)
         return self
 
 

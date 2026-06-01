@@ -11,7 +11,10 @@ from openadr3_client._models._base_model import BaseModel
 from openadr3_client._models._validatable_model import OpenADRResource
 from openadr3_client._models.common.attribute import Attribute
 from openadr3_client._models.common.creation_guarded import CreationGuarded
+from openadr3_client._models.common.value_map_collection import ValuesMap
+from openadr3_client._models.common.ven_resource_attribute_type import VenResourceAttributeType
 from openadr3_client.oadr301.models.target import Target
+from openadr3_client.oadr301.models.target_type import TargetType
 from openadr3_client.oadr301.models.ven.resource import Resource
 
 
@@ -21,10 +24,10 @@ class Ven(ABC, OpenADRResource):
     ven_name: str = Field(min_length=1, max_length=128)
     """The ven name of the ven object."""
 
-    attributes: tuple[Attribute, ...] | None = None
+    attributes: ValuesMap[VenResourceAttributeType, Attribute] | None = None
     """The attributes of the ven."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: ValuesMap[TargetType, Target] | None = None
     """The targets of the ven object."""
 
     resources: tuple[Resource, ...] | None = None
@@ -48,10 +51,10 @@ class VenUpdate(BaseModel):
     ven_name: str | None = Field(default=None, min_length=1, max_length=128)
     """The ven name of the ven object."""
 
-    attributes: tuple[Attribute, ...] | None = None
+    attributes: ValuesMap[VenResourceAttributeType, Attribute] | None = None
     """The attributes of the ven."""
 
-    targets: tuple[Target, ...] | None = None
+    targets: ValuesMap[TargetType, Target] | None = None
     """The targets of the ven object."""
 
     resources: tuple[Resource, ...] | None = None

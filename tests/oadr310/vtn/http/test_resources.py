@@ -8,6 +8,8 @@ import pytest
 from requests import HTTPError
 
 from openadr3_client._models.common.attribute import Attribute
+from openadr3_client._models.common.value_map_collection import ValuesMap
+from openadr3_client._models.common.ven_resource_attribute_type import VenResourceAttributeType
 from openadr3_client.oadr310._vtn.http.resources import ResourcesHttpInterface
 from openadr3_client.oadr310.models.resource.resource import ResourceUpdateBlRequest
 from tests.conftest import IntegrationTestVTNClient
@@ -75,7 +77,7 @@ def test_delete_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
             ven_id=created_ven.id,
             resource_name="test-resource",
             client_id_of_resource=created_ven.client_id,
-            attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+            attributes=ValuesMap([Attribute(type=VenResourceAttributeType("test-attribute"), values=("test-value",))]),
             targets=("test-target",),
         ) as created_resource,
     ):
@@ -87,8 +89,8 @@ def test_delete_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
         assert deleted_resource.created_date_time == created_resource.created_date_time, "created date time should match"
         assert deleted_resource.modification_date_time == created_resource.modification_date_time, "modification date time should match"
         assert deleted_resource.attributes is not None and len(deleted_resource.attributes) == 1, "attribute count should match"
-        assert deleted_resource.attributes[0].type == "test-attribute", "attribute type should match"
-        assert deleted_resource.attributes[0].values == ("test-value",), "attribute values should match"
+        assert deleted_resource.attributes.get_by_type(VenResourceAttributeType("test-attribute")) is not None, "attribute type should match"
+        assert deleted_resource.attributes.get_by_type(VenResourceAttributeType("test-attribute")).values == ("test-value",), "attribute values should match"  # type: ignore[union-attr]
         assert deleted_resource.targets is not None and len(deleted_resource.targets) == 1, "target count should match"
         assert deleted_resource.targets[0] == "test-target", "target should match"
 
@@ -118,7 +120,7 @@ def test_update_ven_resource_by_id_non_existent(vtn_openadr_310_bl_token: Integr
             updated_resource=ResourceUpdateBlRequest(
                 resource_name="test-resource",
                 venID=created_ven.id,
-                attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+                attributes=ValuesMap([Attribute(type=VenResourceAttributeType("test-attribute"), values=("test-value",))]),
                 clientID=created_ven.client_id,
                 targets=("test-target",),
             ),
@@ -146,13 +148,13 @@ def test_update_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
             ven_id=created_ven.id,
             resource_name="test-resource",
             client_id_of_resource=created_ven.client_id,
-            attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+            attributes=ValuesMap([Attribute(type=VenResourceAttributeType("test-attribute"), values=("test-value",))]),
             targets=("test-target",),
         ) as created_resource,
     ):
         resource_update = ResourceUpdateBlRequest(
             resource_name="test-resource-updated-name",
-            attributes=(Attribute(type="test-attribute-updated", values=("test-value-updated",)),),
+            attributes=ValuesMap([Attribute(type=VenResourceAttributeType("test-attribute-updated"), values=("test-value-updated",))]),
             clientID=created_ven.client_id,
             targets=("test-target-updated",),
             venID=created_resource.ven_id,
@@ -168,8 +170,8 @@ def test_update_ven_resource_by_id(vtn_openadr_310_bl_token: IntegrationTestVTNC
         assert updated_resource.ven_id == created_resource.ven_id, "ven id should match"
         assert updated_resource.created_date_time == created_resource.created_date_time, "created date time should match"
         assert updated_resource.attributes is not None and len(updated_resource.attributes) == 1, "attribute count should match"
-        assert updated_resource.attributes[0].type == "test-attribute-updated", "attribute type should match"
-        assert updated_resource.attributes[0].values == ("test-value-updated",), "attribute values should match"
+        assert updated_resource.attributes.get_by_type(VenResourceAttributeType("test-attribute-updated")) is not None, "attribute type should match"
+        assert updated_resource.attributes.get_by_type(VenResourceAttributeType("test-attribute-updated")).values == ("test-value-updated",), "attribute values should match"  # type: ignore[union-attr]
         assert updated_resource.targets is not None and len(updated_resource.targets) == 1, "target count should match"
         assert updated_resource.targets[0] == "test-target-updated", "target should match"
 
@@ -188,7 +190,7 @@ def test_create_ven_resource(vtn_openadr_310_bl_token: IntegrationTestVTNClient)
             ven_id=created_ven.id,
             resource_name="test-resource",
             client_id_of_resource=created_ven.client_id,
-            attributes=(Attribute(type="test-attribute", values=("test-value",)),),
+            attributes=ValuesMap([Attribute(type=VenResourceAttributeType("test-attribute"), values=("test-value",))]),
             targets=("test-target",),
         ) as created_resource,
     ):
