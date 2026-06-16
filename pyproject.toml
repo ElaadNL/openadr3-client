@@ -59,7 +59,7 @@ dev = [
     "types-oauthlib>=3.3.0.20260518,<4",
     "types-requests-oauthlib>=2.0.0.20260518,<3",
     "types-requests>=2.33.0.20260518,<3",
-    "pyjwt>=2.12.0,<3",
+    "pyjwt>=2.13.0,<3",
     "taskipy>=1.14.1,<2",
     "bandit[toml]>=1.9.4,<2",
     # Pandas optional dependencies (keep in sync)
