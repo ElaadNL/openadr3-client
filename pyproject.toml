@@ -60,7 +60,6 @@ dev = [
     "types-requests-oauthlib>=2.0.0.20260610,<3",
     "types-requests>=2.33.0.20260518,<3",
     "taskipy>=1.14.1,<2",
-    "bandit[toml]>=1.9.4,<2",
     # Pandas optional dependencies (keep in sync)
     "pandas (>=2.2.3,<3.0.0)",
     "pandera[mypy,pandas] (>=0.26.1,<0.27.0)",
@@ -79,8 +78,8 @@ include = ["openadr3_client"]
 include = ["openadr3_client"]
 
 [tool.taskipy.tasks]
-local-ci = "task check && task format && task mypy && task bandit && task test && task reuse"
-fix = "task check-fix && task format-fix && task mypy && task bandit"
+local-ci = "task check && task format && task mypy && task test && task reuse"
+fix = "task check-fix && task format-fix && task mypy"
 check = "ruff check ."
 check-fix = "ruff check --fix ."
 check-ci = "ruff check --output-format=github --no-cache ."
@@ -88,7 +87,6 @@ mypy = "mypy . --check-untyped-defs"
 format = "ruff format . --diff"
 format-fix = "ruff format ."
 format-ci = "ruff format --diff --no-cache ."
-bandit = "bandit -c pyproject.toml -r ."
 # Will only add headers to files that are not already licensed.
 # Cannot ignore uv.lock through REUSE.toml, see https://codeberg.org/fsfe/reuse-tool/pulls/1303
 reuse-fix = """
@@ -142,9 +140,6 @@ ignore = [
 # Ignores S101 ("Use of 'assert' detected") for the tests.
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "ANN201", "SLF001", "S106", "S105", "S311", "PLR2004", "PT018"]
-
-[tool.bandit]
-exclude_dirs = ["tests", ".venv"]
 
 [tool.pytest]
 # https://github.com/zupo/awesome-pytest-speedup?tab=readme-ov-file
