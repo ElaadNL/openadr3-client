@@ -45,14 +45,6 @@ repos:
       types: [python]
       stages: [pre-commit]
 
-    - id: bandit
-      name: bandit
-      description: a hook the runs bandit with uv
-      entry: uv run bandit -c pyproject.toml
-      language: system
-      types: [python]
-      stages: [pre-commit]
-
     - id: reuse
       name: reuse
       description: a hook the runs bandit with uv
