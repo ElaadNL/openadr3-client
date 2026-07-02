@@ -4,12 +4,13 @@
 
 """Module containing fixtures relevant for testing the authentication module."""
 
+import base64
+import json
 import logging
 import os
 from collections.abc import Callable, Generator, Iterable
 from typing import Any, cast
 
-import jwt
 import pytest
 from testcontainers.core.network import Network
 from testcontainers.keycloak import KeycloakContainer
@@ -170,10 +171,20 @@ class IntegrationTestVTNClient:
         self.openadr_client_id = openadr_client_id or config.client_id
 
 
+def _decode_jwt_payload(token: str) -> dict[str, Any]:
+    """
+    Manually decodes a JWT payload from a token string, saves a dependency on `jwt`.
+
+    It only gets the subject string; signature verification is handled by the VTN itself.
+    """
+    _, payload_b64, _ = token.split(".")
+    payload_b64 += "=" * (-len(payload_b64) % 4)  # restore base64 padding JWTs strip
+    return json.loads(base64.urlsafe_b64decode(payload_b64))
+
+
 def _openadr_client_id_from_oauth(config: OAuthTokenManagerConfig) -> str:
     token = OAuthTokenManager(config).get_access_token()
-    # We only need the subject string; signature verification is handled by the VTN itself.
-    claims = jwt.decode(token, options={"verify_signature": False})
+    claims = _decode_jwt_payload(token)
     sub = claims.get("sub")
     if isinstance(sub, str) and sub:
         return sub

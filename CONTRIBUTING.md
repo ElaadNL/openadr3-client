@@ -56,6 +56,8 @@ uv run task local-ci
 2. (`uv sync`)
 3. `uv run task test`
 
+If you run into issues on Linux with Docker Desktop, try running `DOCKER_HOST=unix:///home/$USER/.docker/desktop/docker.sock uv run task test`
+
 ## Pre-commit
 
 This repository includes pre-commit hooks. To install the pre-commit hooks, run `uv tool install pre-commit`, then `pre-commit install`. There is a preference for running pre-commit hooks locally, so that all tooling (CI and pre-commit hooks) use the same environment and tool versions.
