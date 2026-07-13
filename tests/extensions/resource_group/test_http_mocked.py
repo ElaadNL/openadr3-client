@@ -53,7 +53,7 @@ _DELETED_RESOURCE_GROUP_JSON = {
 
 
 @pytest.fixture
-def interface() -> ResourceGroupsHttpInterface:
+def interface() -> tuple[ResourceGroupsHttpInterface, MagicMock]:
     """A ResourceGroupsHttpInterface with its authenticated session replaced by a mock."""
     instance = ResourceGroupsHttpInterface(
         base_url=_BASE_URL,
@@ -61,89 +61,106 @@ def interface() -> ResourceGroupsHttpInterface:
         verify_tls_certificate=False,
         allow_insecure_http=True,
     )
-    instance.session = MagicMock()
-    return instance
+    mock_session = MagicMock()
+    instance.session = mock_session
+    return instance, mock_session
 
 
-def test_get_resource_groups_issues_get_with_no_params_by_default(interface: ResourceGroupsHttpInterface) -> None:
+def test_get_resource_groups_issues_get_with_no_params_by_default(
+    interface: tuple[ResourceGroupsHttpInterface, MagicMock],
+) -> None:
     """get_resource_groups with no filters issues a GET with empty query params."""
-    interface.session.get.return_value.json.return_value = [_EXISTING_RESOURCE_GROUP_JSON]
+    instance, mock_session = interface
+    mock_session.get.return_value.json.return_value = [_EXISTING_RESOURCE_GROUP_JSON]
 
-    result = interface.get_resource_groups()
+    result = instance.get_resource_groups()
 
-    interface.session.get.assert_called_once_with(f"{_BASE_URL}/{BASE_PREFIX}", params={})
-    interface.session.get.return_value.raise_for_status.assert_called_once()
+    mock_session.get.assert_called_once_with(f"{_BASE_URL}/{BASE_PREFIX}", params={})
+    mock_session.get.return_value.raise_for_status.assert_called_once()
     assert len(result) == 1
     assert result[0].id == "rg-1"
 
 
 def test_get_resource_groups_merges_name_target_and_pagination_filters(
-    interface: ResourceGroupsHttpInterface,
+    interface: tuple[ResourceGroupsHttpInterface, MagicMock],
 ) -> None:
     """get_resource_groups merges resourceGroupName, target, and pagination into query params."""
-    interface.session.get.return_value.json.return_value = []
+    instance, mock_session = interface
+    mock_session.get.return_value.json.return_value = []
 
-    interface.get_resource_groups(
+    instance.get_resource_groups(
         resource_group_name="RG-1",
         target=TargetFilter(targets=["group-1"]),
         pagination=PaginationFilter(skip=0, limit=10),
     )
 
-    interface.session.get.assert_called_once_with(
+    mock_session.get.assert_called_once_with(
         f"{_BASE_URL}/{BASE_PREFIX}",
         params={"targets": ["group-1"], "skip": 0, "limit": 10, "resourceGroupName": "RG-1"},
     )
 
 
-def test_get_resource_group_by_id_issues_get_to_id_url(interface: ResourceGroupsHttpInterface) -> None:
+def test_get_resource_group_by_id_issues_get_to_id_url(
+    interface: tuple[ResourceGroupsHttpInterface, MagicMock],
+) -> None:
     """get_resource_group_by_id issues a GET to the /resource_groups/{id} URL."""
-    interface.session.get.return_value.json.return_value = _EXISTING_RESOURCE_GROUP_JSON
+    instance, mock_session = interface
+    mock_session.get.return_value.json.return_value = _EXISTING_RESOURCE_GROUP_JSON
 
-    result = interface.get_resource_group_by_id("rg-1")
+    result = instance.get_resource_group_by_id("rg-1")
 
-    interface.session.get.assert_called_once_with(f"{_BASE_URL}/{BASE_PREFIX}/rg-1")
-    interface.session.get.return_value.raise_for_status.assert_called_once()
+    mock_session.get.assert_called_once_with(f"{_BASE_URL}/{BASE_PREFIX}/rg-1")
+    mock_session.get.return_value.raise_for_status.assert_called_once()
     assert result.id == "rg-1"
 
 
-def test_create_resource_group_issues_post_with_serialized_body(interface: ResourceGroupsHttpInterface) -> None:
+def test_create_resource_group_issues_post_with_serialized_body(
+    interface: tuple[ResourceGroupsHttpInterface, MagicMock],
+) -> None:
     """create_resource_group issues a POST with the camelCase-serialized new resource group."""
-    interface.session.post.return_value.json.return_value = _EXISTING_RESOURCE_GROUP_JSON
+    instance, mock_session = interface
+    mock_session.post.return_value.json.return_value = _EXISTING_RESOURCE_GROUP_JSON
     new_resource_group = NewResourceGroup(resource_group_name="RG-1", targets=("group-1",))
 
-    result = interface.create_resource_group(new_resource_group)
+    result = instance.create_resource_group(new_resource_group)
 
-    interface.session.post.assert_called_once_with(
+    mock_session.post.assert_called_once_with(
         f"{_BASE_URL}/{BASE_PREFIX}",
         json=new_resource_group.model_dump(by_alias=True, mode="json"),
     )
-    interface.session.post.return_value.raise_for_status.assert_called_once()
+    mock_session.post.return_value.raise_for_status.assert_called_once()
     assert result.id == "rg-1"
 
 
-def test_update_resource_group_by_id_issues_put_with_serialized_body(interface: ResourceGroupsHttpInterface) -> None:
+def test_update_resource_group_by_id_issues_put_with_serialized_body(
+    interface: tuple[ResourceGroupsHttpInterface, MagicMock],
+) -> None:
     """update_resource_group_by_id issues a PUT to the /resource_groups/{id} URL with the update body."""
-    interface.session.put.return_value.json.return_value = _EXISTING_RESOURCE_GROUP_JSON
+    instance, mock_session = interface
+    mock_session.put.return_value.json.return_value = _EXISTING_RESOURCE_GROUP_JSON
     update = ResourceGroupUpdate(resource_group_name="RG-1b")
 
-    result = interface.update_resource_group_by_id("rg-1", update)
+    result = instance.update_resource_group_by_id("rg-1", update)
 
-    interface.session.put.assert_called_once_with(
+    mock_session.put.assert_called_once_with(
         f"{_BASE_URL}/{BASE_PREFIX}/rg-1",
         json=update.model_dump(by_alias=True, mode="json"),
     )
-    interface.session.put.return_value.raise_for_status.assert_called_once()
+    mock_session.put.return_value.raise_for_status.assert_called_once()
     assert result.id == "rg-1"
 
 
-def test_delete_resource_group_by_id_issues_delete_to_id_url(interface: ResourceGroupsHttpInterface) -> None:
+def test_delete_resource_group_by_id_issues_delete_to_id_url(
+    interface: tuple[ResourceGroupsHttpInterface, MagicMock],
+) -> None:
     """delete_resource_group_by_id issues a DELETE to the /resource_groups/{id} URL."""
-    interface.session.delete.return_value.json.return_value = _DELETED_RESOURCE_GROUP_JSON
+    instance, mock_session = interface
+    mock_session.delete.return_value.json.return_value = _DELETED_RESOURCE_GROUP_JSON
 
-    result = interface.delete_resource_group_by_id("rg-1")
+    result = instance.delete_resource_group_by_id("rg-1")
 
-    interface.session.delete.assert_called_once_with(f"{_BASE_URL}/{BASE_PREFIX}/rg-1")
-    interface.session.delete.return_value.raise_for_status.assert_called_once()
+    mock_session.delete.assert_called_once_with(f"{_BASE_URL}/{BASE_PREFIX}/rg-1")
+    mock_session.delete.return_value.raise_for_status.assert_called_once()
     assert result.id == "rg-1"
 
 
