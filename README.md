@@ -151,6 +151,65 @@ events = ven_client.events.get_events(target=..., pagination=..., program_id=...
 # Process the events as needed...
 ```
 
+## Resource Groups (Experimental Extension)
+
+> **Note:** Resource groups are not yet part of any released OpenADR 3 standard. This feature is provided as an experimental extension and exists outside of any specific `OADRVersion`. Standardization is currently in progress as part of the upcoming OpenADR 3.2 specification, so this API may be subject to breaking changes.
+
+Resource groups allow VEN resources (and other resource groups) to be logically grouped together. This enables operators to target collections of VENs as a single unit when creating programs and events. VENs reading their own group only see the children that belong to them — other members are obfuscated server-side.
+
+Because resource groups are not yet standardized, they are exposed as a standalone extension client via `ResourceGroupClientFactory`, separate from the core BL and VEN clients.
+
+- **BL client** — full CRUD access (`create`, `read`, `update`, `delete`)
+- **VEN client** — read-only access (children are obfuscated)
+
+### Example Resource Group Usage
+
+```python
+from openadr3_client.extensions.resource_group import (
+    ResourceGroupClientFactory,
+    NewResourceGroup,
+    ResourceGroupChild,
+    TargetFilter,
+)
+
+# BL client — full CRUD
+bl = ResourceGroupClientFactory.create_bl_client(
+    vtn_base_url="https://vtn.example.com",
+    client_id="your_client_id",
+    client_secret="your_client_secret",
+    token_url="https://auth.example.com/token",
+    scopes=["read_all", "write_programs"],
+)
+
+# Create a new resource group
+new_group = NewResourceGroup(
+    resource_group_name="my-group",
+    children=(ResourceGroupChild(type="ven_resource", id="ven-res-1"),),
+)
+created_group = bl.create_resource_group(new_group)
+
+# Read resource groups
+groups = bl.get_resource_groups(target=TargetFilter(targets=["zone-a"]))
+single = bl.get_resource_group_by_id(created_group.id)
+
+# Delete a resource group
+bl.delete_resource_group_by_id(created_group.id)
+
+# VEN client — read-only, children are obfuscated
+from openadr3_client.extensions.resource_group import PaginationFilter
+
+ven = ResourceGroupClientFactory.create_ven_client(
+    vtn_base_url="https://vtn.example.com",
+    client_id="your_client_id",
+    client_secret="your_client_secret",
+    token_url="https://auth.example.com/token",
+    scopes=["read_ven_objects"],
+)
+my_groups = ven.get_resource_groups(pagination=PaginationFilter(skip=0, limit=10))
+```
+
+> **Compatibility notice:** VTN support for resource groups may vary. Check with your VTN provider before relying on this functionality in production.
+
 ## Data Format Conversion
 
 The library provides convenience methods to convert between OpenADR3 event intervals and common data formats. These conversions can be used both for input (creating event intervals from a common data format) and output (processing existing event intervals to a common data format).
