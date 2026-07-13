@@ -17,6 +17,7 @@ from openadr3_client.extensions.resource_group.models.resource_group import (
 )
 from tests.conftest import IntegrationTestVTNClient
 
+
 def _bl_interface(client: IntegrationTestVTNClient) -> ResourceGroupsHttpInterface:
     return ResourceGroupsHttpInterface(
         base_url=client.vtn_base_url,
@@ -30,9 +31,7 @@ def test_create_and_get_resource_group(vtn_openadr_310_bl_token: IntegrationTest
     """A BL client can create a resource group and read it back by id."""
     interface = _bl_interface(vtn_openadr_310_bl_token)
 
-    created = interface.create_resource_group(
-        NewResourceGroup(resource_group_name="RG-create", targets=("group-1",))
-    )
+    created = interface.create_resource_group(NewResourceGroup(resource_group_name="RG-create", targets=("group-1",)))
     assert created.resource_group_name == "RG-create"
     assert created.id
 
@@ -58,9 +57,7 @@ def test_update_resource_group(vtn_openadr_310_bl_token: IntegrationTestVTNClien
     interface = _bl_interface(vtn_openadr_310_bl_token)
     created = interface.create_resource_group(NewResourceGroup(resource_group_name="RG-update"))
     try:
-        updated = interface.update_resource_group_by_id(
-            created.id, ResourceGroupUpdate(resource_group_name="RG-updated")
-        )
+        updated = interface.update_resource_group_by_id(created.id, ResourceGroupUpdate(resource_group_name="RG-updated"))
         assert updated.resource_group_name == "RG-updated"
     finally:
         interface.delete_resource_group_by_id(created.id)

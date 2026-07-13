@@ -40,9 +40,7 @@ class WriteOnlyResourceGroupsInterface(ABC):
         """Create a new resource group."""
 
     @abstractmethod
-    def update_resource_group_by_id(
-        self, resource_group_id: str, updated_resource_group: ResourceGroupUpdate
-    ) -> ExistingResourceGroup:
+    def update_resource_group_by_id(self, resource_group_id: str, updated_resource_group: ResourceGroupUpdate) -> ExistingResourceGroup:
         """Update the resource group with the given id."""
 
     @abstractmethod

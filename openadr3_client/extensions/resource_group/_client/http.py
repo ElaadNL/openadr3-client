@@ -95,9 +95,7 @@ class ResourceGroupsWriteOnlyHttpInterface(WriteOnlyResourceGroupsInterface, Aut
             response.raise_for_status()
             return ExistingResourceGroup.model_validate(response.json())
 
-    def update_resource_group_by_id(
-        self, resource_group_id: str, updated_resource_group: ResourceGroupUpdate
-    ) -> ExistingResourceGroup:
+    def update_resource_group_by_id(self, resource_group_id: str, updated_resource_group: ResourceGroupUpdate) -> ExistingResourceGroup:
         response = self.session.put(
             f"{self.base_url}/{BASE_PREFIX}/{resource_group_id}",
             json=updated_resource_group.model_dump(by_alias=True, mode="json"),
