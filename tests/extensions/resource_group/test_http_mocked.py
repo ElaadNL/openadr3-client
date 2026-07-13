@@ -5,11 +5,8 @@
 """
 Mocked-session unit tests for the resource group HTTP client.
 
-The pinned OpenLEADR-rs VTN testcontainer (default v0.2.0-rc2, see
-tests/conftest.py `--openleadr-310-version`) predates resource group support
-(added in openleadr-rs 0.2.3), so the integration tests in test_http.py are
-skipped. These tests stub `interface.session` to verify the client issues the
-expected HTTP verb/URL/body for each operation without needing a live VTN.
+These tests stub `interface.session` to verify the client issues the expected
+HTTP verb/URL/body for each operation without needing a live VTN.
 """
 
 from unittest.mock import MagicMock

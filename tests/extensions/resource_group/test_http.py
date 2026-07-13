@@ -17,13 +17,6 @@ from openadr3_client.extensions.resource_group.models.resource_group import (
 )
 from tests.conftest import IntegrationTestVTNClient
 
-# The pinned OpenLEADR-rs VTN testcontainer image (default v0.2.0-rc2, see
-# tests/conftest.py `--openleadr-310-version`) predates resource group support,
-# which landed in openleadr-rs 0.2.3. Until the pinned image is bumped to an
-# NLFlex-capable version, these integration tests cannot run against the
-# testcontainer. See plan Task 3 Step 1 and the Task 3 execution report.
-
-
 def _bl_interface(client: IntegrationTestVTNClient) -> ResourceGroupsHttpInterface:
     return ResourceGroupsHttpInterface(
         base_url=client.vtn_base_url,

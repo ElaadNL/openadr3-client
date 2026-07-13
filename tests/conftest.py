@@ -28,7 +28,7 @@ _FAILURE_LOG_SOURCES: list[tuple[str, Callable[[int], list[str]]]] = []
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Adds pytest options for the OpenADR 3.1.0 version."""
-    parser.addoption("--openleadr-310-version", default="v0.2.0-rc2", dest="openleadr-310-version")
+    parser.addoption("--openleadr-310-version", default="v0.2.4", dest="openleadr-310-version")
 
 
 def _dump_container_logs_for_failure(*, failing_test: str) -> None:
