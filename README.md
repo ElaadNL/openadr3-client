@@ -24,6 +24,7 @@ Features include:
   - **VEN client**: VEN/device workflows (read Programs/Events, manage VEN registration, Subscriptions, and Reports).
 - **OAuth2 client-credentials auth with token caching**: Built-in OAuth token manager (requests `scopes`/`audience`), caches tokens, refreshes them automatically.
   - **OpenADR 3.1.0 token discovery**: If `token_url=None` and `version=OADR_310`, the BL/VEN HTTP factories can discover the token endpoint via the VTN discovery/auth server endpoint.
+  - **Anonymous (unauthenticated) connections**: Omit both `client_id` and `client_secret` to connect to a VTN that does not require OAuth (for example a public price server or a development/test VTN). No token is provisioned and requests are sent unauthenticated. This is intended for reading public data (such as Programs and Events); write and registration operations are still sent, but a VTN that gates them behind authentication will reject them.
 - **HTTP + TLS controls**: HTTP clients built on `requests`, with configurable TLS verification (`verify_vtn_tls_certificate=True/False/custom CA bundle`).
 - **Typed, validated domain models**: Pydantic v2 models with strong typing (`py.typed`) and runtime validation aligned with the spec.
   - **Immutable models + safe updates**: Models are frozen; resource updates are done via `Existing{Resource}.update(...)`.
