@@ -116,7 +116,7 @@ class VirtualEndNodeClient(BaseVirtualEndNodeClient):
 
 def get_oadr301_ven_client(
     vtn_base_url: str,
-    config: OAuthTokenManagerConfig,
+    config: OAuthTokenManagerConfig | None,
 ) -> VirtualEndNodeClient:
     """
     Creates the OpenADR 3.0.1 virtual end node client.

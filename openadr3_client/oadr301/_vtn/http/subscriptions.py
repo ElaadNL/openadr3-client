@@ -28,7 +28,7 @@ BASE_PREFIX = "subscriptions"
 class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInterface):
     """Implements the read communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def get_subscriptions(
@@ -97,7 +97,7 @@ class SubscriptionsReadOnlyHttpInterface(ReadOnlySubscriptionsInterface, HttpInt
 class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpInterface):
     """Implements the write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def create_subscription(self, new_subscription: NewSubscription) -> ExistingSubscription:
@@ -160,5 +160,5 @@ class SubscriptionsWriteOnlyHttpInterface(WriteOnlySubscriptionsInterface, HttpI
 class SubscriptionsHttpInterface(ReadWriteSubscriptionsInterface, SubscriptionsReadOnlyHttpInterface, SubscriptionsWriteOnlyHttpInterface):
     """Implements the read and write communication with the subscriptions HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)

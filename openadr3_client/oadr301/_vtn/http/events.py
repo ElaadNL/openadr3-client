@@ -25,7 +25,7 @@ BASE_PREFIX = "events"
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def get_events(self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None) -> tuple[ExistingEvent, ...]:
@@ -76,7 +76,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
@@ -137,5 +137,5 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)

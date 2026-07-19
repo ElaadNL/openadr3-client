@@ -58,6 +58,31 @@ class BearerAuthenticatedSession(Session):
         self.auth = _BearerAuth(token_manager)
 
 
+class UnauthenticatedSession(Session):
+    """
+    Session that makes anonymous (unauthenticated) requests.
+
+    Used to connect to VTNs that do not require OAuth authentication, such as
+    public price servers or development/test VTNs.
+    """
+
+    def __init__(self, *, verify_tls_certificate: bool | str = True) -> None:
+        """
+        Initializes the unauthenticated session.
+
+        Args:
+            verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
+            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
+            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
+            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+
+        """
+        super().__init__()
+        if not verify_tls_certificate:
+            logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")
+        self.verify = verify_tls_certificate
+
+
 class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
     """Session that includes a bearer token and requires HTTPS in all requests made through it."""
 
@@ -76,6 +101,27 @@ class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
         """  # noqa: E501
         super().__init__(allow_insecure_http=allow_insecure_http)
         self.auth = _BearerAuth(token_manager)
+        if not verify_tls_certificate:
+            logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")
+        self.verify = verify_tls_certificate
+
+
+class _UnauthenticatedHttpsOnlySession(HTTPSOnlySession):
+    """Session that makes anonymous requests and requires HTTPS in all requests made through it."""
+
+    def __init__(self, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+        """
+        Initializes the unauthenticated HTTPS-only session.
+
+        Args:
+            verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
+            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
+            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
+            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+
+        """  # noqa: E501
+        super().__init__(allow_insecure_http=allow_insecure_http)
         if not verify_tls_certificate:
             logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")
         self.verify = verify_tls_certificate
