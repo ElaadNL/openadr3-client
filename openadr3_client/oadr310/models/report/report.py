@@ -111,6 +111,9 @@ class ServerReport(Report):
     created_date_time: AwareDatetime
     modification_date_time: AwareDatetime
 
+    client_id: str = Field(alias="clientID", min_length=1, max_length=128)
+    """Client ID of the VEN associated with the resource."""
+
 
 @final
 class ExistingReport(ServerReport):
