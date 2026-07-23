@@ -6,6 +6,9 @@
 
 import os
 
+import pytest
+
+from openadr3_client._common.http.authenticated_session import _BearerAuth
 from openadr3_client.bl._client import BaseBusinessLogicClient
 from openadr3_client.bl.http_factory import BusinessLogicHttpClientFactory
 from openadr3_client.version import OADRVersion
@@ -39,3 +42,29 @@ def test_http_bl_client_creates_business_logic_client_oadr310():
         version=OADRVersion.OADR_310,
     )
     assert isinstance(client, BaseBusinessLogicClient)
+    # An authenticated client attaches a bearer token to its requests.
+    assert isinstance(client.programs.session.auth, _BearerAuth)  # type: ignore[attr-defined]
+
+
+@pytest.mark.parametrize("version", [OADRVersion.OADR_301, OADRVersion.OADR_310])
+def test_http_bl_client_creates_anonymous_client(version: OADRVersion):
+    """Test that omitting the client credentials creates an anonymous (unauthenticated) BL client."""
+    vtn_base_url = "https://elaad.nl/vtn"
+    client = BusinessLogicHttpClientFactory.create_http_bl_client(
+        vtn_base_url=vtn_base_url,
+        version=version,
+    )
+    assert isinstance(client, BaseBusinessLogicClient)
+    # An anonymous client does not attach any authentication to its requests.
+    assert client.programs.session.auth is None  # type: ignore[attr-defined]
+
+
+def test_http_bl_client_partial_credentials_raises():
+    """Test that providing only one of client_id/client_secret raises a ValueError."""
+    with pytest.raises(ValueError, match="Both client_id and client_secret"):
+        BusinessLogicHttpClientFactory.create_http_bl_client(
+            vtn_base_url="https://elaad.nl/vtn",
+            client_secret=OAUTH_CLIENT_SECRET,
+            token_url=OAUTH_TOKEN_ENDPOINT,
+            version=OADRVersion.OADR_310,
+        )

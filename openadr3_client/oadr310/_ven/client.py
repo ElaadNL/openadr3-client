@@ -161,7 +161,7 @@ class VirtualEndNodeClient(BaseVirtualEndNodeClient):
 
 def get_oadr310_ven_client(
     vtn_base_url: str,
-    config: OAuthTokenManagerConfig,
+    config: OAuthTokenManagerConfig | None,
     *,
     verify_vtn_tls_certificate: bool | str = True,
     allow_insecure_http: bool = False,

@@ -20,7 +20,7 @@ BASE_PREFIX = "vens"
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def get_vens(self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingVen, ...]:
@@ -121,7 +121,7 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, HttpInterface):
 class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def create_ven(self, new_ven: NewVen) -> ExistingVen:
@@ -249,5 +249,5 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, HttpInterface):
 class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):
     """Implements the read and write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)

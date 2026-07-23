@@ -23,7 +23,7 @@ BASE_PREFIX = "programs"
 class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def get_programs(self, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingProgram, ...]:
@@ -70,7 +70,7 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
 class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)
 
     def create_program(self, new_program: NewProgram) -> ExistingProgram:
@@ -126,5 +126,5 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
 class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
         super().__init__(base_url, config)

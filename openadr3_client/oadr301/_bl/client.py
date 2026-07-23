@@ -113,7 +113,7 @@ class BusinessLogicClient(BaseBusinessLogicClient):
 
 def get_oadr301_bl_client(
     vtn_base_url: str,
-    config: OAuthTokenManagerConfig,
+    config: OAuthTokenManagerConfig | None,
 ) -> BusinessLogicClient:
     """
     Creates the OpenADR 3.0.1 business logic client.

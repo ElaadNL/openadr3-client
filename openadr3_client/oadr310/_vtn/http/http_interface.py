@@ -5,7 +5,10 @@
 from requests import Session
 
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
-from openadr3_client._common.http.authenticated_session import _BearerAuthenticatedHttpsOnlySession
+from openadr3_client._common.http.authenticated_session import (
+    _BearerAuthenticatedHttpsOnlySession,
+    _UnauthenticatedHttpsOnlySession,
+)
 from openadr3_client.logging import logger
 
 
@@ -61,12 +64,18 @@ class AnonymousHttpInterface(_BaseHttpInterface):
 
 
 class AuthenticatedHttpInterface(_BaseHttpInterface):
-    """Represents an HTTP interface that makes authenticated requests."""
+    """
+    Represents an HTTP interface that makes authenticated requests.
+
+    When ``config`` is ``None``, the interface makes anonymous (unauthenticated)
+    requests instead, for connecting to VTNs that do not require OAuth (for
+    example public price servers or development/test VTNs).
+    """
 
     def __init__(
         self,
         base_url: str,
-        config: OAuthTokenManagerConfig,
+        config: OAuthTokenManagerConfig | None,
         *,
         verify_tls_certificate: bool | str = True,
         allow_insecure_http: bool = False,
@@ -76,7 +85,8 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
 
         Args:
             base_url (str): The base URL for the HTTP interface.
-            config (OAuthTokenManagerConfig): The configuration for the OAuth token manager.
+            config (OAuthTokenManagerConfig | None): The configuration for the OAuth token manager. If None, an
+            anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
             verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
             Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
             If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
@@ -84,9 +94,16 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
             allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
         """  # noqa: E501
-        authenticated_session = _BearerAuthenticatedHttpsOnlySession(
-            token_manager=OAuthTokenManager(config),
-            verify_tls_certificate=verify_tls_certificate,
-            allow_insecure_http=allow_insecure_http,
+        session = (
+            _UnauthenticatedHttpsOnlySession(
+                verify_tls_certificate=verify_tls_certificate,
+                allow_insecure_http=allow_insecure_http,
+            )
+            if config is None
+            else _BearerAuthenticatedHttpsOnlySession(
+                token_manager=OAuthTokenManager(config),
+                verify_tls_certificate=verify_tls_certificate,
+                allow_insecure_http=allow_insecure_http,
+            )
         )
-        super().__init__(base_url=base_url, session=authenticated_session)
+        super().__init__(base_url=base_url, session=session)
