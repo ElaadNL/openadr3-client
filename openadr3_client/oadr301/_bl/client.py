@@ -120,7 +120,8 @@ def get_oadr301_bl_client(
 
     Args:
         vtn_base_url (str): The base URL for the HTTP interface of the VTN.
-        config (OAuthTokenManagerConfig): The OAuth token manager configuration.
+        config (OAuthTokenManagerConfig | None): The OAuth token manager configuration. If None, an
+        anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
 
     Returns:
         BusinessLogicClient: The business logic client instance.

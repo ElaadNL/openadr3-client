@@ -171,7 +171,8 @@ def get_oadr310_ven_client(
 
     Args:
         vtn_base_url (str): The base URL for the HTTP interface of the VTN.
-        config (OAuthTokenManagerConfig): The OAuth token manager configuration.
+        config (OAuthTokenManagerConfig | None): The OAuth token manager configuration. If None, an
+        anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
         verify_vtn_tls_certificate (bool | str): Whether the BL verifies the TLS certificate of the VTN.
         Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
         If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the

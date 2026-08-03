@@ -11,8 +11,8 @@ from openadr3_client.version import OADRVersion
 
 def build_token_manager_config(
     *,
-    client_id: str | None,
-    client_secret: str | None,
+    client_id: str,
+    client_secret: str,
     token_url: str | None,
     scopes: list[str] | None,
     audience: str | None,
@@ -20,21 +20,19 @@ def build_token_manager_config(
     verify_vtn_tls_certificate: bool | str,
     version: OADRVersion,
     factory_name: str,
-) -> OAuthTokenManagerConfig | None:
+) -> OAuthTokenManagerConfig:
     """
-    Builds the OAuth token manager configuration for a client factory.
+    Builds the OAuth token manager configuration for an authenticated client factory.
 
-    Returns None when an anonymous (unauthenticated) client is requested, which is the case when neither
-    client_id nor client_secret is provided. An anonymous client makes unauthenticated requests, for
-    connecting to VTNs that do not require OAuth (for example public price servers or development/test VTNs).
-    Anonymous clients are intended for reading public data; write and registration operations are still
-    sent, but a VTN that gates them behind authentication will reject them.
+    This is the builder for authenticated clients only; anonymous (unauthenticated) clients are created
+    through their own factory method and never call this function. De-duplicates the token-URL discovery
+    logic previously copy-pasted across the VEN and BL factories.
 
     Args:
-        client_id: The OAuth client id, or None for an anonymous client.
-        client_secret: The OAuth client secret, or None for an anonymous client.
-        token_url: The endpoint to provision access tokens from. If None and the client is authenticated, the
-        token URL is discovered from the VTN discovery endpoint (OpenADR 3.1.0 only).
+        client_id: The OAuth client id.
+        client_secret: The OAuth client secret.
+        token_url: The endpoint to provision access tokens from. If None, the token URL is discovered from
+        the VTN discovery endpoint (OpenADR 3.1.0 only).
         scopes: The scopes to request with the token.
         audience: The audience to request with the token.
         vtn_base_url: The base URL for the HTTP interface of the VTN, used for token URL discovery.
@@ -43,18 +41,9 @@ def build_token_manager_config(
         factory_name: A human readable name of the calling factory, used in log messages.
 
     Returns:
-        OAuthTokenManagerConfig | None: The token manager configuration, or None for an anonymous client.
+        OAuthTokenManagerConfig: The token manager configuration.
 
     """
-    # An anonymous (unauthenticated) client is requested when no client credentials are provided.
-    if client_id is None and client_secret is None:
-        return None
-
-    # Providing only one of the two credentials is a misconfiguration.
-    if client_id is None or client_secret is None:
-        msg = "Both client_id and client_secret must be provided for an authenticated client, or both omitted for an anonymous client."
-        raise ValueError(msg)
-
     # Starting with OpenADR 3.1.0, the token URL can be discovered from the VTN through the discovery endpoint.
     # This is only done if the token_url has not been manually provided.
     if token_url is None:
