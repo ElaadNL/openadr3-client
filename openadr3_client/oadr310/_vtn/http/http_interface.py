@@ -10,6 +10,7 @@ from openadr3_client._common.http.authenticated_session import (
     _BearerAuthenticatedHttpsOnlySession,
     _configure_tls_verification,
 )
+from openadr3_client._common.tls import TlsVerification
 
 
 class _BaseHttpInterface:
@@ -42,17 +43,14 @@ class AnonymousHttpInterface(_BaseHttpInterface):
         self,
         base_url: str,
         *,
-        verify_tls_certificate: bool | str = True,
+        verify_tls_certificate: TlsVerification = True,
     ) -> None:
         """
         Initializes the client with a specified base URL.
 
         Args:
             base_url (str): The base URL for the HTTP interface.
-            verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            verify_tls_certificate: See `TlsVerification`. Defaults to True.
 
         """
         session = Session()
@@ -74,7 +72,7 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
         base_url: str,
         config: OAuthTokenManagerConfig | None,
         *,
-        verify_tls_certificate: bool | str = True,
+        verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
     ) -> None:
         """
@@ -84,10 +82,7 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
             base_url (str): The base URL for the HTTP interface.
             config (OAuthTokenManagerConfig | None): The configuration for the OAuth token manager. If None, an
             anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
-            verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            verify_tls_certificate: See `TlsVerification`. Defaults to True.
             allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
         """  # noqa: E501

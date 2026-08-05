@@ -4,6 +4,7 @@
 
 """Implements the communication with the auth interface of an OpenADR 3 VTN."""
 
+from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 from openadr3_client.oadr310._vtn.http.http_interface import AnonymousHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.auth import ReadOnlyAuthInterface
@@ -15,7 +16,7 @@ BASE_PREFIX = "auth"
 class AuthReadOnlyInterface(ReadOnlyAuthInterface, AnonymousHttpInterface):
     """Implements the read communication with the auth HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, *, verify_tls_certificate: bool | str = True) -> None:
+    def __init__(self, base_url: str, *, verify_tls_certificate: TlsVerification = True) -> None:
         super().__init__(base_url=base_url, verify_tls_certificate=verify_tls_certificate)
 
     def get_auth_server(self) -> AuthServerInfo:

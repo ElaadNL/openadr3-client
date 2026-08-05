@@ -6,6 +6,7 @@ from typing import final
 
 from openadr3_client._auth.config_builder import build_token_manager_config
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.tls import TlsVerification, normalize_tls_verification
 from openadr3_client.ven._client import BaseVirtualEndNodeClient
 from openadr3_client.version import OADRVersion
 
@@ -22,7 +23,7 @@ class VirtualEndNodeHttpClientFactory:
         token_url: str | None = None,
         scopes: list[str] | None = None,
         *,
-        verify_vtn_tls_certificate: bool | str = True,
+        verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
     ) -> BaseVirtualEndNodeClient:
@@ -39,14 +40,13 @@ class VirtualEndNodeHttpClientFactory:
             token_url: The endpoint to provision access tokens from. Defaults to None. If None, the token URL is discovered by calling
             the discover endpoint (introduced in OpenADR 3.1) on the OpenADR VTN.
             scopes: The scopes to request with the token. If empty, no scopes are requested.
-            verify_vtn_tls_certificate: Whether the VEN verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True. Passing a str path to a CA
+            certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version: The OpenADR version to use for the VEN client.
 
         """
+        verify_tls = normalize_tls_verification(verify_vtn_tls_certificate)
         config = build_token_manager_config(
             client_id=client_id,
             client_secret=client_secret,
@@ -54,14 +54,14 @@ class VirtualEndNodeHttpClientFactory:
             scopes=scopes,
             audience=None,
             vtn_base_url=vtn_base_url,
-            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            verify_vtn_tls_certificate=verify_tls,
             version=version,
             factory_name="VEN client factory",
         )
         return VirtualEndNodeHttpClientFactory._create_ven_client(
             vtn_base_url=vtn_base_url,
             config=config,
-            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            verify_vtn_tls_certificate=verify_tls,
             allow_insecure_http=allow_insecure_http,
             version=version,
         )
@@ -70,7 +70,7 @@ class VirtualEndNodeHttpClientFactory:
     def create_anonymous_http_ven_client(
         vtn_base_url: str,
         *,
-        verify_vtn_tls_certificate: bool | str = True,
+        verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
     ) -> BaseVirtualEndNodeClient:
@@ -84,10 +84,8 @@ class VirtualEndNodeHttpClientFactory:
 
         Args:
             vtn_base_url: The base URL for the HTTP interface of the VTN.
-            verify_vtn_tls_certificate: Whether the VEN verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True. Passing a str path to a CA
+            certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version: The OpenADR version to use for the VEN client.
 
@@ -95,7 +93,7 @@ class VirtualEndNodeHttpClientFactory:
         return VirtualEndNodeHttpClientFactory._create_ven_client(
             vtn_base_url=vtn_base_url,
             config=None,
-            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            verify_vtn_tls_certificate=normalize_tls_verification(verify_vtn_tls_certificate),
             allow_insecure_http=allow_insecure_http,
             version=version,
         )
@@ -105,7 +103,7 @@ class VirtualEndNodeHttpClientFactory:
         vtn_base_url: str,
         config: OAuthTokenManagerConfig | None,
         *,
-        verify_vtn_tls_certificate: bool | str,
+        verify_vtn_tls_certificate: TlsVerification,
         allow_insecure_http: bool,
         version: OADRVersion,
     ) -> BaseVirtualEndNodeClient:

@@ -8,6 +8,7 @@ from requests import Session
 
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
 from openadr3_client._common.http.authenticated_session import _BearerAuthenticatedHttpsOnlySession
+from openadr3_client._common.tls import TlsVerification
 
 
 class _BaseHttpInterface:
@@ -26,7 +27,7 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
         base_url: str,
         config: OAuthTokenManagerConfig,
         *,
-        verify_tls_certificate: bool | str = True,
+        verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
     ) -> None:
         session = _BearerAuthenticatedHttpsOnlySession(

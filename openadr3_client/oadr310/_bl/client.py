@@ -5,6 +5,7 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.tls import TlsVerification
 from openadr3_client.bl._client import BaseBusinessLogicClient
 from openadr3_client.oadr310._vtn.http.auth import AuthReadOnlyInterface
 from openadr3_client.oadr310._vtn.http.events import EventsHttpInterface
@@ -163,21 +164,18 @@ def get_oadr310_bl_client(
     vtn_base_url: str,
     config: OAuthTokenManagerConfig | None,
     *,
-    verify_vtn_tls_certificate: bool | str = True,
+    verify_vtn_tls_certificate: TlsVerification = True,
     allow_insecure_http: bool = False,
 ) -> BusinessLogicClient:
     """
     Creates the OpenADR 3.1.0 business logic client.
 
     Args:
-        vtn_base_url (str): The base URL for the HTTP interface of the VTN.
-        config (OAuthTokenManagerConfig | None): The OAuth token manager configuration. If None, an
+        vtn_base_url: The base URL for the HTTP interface of the VTN.
+        config: The OAuth token manager configuration. If None, an
         anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
-        verify_vtn_tls_certificate (bool | str): Whether the BL verifies the TLS certificate of the VTN.
-        Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-        If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-        PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
-        allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+        verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True.
+        allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
     Returns:
         BusinessLogicClient: The business logic client instance.

@@ -7,6 +7,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.tls import TlsVerification
 from openadr3_client.extensions.resource_group._client.filters import PaginationFilter, TargetFilter
 from openadr3_client.extensions.resource_group._client.http_interface import AuthenticatedHttpInterface
 from openadr3_client.extensions.resource_group._client.interfaces import (
@@ -32,7 +33,7 @@ class ResourceGroupsReadOnlyHttpInterface(ReadOnlyResourceGroupsInterface, Authe
         base_url: str,
         config: OAuthTokenManagerConfig,
         *,
-        verify_tls_certificate: bool | str = True,
+        verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
     ) -> None:
         super().__init__(
@@ -76,7 +77,7 @@ class ResourceGroupsWriteOnlyHttpInterface(WriteOnlyResourceGroupsInterface, Aut
         base_url: str,
         config: OAuthTokenManagerConfig,
         *,
-        verify_tls_certificate: bool | str = True,
+        verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
     ) -> None:
         super().__init__(
@@ -121,7 +122,7 @@ class ResourceGroupsHttpInterface(
         base_url: str,
         config: OAuthTokenManagerConfig,
         *,
-        verify_tls_certificate: bool | str = True,
+        verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
     ) -> None:
         super().__init__(

@@ -6,6 +6,7 @@ from typing import final
 
 from openadr3_client._auth.config_builder import build_token_manager_config
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.tls import TlsVerification, normalize_tls_verification
 from openadr3_client.bl._client import BaseBusinessLogicClient
 from openadr3_client.version import OADRVersion
 
@@ -23,7 +24,7 @@ class BusinessLogicHttpClientFactory:
         scopes: list[str] | None = None,
         audience: str | None = None,
         *,
-        verify_vtn_tls_certificate: bool | str = True,
+        verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
     ) -> BaseBusinessLogicClient:
@@ -41,10 +42,8 @@ class BusinessLogicHttpClientFactory:
             the discover endpoint (introduced in OpenADR 3.1) on the OpenADR VTN.
             scopes (list[str]): The scopes to request with the token. If empty, no scopes are requested.
             audience (str): The audience to request with the token. If empty, no audience is requested.
-            verify_vtn_tls_certificate (bool | str): Whether the BL verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
+            verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True. Passing a str path to a CA
+            certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version (OADRVersion): The OpenADR version to use.
 
@@ -52,6 +51,7 @@ class BusinessLogicHttpClientFactory:
             BaseBusinessLogicClient: The business logic client instance.
 
         """  # noqa: E501
+        verify_tls = normalize_tls_verification(verify_vtn_tls_certificate)
         config = build_token_manager_config(
             client_id=client_id,
             client_secret=client_secret,
@@ -59,14 +59,14 @@ class BusinessLogicHttpClientFactory:
             scopes=scopes,
             audience=audience,
             vtn_base_url=vtn_base_url,
-            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            verify_vtn_tls_certificate=verify_tls,
             version=version,
             factory_name="BL client factory",
         )
         return BusinessLogicHttpClientFactory._create_bl_client(
             vtn_base_url=vtn_base_url,
             config=config,
-            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            verify_vtn_tls_certificate=verify_tls,
             allow_insecure_http=allow_insecure_http,
             version=version,
         )
@@ -75,7 +75,7 @@ class BusinessLogicHttpClientFactory:
     def create_anonymous_http_bl_client(
         vtn_base_url: str,
         *,
-        verify_vtn_tls_certificate: bool | str = True,
+        verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
     ) -> BaseBusinessLogicClient:
@@ -88,22 +88,20 @@ class BusinessLogicHttpClientFactory:
         behind authentication will reject them.
 
         Args:
-            vtn_base_url (str): The base URL for the HTTP interface of the VTN.
-            verify_vtn_tls_certificate (bool | str): Whether the BL verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
-            allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
-            version (OADRVersion): The OpenADR version to use.
+            vtn_base_url: The base URL for the HTTP interface of the VTN.
+            verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True. Passing a str path to a CA
+            certificate bundle is deprecated, pass a `pathlib.Path` instead.
+            allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            version: The OpenADR version to use.
 
         Returns:
             BaseBusinessLogicClient: The business logic client instance.
 
-        """  # noqa: E501
+        """
         return BusinessLogicHttpClientFactory._create_bl_client(
             vtn_base_url=vtn_base_url,
             config=None,
-            verify_vtn_tls_certificate=verify_vtn_tls_certificate,
+            verify_vtn_tls_certificate=normalize_tls_verification(verify_vtn_tls_certificate),
             allow_insecure_http=allow_insecure_http,
             version=version,
         )
@@ -113,7 +111,7 @@ class BusinessLogicHttpClientFactory:
         vtn_base_url: str,
         config: OAuthTokenManagerConfig | None,
         *,
-        verify_vtn_tls_certificate: bool | str,
+        verify_vtn_tls_certificate: TlsVerification,
         allow_insecure_http: bool,
         version: OADRVersion,
     ) -> BaseBusinessLogicClient:

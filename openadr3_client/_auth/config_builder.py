@@ -5,6 +5,7 @@
 """Shared helper for building the OAuth token manager configuration from client factory arguments."""
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 from openadr3_client.version import OADRVersion
 
@@ -17,7 +18,7 @@ def build_token_manager_config(
     scopes: list[str] | None,
     audience: str | None,
     vtn_base_url: str,
-    verify_vtn_tls_certificate: bool | str,
+    verify_vtn_tls_certificate: TlsVerification,
     version: OADRVersion,
     factory_name: str,
 ) -> OAuthTokenManagerConfig:

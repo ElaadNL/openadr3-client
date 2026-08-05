@@ -9,6 +9,7 @@ from typing import final
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 from openadr3_client.oadr310._vtn.http.http_interface import AuthenticatedHttpInterface
 from openadr3_client.oadr310._vtn.interfaces.events import (
@@ -25,7 +26,7 @@ BASE_PREFIX = "events"
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
         super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def get_events(self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None) -> tuple[ExistingEvent, ...]:
@@ -76,7 +77,7 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, AuthenticatedHttpInte
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
         super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
 
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
@@ -133,5 +134,5 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, AuthenticatedHttpIn
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
         super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)

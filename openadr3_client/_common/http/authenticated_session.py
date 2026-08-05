@@ -4,12 +4,14 @@
 
 """Implementation of a HTTP session which has an associated access token that is send to every request."""
 
+from pathlib import Path
 from urllib.parse import urlparse
 
 from requests import PreparedRequest, Session
 from requests.auth import AuthBase
 
 from openadr3_client._auth.token_manager import OAuthTokenManager
+from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 
 
@@ -32,7 +34,7 @@ class _BearerAuth(AuthBase):
         return r
 
 
-def _configure_tls_verification(session: Session, *, verify_tls_certificate: bool | str) -> None:
+def _configure_tls_verification(session: Session, *, verify_tls_certificate: TlsVerification) -> None:
     """
     Apply the TLS certificate verification setting to a session.
 
@@ -41,17 +43,14 @@ def _configure_tls_verification(session: Session, *, verify_tls_certificate: boo
     warning across every session/interface that accepts a verification setting.
 
     Args:
-        session (Session): The session to configure.
-        verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
-        True validates the TLS certificate against known CAs. False disables verification (not recommended).
-        A string is treated as a path to a custom CA certificate bundle (.PEM) for a self signed CA; the PEM
-        file must contain the entire certificate chain including intermediate certificates required to
-        validate the servers certificate.
+        session: The session to configure.
+        verify_tls_certificate: See `TlsVerification`.
 
     """
     if not verify_tls_certificate:
         logger.warning("TLS certificate validation disabled! In most scenarios, this is a bad idea...")
-    session.verify = verify_tls_certificate
+    # requests annotates Session.verify as bool | str, so the Path is narrowed to str for the type contrac
+    session.verify = str(verify_tls_certificate) if isinstance(verify_tls_certificate, Path) else verify_tls_certificate
 
 
 class HTTPSOnlySession(Session):
@@ -62,18 +61,15 @@ class HTTPSOnlySession(Session):
     requests while preserving HTTPS enforcement and the TLS verification controls.
     """
 
-    def __init__(self, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+    def __init__(self, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
         """
         Initializes the HTTPS-only session.
 
         Args:
-            verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
-            allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            verify_tls_certificate: See `TlsVerification`. Defaults to True.
+            allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
-        """  # noqa: E501
+        """
         super().__init__()
         self._allow_insecure_http = allow_insecure_http
         _configure_tls_verification(self, verify_tls_certificate=verify_tls_certificate)
@@ -111,18 +107,15 @@ class UnauthenticatedSession(Session):
 class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
     """Session that includes a bearer token and requires HTTPS in all requests made through it."""
 
-    def __init__(self, token_manager: OAuthTokenManager, *, verify_tls_certificate: bool | str = True, allow_insecure_http: bool = False) -> None:
+    def __init__(self, token_manager: OAuthTokenManager, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
         """
         Initializes the Bearer Authenticated Session.
 
         Args:
-            token_manager (OAuthTokenManager): The Oauth token credentials to authenticate with
-            verify_tls_certificate (bool | str): Whether the VEN verifies the TLS certificate of the VTN.
-            Defaults to True to validate the TLS certificate against known CAs. Can be set to False to disable verification (not recommended).
-            If a string is given as value, it is assumed that a custom CA certificate bundle (.PEM) is provided for a self signed CA. In this case, the
-            PEM file must contain the entire certificate chain including intermediate certificates required to validate the servers certificate.
-            allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            token_manager: The Oauth token credentials to authenticate with
+            verify_tls_certificate: See `TlsVerification`. Defaults to True.
+            allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
 
-        """  # noqa: E501
+        """
         super().__init__(verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
         self.auth = _BearerAuth(token_manager)
