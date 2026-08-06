@@ -27,7 +27,7 @@ class OpenADR310RefImplementationVtnTestContainer:
         network: Network | None = None,
         vtn_reference_image: str = "ghcr.io/nicburgt/oadr310-vtn-test:latest",
         vtn_port: int = 8080,
-        **kwargs: dict[str, Any],
+        **kwargs: Any,  # noqa: ANN401
     ) -> None:
         """
         Initialize the VTN test container.
@@ -134,12 +134,12 @@ class OpenADR310RefImplementationVtnTestContainer:
             # Internal network, so we must create the network manually.
             self._network.create()
 
-        self._mqtt.start(configfile=self._mosquitto_config_file_dir)
+        self._mqtt.start(configfile=str(self._mosquitto_config_file_dir))
 
         # Configure the VTN with the MQTT broker URL prior to starting it.
-        self._vtn.with_env("MQTT_VTN_BROKER_IP", "mqttbroker").with_env("MQTT_VTN_BROKER_PORT", self._mqtt.MQTT_PORT).with_env(
+        self._vtn.with_env("MQTT_VTN_BROKER_IP", "mqttbroker").with_env("MQTT_VTN_BROKER_PORT", str(self._mqtt.MQTT_PORT)).with_env(
             "MQTT_CLIENT_BROKER_HOST", "mqttbroker"
-        ).with_env("MQTT_CLIENT_BROKER_PORT", self._mqtt.MQTT_PORT).start()
+        ).with_env("MQTT_CLIENT_BROKER_PORT", str(self._mqtt.MQTT_PORT)).start()
 
         self._start_vtn_log_capture()
         return self

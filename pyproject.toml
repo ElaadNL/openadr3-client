@@ -135,6 +135,7 @@ ignore = [
     # Start of own error codes
     "ANN002", # Ignore unused *args
     "ANN003", # Ignore unused **kwargs
+    "CPY001", # Copyright headers are checked by REUSE instead
     "D107", # Allow undocumented __init__
     "TC001", # Move to type checking block (does not play nice with pydantic models)
     "TC002", # Move to type checking block (does not play nice with pydantic models)

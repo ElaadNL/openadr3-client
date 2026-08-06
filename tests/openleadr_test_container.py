@@ -33,7 +33,7 @@ class OpenLeadrVtnTestContainer:
         postgres_user: str = "openadr",
         postgres_password: str = "openadr",  # noqa: S107
         postgres_db: str = "openadr",
-        **kwargs: dict[str, Any],
+        **kwargs: Any,  # noqa: ANN401
     ) -> None:
         """
         Initialize the VTN test container with its PostgreSQL dependency.
@@ -97,7 +97,7 @@ class OpenLeadrVtnTestContainer:
             .with_env(key="OAUTH_KEY_TYPE", value=oauth_key_type)
             .with_env(key="OAUTH_JWKS_LOCATION", value=oauth_jwks_url)
             .with_env(key="OAUTH_TOKEN_URL", value=oauth_token_url)
-            .with_env(key="PG_PORT", value=self._postgres.port)
+            .with_env(key="PG_PORT", value=str(self._postgres.port))
             .with_env(key="PG_DB", value=postgres_db)
             .with_env(key="PG_USER", value=postgres_user)
             .with_env(key="PG_PASSWORD", value=postgres_password)
