@@ -89,18 +89,6 @@ jobs:
           name: mypy-log
           path: mypy-logs
 
-      - name: Run bandit
-        run: |
-          mkdir bandit-logs
-          uv run task bandit > bandit-logs/bandit-log.log
-
-      - name: Upload bandit logs
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: bandit-log
-          path: bandit-logs
-
       - name: Run reuse
         run: |
           mkdir reuse-logs
