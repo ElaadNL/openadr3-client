@@ -115,6 +115,7 @@ ignore = [
     # From:https://github.com/wemake-services/wemake-django-template/blob/master/pyproject.toml
     "A005",   # allow to shadow stdlib and builtin module names
     "COM812", # trailing comma, conflicts with `ruff format`
+    "CPY001", # copyright headers are checked by `reuse lint`
     # Different doc rules that we don't really care about:
     "D100",
     "D104",
