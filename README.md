@@ -75,16 +75,16 @@ bl_client = BusinessLogicHttpClientFactory.create_http_bl_client(
 
 # Create a new program (NewProgram allows for more properties, this is just a simple example).
 program = NewProgram(
-        id=None, # ID cannot be set by the client, assigned by the VTN.
-        program_name="Example Program",
-        program_long_name="Example Program Long Name",
-        interval_period=IntervalPeriod(
-            start=datetime(2023, 1, 1, 12, 30, 0, tzinfo=UTC),
-            duration=timedelta(minutes=5),
-            randomize_start=timedelta(minutes=5),
-        ),
-        payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units=Unit.KWH, currency="EUR"),),
-        targets=(Target(type="test-target-1", values=("test-value-1",)),),
+    id=None,  # ID cannot be set by the client, assigned by the VTN.
+    program_name="Example Program",
+    program_long_name="Example Program Long Name",
+    interval_period=IntervalPeriod(
+        start=datetime(2023, 1, 1, 12, 30, 0, tzinfo=UTC),
+        duration=timedelta(minutes=5),
+        randomize_start=timedelta(minutes=5),
+    ),
+    payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units=Unit.KWH, currency="EUR"),),
+    targets=(Target(type="test-target-1", values=("test-value-1",)),),
 )
 
 created_program = bl_client.programs.create_program(new_program=program)
@@ -92,13 +92,11 @@ created_program = bl_client.programs.create_program(new_program=program)
 # Create an event inside the program
 event = NewEvent(
     id=None,
-    programID=created_program.id, # ID of program is known after creation
+    programID=created_program.id,  # ID of program is known after creation
     event_name="test-event",
     priority=999,
     targets=(Target(type="test-target-1", values=("test-value-1",)),),
-    payload_descriptor=(
-        EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units=Unit.KWH, currency="EUR"),
-    ),
+    payload_descriptor=(EventPayloadDescriptor(payload_type=EventPayloadType.PRICE, units=Unit.KWH, currency="EUR"),),
     # Top Level interval definition, each interval specified with the None value will inherit this
     # value by default as its interval period. In this case, each interval will have an implicit
     # duration of 5 minutes.
@@ -116,8 +114,6 @@ event = NewEvent(
 )
 
 created_event = bl_client.events.create_event(new_event=event)
-
-
 ```
 
 ## Virtual End Node (VEN) Client
@@ -248,13 +244,15 @@ Example DataFrame:
 ```python
 import pandas as pd
 
-df = pd.DataFrame({
-    'type': ['SIMPLE'],
-    'values': [[1.0, 2.0]],
-    'start': [pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns")],
-    'duration': [pd.Timedelta(hours=1)],
-    'randomize_start': [pd.Timedelta(minutes=5)]
-})
+df = pd.DataFrame(
+    {
+        "type": ["SIMPLE"],
+        "values": [[1.0, 2.0]],
+        "start": [pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns")],
+        "duration": [pd.Timedelta(hours=1)],
+        "randomize_start": [pd.Timedelta(minutes=5)],
+    }
+)
 ```
 
 #### Pandas Output Format
@@ -290,13 +288,12 @@ from datetime import datetime, timedelta, UTC
 dict_iterable_input = [
     {
         # Required fields
-        'type': 'SIMPLE',
-        'values': [1.0, 2.0],
-
+        "type": "SIMPLE",
+        "values": [1.0, 2.0],
         # Optional fields
-        'start': datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),
-        'duration': timedelta(hours=1),
-        'randomize_start': timedelta(minutes=15)
+        "start": datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),
+        "duration": timedelta(hours=1),
+        "randomize_start": timedelta(minutes=15),
     },
 ]
 ```
@@ -355,10 +352,7 @@ unit = Unit.KWH
 payload_type = EventPayloadType.SIMPLE
 
 # These can be used in payload descriptors
-descriptor = EventPayloadDescriptor(
-    payload_type=unit,
-    units=payload_type
-)
+descriptor = EventPayloadDescriptor(payload_type=unit, units=payload_type)
 ```
 
 ### Custom Cases
@@ -374,10 +368,7 @@ custom_unit = Unit("CUSTOM_UNIT")
 custom_payload_type = EventPayloadType("CUSTOM_PAYLOAD")
 
 # These can be used in payload descriptors
-descriptor = EventPayloadDescriptor(
-    payload_type=custom_payload_type,
-    units=custom_unit
-)
+descriptor = EventPayloadDescriptor(payload_type=custom_payload_type, units=custom_unit)
 ```
 
 Note that custom enumeration cases are validated according to the OpenADR3 specification:
@@ -421,14 +412,10 @@ openadr3-client supports the use of validator plugins. The plugins are created u
 Registering a plugin is done using the global ValidatorPluginRegistry class:
 
 ```python
-    from openadr3_client.plugin import ValidatorPluginRegistry, ValidatorPlugin
-    from openadr3_client.models.event.event import Event
+from openadr3_client.plugin import ValidatorPluginRegistry, ValidatorPlugin
+from openadr3_client.models.event.event import Event
 
-    ValidatorPluginRegistry.register_plugin(
-        MyFirstPlugin().setup()
-    ).register_plugin(
-        MySecondPlugin().setup()
-    )
+ValidatorPluginRegistry.register_plugin(MyFirstPlugin().setup()).register_plugin(MySecondPlugin().setup())
 ```
 
 Since the ValidatorPluginRegistry class is a singleton, all validators will run after the registration.

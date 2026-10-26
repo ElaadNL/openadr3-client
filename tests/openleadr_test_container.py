@@ -6,7 +6,7 @@ import threading
 import uuid
 from collections import deque
 from types import TracebackType
-from typing import Any, Self
+from typing import Self
 
 import docker.errors
 from testcontainers.core.container import DockerContainer, LogMessageWaitStrategy
@@ -33,7 +33,6 @@ class OpenLeadrVtnTestContainer:
         postgres_user: str = "openadr",
         postgres_password: str = "openadr",  # noqa: S107
         postgres_db: str = "openadr",
-        **kwargs: dict[str, Any],
     ) -> None:
         """
         Initialize the VTN test container with its PostgreSQL dependency.
@@ -53,7 +52,6 @@ class OpenLeadrVtnTestContainer:
             postgres_user (str, optional): PostgreSQL username. Defaults to "openadr".
             postgres_password (str, optional): PostgreSQL password. Defaults to "openadr".
             postgres_db (str, optional): PostgreSQL database name. Defaults to "openadr".
-            **kwargs: Additional arguments to pass to the DockerContainer constructor.
 
         """
         self._vtn_port = vtn_port
@@ -88,7 +86,7 @@ class OpenLeadrVtnTestContainer:
 
         # Initialize VTN container with the static environment variables.
         self._vtn = (
-            DockerContainer(openleadr_rs_image, **kwargs)
+            DockerContainer(openleadr_rs_image)
             .with_kwargs(platform="linux/amd64")
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
@@ -97,7 +95,7 @@ class OpenLeadrVtnTestContainer:
             .with_env(key="OAUTH_KEY_TYPE", value=oauth_key_type)
             .with_env(key="OAUTH_JWKS_LOCATION", value=oauth_jwks_url)
             .with_env(key="OAUTH_TOKEN_URL", value=oauth_token_url)
-            .with_env(key="PG_PORT", value=self._postgres.port)
+            .with_env(key="PG_PORT", value=str(self._postgres.port))
             .with_env(key="PG_DB", value=postgres_db)
             .with_env(key="PG_USER", value=postgres_user)
             .with_env(key="PG_PASSWORD", value=postgres_password)

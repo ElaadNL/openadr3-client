@@ -7,7 +7,7 @@ import threading
 from collections import deque
 from pathlib import Path
 from types import TracebackType
-from typing import Any, Self
+from typing import Self
 
 import docker.errors
 from testcontainers.core.container import DockerContainer, LogMessageWaitStrategy
@@ -27,7 +27,6 @@ class OpenADR310RefImplementationVtnTestContainer:
         network: Network | None = None,
         vtn_reference_image: str = "ghcr.io/nicburgt/oadr310-vtn-test:latest",
         vtn_port: int = 8080,
-        **kwargs: dict[str, Any],
     ) -> None:
         """
         Initialize the VTN test container.
@@ -38,7 +37,6 @@ class OpenADR310RefImplementationVtnTestContainer:
             network (Network | None, optional): The Docker network to use. If None, a new network will be created.
             vtn_reference_image (str, optional): The Docker image reference for the VTN. Defaults to "ghcr.io/nicburgt/oadr310-vtn-test:latest".
             vtn_port (int, optional): The port on which the VTN will listen. Defaults to 8080.
-            **kwargs: Additional arguments to pass to the DockerContainer constructor.
 
         """
         self._vtn_port = vtn_port
@@ -79,7 +77,7 @@ class OpenADR310RefImplementationVtnTestContainer:
 
         # Initialize VTN container with the static environment variables.
         self._vtn = (
-            DockerContainer(vtn_reference_image, **kwargs)
+            DockerContainer(vtn_reference_image)
             .with_kwargs(platform="linux/amd64")
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
@@ -134,12 +132,12 @@ class OpenADR310RefImplementationVtnTestContainer:
             # Internal network, so we must create the network manually.
             self._network.create()
 
-        self._mqtt.start(configfile=self._mosquitto_config_file_dir)
+        self._mqtt.start(configfile=str(self._mosquitto_config_file_dir))
 
         # Configure the VTN with the MQTT broker URL prior to starting it.
-        self._vtn.with_env("MQTT_VTN_BROKER_IP", "mqttbroker").with_env("MQTT_VTN_BROKER_PORT", self._mqtt.MQTT_PORT).with_env(
+        self._vtn.with_env("MQTT_VTN_BROKER_IP", "mqttbroker").with_env("MQTT_VTN_BROKER_PORT", str(self._mqtt.MQTT_PORT)).with_env(
             "MQTT_CLIENT_BROKER_HOST", "mqttbroker"
-        ).with_env("MQTT_CLIENT_BROKER_PORT", self._mqtt.MQTT_PORT).start()
+        ).with_env("MQTT_CLIENT_BROKER_PORT", str(self._mqtt.MQTT_PORT)).start()
 
         self._start_vtn_log_capture()
         return self
