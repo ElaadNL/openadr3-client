@@ -16,6 +16,10 @@ updates:
         dependency-type: "production"
       dev-dependencies:
         dependency-type: "development"
+      uv-security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -25,5 +29,9 @@ updates:
       default-days: 7
     groups:
       github-actions:
+        patterns:
+          - "*"
+      github-actions-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
