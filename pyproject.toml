@@ -51,7 +51,7 @@ version-file = "openadr3_client/_version.py"
 [dependency-groups]
 dev = [
     "mypy>=2.4.0,<3",
-    "ruff>=0.17.1,<0.18",
+    "ruff>=0.17.3,<0.18",
     "pytest>=9.1.1,<10",
     "pytest-cov>=7.0.0,<8",
     "testcontainers[keycloak, mqtt]>=4.15.0,<5",
