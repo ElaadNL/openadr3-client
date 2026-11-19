@@ -11,6 +11,7 @@ from requests import PreparedRequest, Session
 from requests.auth import AuthBase
 
 from openadr3_client._auth.token_manager import OAuthTokenManager
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout, validate_http_timeout
 from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 
@@ -53,7 +54,34 @@ def _configure_tls_verification(session: Session, *, verify_tls_certificate: Tls
     session.verify = str(verify_tls_certificate) if isinstance(verify_tls_certificate, Path) else verify_tls_certificate
 
 
-class HTTPSOnlySession(Session):
+class _TimeoutSession(Session):
+    """
+    Session that applies a timeout to every request made through it.
+
+    `requests` waits indefinitely for a response unless a timeout is passed per request. Enforcing it here,
+    on the base of every session the client creates, guarantees that no request can block forever, including
+    requests added to the client in the future.
+    """
+
+    def __init__(self, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        """
+        Initializes the timeout session.
+
+        Args:
+            timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
+
+        """
+        super().__init__()
+        self.timeout = validate_http_timeout(timeout)
+
+    def request(self, method, url, *args, **kwargs):  # noqa: ANN001, ANN202
+        # An explicit None would disable the timeout, so it is replaced by the session timeout as well.
+        if kwargs.get("timeout") is None:
+            kwargs["timeout"] = self.timeout
+        return super().request(method, url, *args, **kwargs)
+
+
+class HTTPSOnlySession(_TimeoutSession):
     """
     Session that rejects all non HTTPS requests.
 
@@ -61,16 +89,23 @@ class HTTPSOnlySession(Session):
     requests while preserving HTTPS enforcement and the TLS verification controls.
     """
 
-    def __init__(self, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
+    def __init__(
+        self,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
         """
         Initializes the HTTPS-only session.
 
         Args:
             verify_tls_certificate: See `TlsVerification`. Defaults to True.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
         """
-        super().__init__()
+        super().__init__(timeout=timeout)
         self._allow_insecure_http = allow_insecure_http
         _configure_tls_verification(self, verify_tls_certificate=verify_tls_certificate)
 
@@ -85,15 +120,15 @@ class HTTPSOnlySession(Session):
         return super().request(method, url, *args, **kwargs)
 
 
-class BearerAuthenticatedSession(Session):
+class BearerAuthenticatedSession(_TimeoutSession):
     """Session that includes a bearer token in all requests made through it."""
 
-    def __init__(self, token_manager: OAuthTokenManager) -> None:
-        super().__init__()
+    def __init__(self, token_manager: OAuthTokenManager, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(timeout=timeout)
         self.auth = _BearerAuth(token_manager)
 
 
-class UnauthenticatedSession(Session):
+class UnauthenticatedSession(_TimeoutSession):
     """
     Session that makes anonymous (unauthenticated) requests.
 
@@ -107,7 +142,14 @@ class UnauthenticatedSession(Session):
 class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
     """Session that includes a bearer token and requires HTTPS in all requests made through it."""
 
-    def __init__(self, token_manager: OAuthTokenManager, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
+    def __init__(
+        self,
+        token_manager: OAuthTokenManager,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
         """
         Initializes the Bearer Authenticated Session.
 
@@ -115,7 +157,8 @@ class _BearerAuthenticatedHttpsOnlySession(HTTPSOnlySession):
             token_manager: The Oauth token credentials to authenticate with
             verify_tls_certificate: See `TlsVerification`. Defaults to True.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
         """
-        super().__init__(verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+        super().__init__(verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)
         self.auth = _BearerAuth(token_manager)

@@ -7,6 +7,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 from openadr3_client.oadr310._vtn.http.http_interface import AuthenticatedHttpInterface
@@ -20,8 +21,16 @@ BASE_PREFIX = "vens"
 class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+    def __init__(
+        self,
+        base_url: str,
+        config: OAuthTokenManagerConfig | None,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)
 
     def get_vens(self, ven_name: str | None, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingVen, ...]:
         """
@@ -71,8 +80,16 @@ class VensReadOnlyHttpInterface(ReadOnlyVensInterface, AuthenticatedHttpInterfac
 class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+    def __init__(
+        self,
+        base_url: str,
+        config: OAuthTokenManagerConfig | None,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)
 
     def create_ven(self, new_ven: NewVen) -> ExistingVen:
         """
@@ -127,5 +144,13 @@ class VensWriteOnlyHttpInterface(WriteOnlyVensInterface, AuthenticatedHttpInterf
 class VensHttpInterface(ReadWriteVensInterface, VensReadOnlyHttpInterface, VensWriteOnlyHttpInterface):
     """Implements the read and write communication with the ven HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+    def __init__(
+        self,
+        base_url: str,
+        config: OAuthTokenManagerConfig | None,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)

@@ -4,6 +4,7 @@
 
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
 from openadr3_client._common.http.authenticated_session import BearerAuthenticatedSession, UnauthenticatedSession
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 
 
 class HttpInterface:
@@ -18,6 +19,8 @@ class HttpInterface:
         self,
         base_url: str,
         config: OAuthTokenManagerConfig | None,
+        *,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         """
         Initializes the client with a specified base URL.
@@ -26,10 +29,11 @@ class HttpInterface:
             base_url (str): The base URL for the HTTP interface.
             config (OAuthTokenManagerConfig | None): The configuration for the OAuth token manager. If None, an
             anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
+            timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
         """
         if base_url is None:
             msg = "base_url is required"
             raise ValueError(msg)
         self.base_url = base_url
-        self.session = UnauthenticatedSession() if config is None else BearerAuthenticatedSession(OAuthTokenManager(config))
+        self.session = UnauthenticatedSession(timeout=timeout) if config is None else BearerAuthenticatedSession(OAuthTokenManager(config), timeout=timeout)

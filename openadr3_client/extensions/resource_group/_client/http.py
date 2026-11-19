@@ -7,6 +7,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 from openadr3_client.extensions.resource_group._client.filters import PaginationFilter, TargetFilter
 from openadr3_client.extensions.resource_group._client.http_interface import AuthenticatedHttpInterface
@@ -35,12 +36,14 @@ class ResourceGroupsReadOnlyHttpInterface(ReadOnlyResourceGroupsInterface, Authe
         *,
         verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         super().__init__(
             base_url=base_url,
             config=config,
             verify_tls_certificate=verify_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         )
 
     def get_resource_groups(
@@ -79,12 +82,14 @@ class ResourceGroupsWriteOnlyHttpInterface(WriteOnlyResourceGroupsInterface, Aut
         *,
         verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         super().__init__(
             base_url=base_url,
             config=config,
             verify_tls_certificate=verify_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         )
 
     def create_resource_group(self, new_resource_group: NewResourceGroup) -> ExistingResourceGroup:
@@ -124,10 +129,12 @@ class ResourceGroupsHttpInterface(
         *,
         verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         super().__init__(
             base_url=base_url,
             config=config,
             verify_tls_certificate=verify_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         )

@@ -7,6 +7,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 from openadr3_client.oadr310._vtn.http.http_interface import AuthenticatedHttpInterface
@@ -24,8 +25,16 @@ BASE_PREFIX = "reports"
 class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, AuthenticatedHttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+    def __init__(
+        self,
+        base_url: str,
+        config: OAuthTokenManagerConfig | None,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)
 
     def get_reports(
         self,
@@ -88,8 +97,16 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, AuthenticatedHttpIn
 class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+    def __init__(
+        self,
+        base_url: str,
+        config: OAuthTokenManagerConfig | None,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)
 
     def create_report(self, new_report: NewReport) -> ExistingReport:
         """
@@ -144,5 +161,13 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, AuthenticatedHttp
 class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, verify_tls_certificate: TlsVerification = True, allow_insecure_http: bool = False) -> None:
-        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http)
+    def __init__(
+        self,
+        base_url: str,
+        config: OAuthTokenManagerConfig | None,
+        *,
+        verify_tls_certificate: TlsVerification = True,
+        allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
+    ) -> None:
+        super().__init__(base_url=base_url, config=config, verify_tls_certificate=verify_tls_certificate, allow_insecure_http=allow_insecure_http, timeout=timeout)

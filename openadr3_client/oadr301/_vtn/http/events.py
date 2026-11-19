@@ -9,6 +9,7 @@ from typing import final
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client.logging import logger
 from openadr3_client.oadr301._vtn.http.http_interface import HttpInterface
 from openadr3_client.oadr301._vtn.interfaces.events import (
@@ -25,8 +26,8 @@ BASE_PREFIX = "events"
 class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
     """Implements the read communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)
 
     def get_events(self, target: TargetFilter | None, pagination: PaginationFilter | None, program_id: str | None) -> tuple[ExistingEvent, ...]:
         """
@@ -76,8 +77,8 @@ class EventsReadOnlyHttpInterface(ReadOnlyEventsInterface, HttpInterface):
 class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
     """Implements the write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)
 
     def create_event(self, new_event: NewEvent) -> ExistingEvent:
         """
@@ -137,5 +138,5 @@ class EventsWriteOnlyHttpInterface(WriteOnlyEventsInterface, HttpInterface):
 class EventsHttpInterface(ReadWriteEventsInterface, EventsReadOnlyHttpInterface, EventsWriteOnlyHttpInterface):
     """Implements the read and write communication with the events HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)

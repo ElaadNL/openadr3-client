@@ -7,6 +7,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client.logging import logger
 from openadr3_client.oadr301._vtn.http.http_interface import HttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter, TargetFilter
@@ -23,8 +24,8 @@ BASE_PREFIX = "programs"
 class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
     """Implements the read communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)
 
     def get_programs(self, target: TargetFilter | None, pagination: PaginationFilter | None) -> tuple[ExistingProgram, ...]:
         """
@@ -70,8 +71,8 @@ class ProgramsReadOnlyHttpInterface(ReadOnlyProgramsInterface, HttpInterface):
 class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
     """Implements the write communication with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)
 
     def create_program(self, new_program: NewProgram) -> ExistingProgram:
         """
@@ -126,5 +127,5 @@ class ProgramsWriteOnlyHttpInterface(WriteOnlyProgramsInterface, HttpInterface):
 class ProgramsHttpInterface(ReadWriteProgramsInterface, ProgramsReadOnlyHttpInterface, ProgramsWriteOnlyHttpInterface):
     """Implements the read and write communications with the programs HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)

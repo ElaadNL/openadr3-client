@@ -25,7 +25,7 @@ Features include:
 - **OAuth2 client-credentials auth with token caching**: Built-in OAuth token manager (requests `scopes`/`audience`), caches tokens, refreshes them automatically.
   - **OpenADR 3.1.0 token discovery**: If `token_url=None` and `version=OADR_310`, the BL/VEN HTTP factories can discover the token endpoint via the VTN discovery/auth server endpoint.
   - **Anonymous (unauthenticated) connections**: Use `create_anonymous_http_ven_client` / `create_anonymous_http_bl_client` to connect to a VTN that does not require OAuth (for example a public price server or a development/test VTN). No token is provisioned and requests are sent unauthenticated. This is intended for reading public data (such as Programs and Events); write and registration operations are still sent, but a VTN that gates them behind authentication will reject them.
-- **HTTP + TLS controls**: HTTP clients built on `requests`, with configurable TLS verification (`verify_vtn_tls_certificate=True/False/Path` to a custom CA bundle).
+- **HTTP + TLS controls**: HTTP clients built on `requests`, with configurable TLS verification (`verify_vtn_tls_certificate=True/False/Path` to a custom CA bundle), and a request timeout on every HTTP call (`timeout`, default 30 seconds).
 - **Typed, validated domain models**: Pydantic v2 models with strong typing (`py.typed`) and runtime validation aligned with the spec.
   - **Immutable models + safe updates**: Models are frozen; resource updates are done via `Existing{Resource}.update(...)`.
   - **Flexible enums**: Use predefined enum cases (e.g. `Unit.KWH`) or construct custom spec-compliant values (e.g. `Unit("CUSTOM_UNIT")`).
@@ -309,6 +309,26 @@ When converting an event interval to a list of dictionaries, the output is check
 3. Choose the appropriate client interface (BL or VEN)
 4. Initialize the client with the required interfaces
 5. Start interacting with the OpenADR3 VTN system.
+
+## Request Timeouts
+
+Every HTTP request the client makes has a timeout. This covers requests to the VTN, the OpenADR 3.1.0 token URL discovery request and requests to the OAuth token endpoint. The default is 30 seconds (`DEFAULT_HTTP_TIMEOUT`). Set a different value with the `timeout` argument of any client factory:
+
+```python
+from openadr3_client.ven.http_factory import VirtualEndNodeHttpClientFactory
+from openadr3_client.version import OADRVersion
+
+ven_client = VirtualEndNodeHttpClientFactory.create_http_ven_client(
+    vtn_base_url="https://vtn.example.com/openadr3/3.1.0",
+    client_id="your_client_id",
+    client_secret="your_client_secret",
+    version=OADRVersion.OADR_310,
+    timeout=10,  # 10 seconds to connect and 10 seconds to read
+    # timeout=(3.05, 27),  # or separate (connect, read) timeouts
+)
+```
+
+The timeout must be a number of seconds greater than 0, or a `(connect, read)` tuple of such numbers. `None` is rejected: the client never waits indefinitely for a response. When a timeout is exceeded, `requests.exceptions.Timeout` (`ConnectTimeout` or `ReadTimeout`) is raised.
 
 ## Model Immutability
 

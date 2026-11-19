@@ -9,6 +9,7 @@ from threading import Lock
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout, validate_http_timeout
 from openadr3_client.logging import logger
 
 
@@ -19,6 +20,8 @@ class OAuthTokenManagerConfig:
     token_url: str
     scopes: list[str] | None
     audience: str | None
+    timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT
+    """Timeout for requests to the token endpoint. See `HttpTimeout`."""
 
 
 class OAuthTokenManager:
@@ -30,6 +33,7 @@ class OAuthTokenManager:
         self.token_url = config.token_url
         self.client_secret = config.client_secret
         self.audience = config.audience
+        self.timeout = validate_http_timeout(config.timeout)
         if self.token_url is None:
             msg = "token_url is required"
             raise ValueError(msg)
@@ -66,7 +70,8 @@ class OAuthTokenManager:
             return self._get_new_access_token()
 
     def _get_new_access_token(self) -> str:
-        token_response = self.oauth.fetch_token(token_url=self.token_url, client_secret=self.client_secret, audience=self.audience)
+        # The timeout is passed explicitly: requests_oauthlib forwards timeout=None (wait indefinitely) by default.
+        token_response = self.oauth.fetch_token(token_url=self.token_url, client_secret=self.client_secret, audience=self.audience, timeout=self.timeout)
 
         # Calculate expiration time (half of token lifetime)
         expires_in_seconds = token_response.get("expires_in", 3600)
