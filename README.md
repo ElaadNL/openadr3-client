@@ -229,14 +229,15 @@ When creating an event interval from a DataFrame, the input must match the follo
 |------------|------|----------|-------------|
 | type | str | Yes | The type of the event interval |
 | values | list[Union[int, float, str, bool, Point]] | Yes | The payload values for the interval |
-| start | datetime64[ns, UTC] | Yes | The start time of the interval (UTC timezone) |
-| duration | timedelta64[ns] | Yes | The duration of the interval |
-| randomize_start | timedelta64[ns] | No | The randomization window for the start time |
+| start | datetime64[us, UTC] | Yes | The start time of the interval (UTC timezone) |
+| duration | timedelta64[us] | Yes | The duration of the interval |
+| randomize_start | timedelta64[us] | No | The randomization window for the start time |
 
 Important notes:
 
 - All datetime values must be timezone-aware and in UTC
-- All datetime and timedelta values must use nanosecond precision (`[ns]`)
+- Datetime and timedelta columns may use any resolution (`[s]`, `[ms]`, `[us]` or `[ns]`); they are normalized to microsecond precision (`[us]`), the pandas 3 default
+- The `type` column may use the pandas 3 `str` dtype or a legacy `object` dtype column of strings
 - The id column of an event interval cannot be provided as input - the client will automatically assign incrementing integer IDs to the event intervals, in the same order as they were given.
 
 Example DataFrame:
@@ -248,7 +249,7 @@ df = pd.DataFrame(
     {
         "type": ["SIMPLE"],
         "values": [[1.0, 2.0]],
-        "start": [pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns")],
+        "start": [pd.Timestamp("2023-01-01 00:00:00.000Z")],
         "duration": [pd.Timedelta(hours=1)],
         "randomize_start": [pd.Timedelta(minutes=5)],
     }
@@ -257,7 +258,7 @@ df = pd.DataFrame(
 
 #### Pandas Output Format
 
-When converting an event interval to a DataFrame, the output will match the same schema as the input format, with one addition: the event interval's `id` field will be included as the DataFrame index. The conversion process includes validation to ensure the data meets the schema requirements, including timezone and precision specifications.
+When converting an event interval to a DataFrame, the output will match the same schema as the input format, with one addition: the event interval's `id` field will be included as the DataFrame index. The conversion process includes validation to ensure the data meets the schema requirements, including timezone and precision specifications. Datetime and timedelta columns are returned in microsecond precision (`[us]`) and the `type` column uses the pandas 3 `str` dtype.
 
 ### TypedDict Format
 

@@ -13,6 +13,8 @@ from testcontainers.core.container import DockerContainer, LogMessageWaitStrateg
 from testcontainers.core.network import Network
 from testcontainers.postgres import PostgresContainer
 
+from tests.container_platform import AMD64_PLATFORM, ensure_image_for_platform
+
 _LOG_BUFFER_MAX_LINES = 5_000
 
 
@@ -87,7 +89,8 @@ class OpenLeadrVtnTestContainer:
         # Initialize VTN container with the static environment variables.
         self._vtn = (
             DockerContainer(openleadr_rs_image)
-            .with_kwargs(platform="linux/amd64")
+            # openleadr-rs images are only published for amd64.
+            .with_kwargs(platform=AMD64_PLATFORM)
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
             .with_env(key="OAUTH_TYPE", value="EXTERNAL")
@@ -154,6 +157,7 @@ class OpenLeadrVtnTestContainer:
             .replace(str(self._postgres.get_exposed_port(self._postgres_port)), "5432")
         )
 
+        ensure_image_for_platform(self._vtn)
         # Configure the VTN with the database URL prior to starting it.
         self._vtn.with_env(key="DATABASE_URL", value=vtn_db_url).waiting_for(LogMessageWaitStrategy("pg_advisory_unlock")).start()
         self._start_vtn_log_capture()
