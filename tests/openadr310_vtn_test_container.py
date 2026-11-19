@@ -14,6 +14,8 @@ from testcontainers.core.container import DockerContainer, LogMessageWaitStrateg
 from testcontainers.core.network import Network
 from testcontainers.mqtt import MosquittoContainer
 
+from tests.container_platform import AMD64_PLATFORM, ensure_image_for_platform
+
 _LOG_BUFFER_MAX_LINES = 5_000
 
 
@@ -64,10 +66,10 @@ class OpenADR310RefImplementationVtnTestContainer:
 
         # Initialize MQTT container, which is required by the VTN.
         self._mqtt = (
+            # Multi-arch image, so it runs natively on both amd64 and arm64 hosts.
             MosquittoContainer(
-                image="amd64/eclipse-mosquitto:2.0.22",
+                image="eclipse-mosquitto:2.0.22",
             )
-            .with_kwargs(platform="linux/amd64")
             .with_volume_mapping(host=str(mosquitto_cert_dir), container="/mosquitto/certs", mode="ro")
             .with_network(self._network)
             .with_network_aliases("mqttbroker")
@@ -78,7 +80,8 @@ class OpenADR310RefImplementationVtnTestContainer:
         # Initialize VTN container with the static environment variables.
         self._vtn = (
             DockerContainer(vtn_reference_image)
-            .with_kwargs(platform="linux/amd64")
+            # The reference VTN image is only published for amd64.
+            .with_kwargs(platform=AMD64_PLATFORM)
             .with_network(self._network)
             .with_exposed_ports(self._vtn_port)
             # Use network alias to communicate with MQTT broker from VTN (same docker network).
@@ -134,6 +137,7 @@ class OpenADR310RefImplementationVtnTestContainer:
 
         self._mqtt.start(configfile=str(self._mosquitto_config_file_dir))
 
+        ensure_image_for_platform(self._vtn)
         # Configure the VTN with the MQTT broker URL prior to starting it.
         self._vtn.with_env("MQTT_VTN_BROKER_IP", "mqttbroker").with_env("MQTT_VTN_BROKER_PORT", str(self._mqtt.MQTT_PORT)).with_env(
             "MQTT_CLIENT_BROKER_HOST", "mqttbroker"

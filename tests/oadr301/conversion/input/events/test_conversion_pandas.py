@@ -31,8 +31,8 @@ def get_inputs() -> list[pd.DataFrame]:
         pd.DataFrame(
             {
                 "start": [
-                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
-                    pd.Timestamp("2024-01-01 00:00:00.000Z").as_unit("ns"),
+                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("us"),
+                    pd.Timestamp("2024-01-01 00:00:00.000Z").as_unit("us"),
                 ],
                 "duration": [pd.Timedelta(hours=1), pd.Timedelta(minutes=5)],
                 "randomize_start": [
@@ -46,9 +46,9 @@ def get_inputs() -> list[pd.DataFrame]:
         pd.DataFrame(
             {
                 "start": [
-                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
+                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("s"),
                 ],
-                "duration": [pd.Timedelta(minutes=5)],
+                "duration": [pd.Timedelta(minutes=5).as_unit("s")],
                 "type": [
                     "SIMPLE",
                 ],
@@ -170,13 +170,13 @@ def test_conversion_pandas_no_payloads_error():
     """
     df_input = pd.DataFrame(
         {
-            "start": pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
+            "start": pd.Timestamp("2023-01-01 00:00:00.000Z"),
             "duration": [pd.Timedelta(minutes=5)],
             "type": "SIMPLE",
             # Dataframes already validate that the count of values must be equal.
             # So we validate on a 'malicious compliance' case, in which a value is provided
-            # that does not represent a value.
-            "values": [""],
+            # that does not represent a value. The object dtype mimics a column of lists.
+            "values": pd.Series([""], dtype=object),
         },
         index=[0],
     )
@@ -187,3 +187,67 @@ def test_conversion_pandas_no_payloads_error():
         _ = converter.convert(df_input)
 
     assert exception_group.group_contains(SchemaError, match="payload_values_atleast_one")
+
+
+def test_conversion_pandas_str_values_error():
+    """
+    Tests the conversion of a dataframe with a values column of plain strings.
+
+    Pandas 3 infers the str dtype for such a column, which is rejected as values must be lists.
+    """
+    df_input = pd.DataFrame(
+        {
+            "start": pd.Timestamp("2023-01-01 00:00:00.000Z"),
+            "duration": [pd.Timedelta(minutes=5)],
+            "type": "SIMPLE",
+            "values": ["1.0"],
+        },
+        index=[0],
+    )
+
+    converter = PandasEventIntervalConverter()
+
+    with pytest.raises(ExceptionGroup) as exception_group:
+        _ = converter.convert(df_input)
+
+    assert exception_group.group_contains(SchemaError, match="expected series 'values' to have type object")
+
+
+def test_conversion_pandas_object_dtype_type_column():
+    """Tests that a legacy object dtype column of strings is accepted for the type column."""
+    df_input = pd.DataFrame(
+        {
+            "start": [pd.Timestamp("2023-01-01 00:00:00.000Z")],
+            "duration": [pd.Timedelta(minutes=5)],
+            "type": pd.Series(["SIMPLE"], dtype=object),
+            "values": [[1.0, 2.0]],
+        },
+    )
+
+    converter = PandasEventIntervalConverter()
+    intervals = converter.convert(df_input)
+
+    assert intervals == [
+        Interval(
+            id=0,
+            interval_period=IntervalPeriod(start=datetime(2023, 1, 1, tzinfo=UTC), duration=timedelta(minutes=5)),
+            payloads=(EventPayload(type=EventPayloadType.SIMPLE, values=(1.0, 2.0)),),
+        )
+    ]
+
+
+def test_conversion_pandas_does_not_modify_input():
+    """Tests that normalizing the column dtypes during validation does not modify the given dataframe."""
+    df_input = pd.DataFrame(
+        {
+            "start": [pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns")],
+            "duration": [pd.Timedelta(minutes=5).as_unit("ns")],
+            "type": pd.Series(["SIMPLE"], dtype=object),
+            "values": [[1.0, 2.0]],
+        },
+    )
+    dtypes_before = df_input.dtypes.copy()
+
+    _ = PandasEventIntervalConverter().convert(df_input)
+
+    assert df_input.dtypes.equals(dtypes_before)

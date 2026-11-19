@@ -17,7 +17,7 @@ def get_original_inputs() -> list[pd.DataFrame]:
         pd.DataFrame(
             {
                 "id": 0,
-                "start": pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
+                "start": pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("us"),
                 "duration": pd.Timedelta(hours=1),
                 "randomize_start": pd.Timedelta(minutes=5),
                 "type": "SIMPLE",
@@ -28,8 +28,8 @@ def get_original_inputs() -> list[pd.DataFrame]:
             {
                 "id": [0, 1],
                 "start": [
-                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
-                    pd.Timestamp("2024-01-01 00:00:00.000Z").as_unit("ns"),
+                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("us"),
+                    pd.Timestamp("2024-01-01 00:00:00.000Z").as_unit("us"),
                 ],
                 "duration": [pd.Timedelta(hours=1), pd.Timedelta(minutes=5)],
                 "randomize_start": [
@@ -44,7 +44,7 @@ def get_original_inputs() -> list[pd.DataFrame]:
             {
                 "id": [0],
                 "start": [
-                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("ns"),
+                    pd.Timestamp("2023-01-01 00:00:00.000Z").as_unit("us"),
                 ],
                 "duration": [pd.Timedelta(minutes=5)],
                 "type": [
@@ -53,7 +53,7 @@ def get_original_inputs() -> list[pd.DataFrame]:
                 "values": [
                     [1.0, 2.0],
                 ],
-                "randomize_start": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[ns]"),
+                "randomize_start": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[us]"),
             }
         ).set_index("id"),
         pd.DataFrame(
@@ -65,9 +65,9 @@ def get_original_inputs() -> list[pd.DataFrame]:
                 "values": [
                     [1.0, 2.0],
                 ],
-                "start": pd.Series([pd.Timedelta("NaT")], dtype="datetime64[ns, UTC]"),
-                "duration": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[ns]"),
-                "randomize_start": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[ns]"),
+                "start": pd.Series([pd.Timedelta("NaT")], dtype="datetime64[us, UTC]"),
+                "duration": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[us]"),
+                "randomize_start": pd.Series([pd.Timedelta("NaT")], dtype="timedelta64[us]"),
             }
         ).set_index("id"),
     ]
