@@ -5,6 +5,7 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client.oadr301._vtn.http.events import EventsReadOnlyHttpInterface
 from openadr3_client.oadr301._vtn.http.programs import ProgramsReadOnlyHttpInterface
 from openadr3_client.oadr301._vtn.http.reports import ReportsHttpInterface
@@ -117,6 +118,8 @@ class VirtualEndNodeClient(BaseVirtualEndNodeClient):
 def get_oadr301_ven_client(
     vtn_base_url: str,
     config: OAuthTokenManagerConfig | None,
+    *,
+    timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
 ) -> VirtualEndNodeClient:
     """
     Creates the OpenADR 3.0.1 virtual end node client.
@@ -125,6 +128,7 @@ def get_oadr301_ven_client(
         vtn_base_url (str): The base URL for the HTTP interface of the VTN.
         config (OAuthTokenManagerConfig | None): The OAuth token manager configuration. If None, an
         anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
+        timeout (HttpTimeout): See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
     Returns:
         VirtualEndNodeClient: The virtual end node client instance.
@@ -135,21 +139,26 @@ def get_oadr301_ven_client(
         events=EventsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         ),
         programs=ProgramsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         ),
         reports=ReportsHttpInterface(
             base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         ),
         vens=VensHttpInterface(
             base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         ),
         subscriptions=SubscriptionsHttpInterface(
             base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         ),
     )

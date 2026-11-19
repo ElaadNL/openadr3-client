@@ -6,6 +6,7 @@ from typing import final
 
 from openadr3_client._auth.config_builder import build_token_manager_config
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification, normalize_tls_verification
 from openadr3_client.bl._client import BaseBusinessLogicClient
 from openadr3_client.version import OADRVersion
@@ -27,6 +28,7 @@ class BusinessLogicHttpClientFactory:
         verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> BaseBusinessLogicClient:
         """
         Creates an authenticated business logic client which uses the HTTP interface of a VTN.
@@ -46,6 +48,8 @@ class BusinessLogicHttpClientFactory:
             certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version (OADRVersion): The OpenADR version to use.
+            timeout: The timeout for every HTTP request made by the client, including token requests. See `HttpTimeout`.
+            Defaults to `DEFAULT_HTTP_TIMEOUT` (30 seconds). Waiting indefinitely is not supported.
 
         Returns:
             BaseBusinessLogicClient: The business logic client instance.
@@ -62,6 +66,7 @@ class BusinessLogicHttpClientFactory:
             verify_vtn_tls_certificate=verify_tls,
             version=version,
             factory_name="BL client factory",
+            timeout=timeout,
         )
         return BusinessLogicHttpClientFactory._create_bl_client(
             vtn_base_url=vtn_base_url,
@@ -69,6 +74,7 @@ class BusinessLogicHttpClientFactory:
             verify_vtn_tls_certificate=verify_tls,
             allow_insecure_http=allow_insecure_http,
             version=version,
+            timeout=timeout,
         )
 
     @staticmethod
@@ -78,6 +84,7 @@ class BusinessLogicHttpClientFactory:
         verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> BaseBusinessLogicClient:
         """
         Creates an anonymous (unauthenticated) business logic client which uses the HTTP interface of a VTN.
@@ -93,6 +100,8 @@ class BusinessLogicHttpClientFactory:
             certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version: The OpenADR version to use.
+            timeout: The timeout for every HTTP request made by the client, including token requests. See `HttpTimeout`.
+            Defaults to `DEFAULT_HTTP_TIMEOUT` (30 seconds). Waiting indefinitely is not supported.
 
         Returns:
             BaseBusinessLogicClient: The business logic client instance.
@@ -104,6 +113,7 @@ class BusinessLogicHttpClientFactory:
             verify_vtn_tls_certificate=normalize_tls_verification(verify_vtn_tls_certificate),
             allow_insecure_http=allow_insecure_http,
             version=version,
+            timeout=timeout,
         )
 
     @staticmethod
@@ -114,6 +124,7 @@ class BusinessLogicHttpClientFactory:
         verify_vtn_tls_certificate: TlsVerification,
         allow_insecure_http: bool,
         version: OADRVersion,
+        timeout: HttpTimeout,
     ) -> BaseBusinessLogicClient:
         """Dispatches to the version-specific BL client. `config` is None for an anonymous client."""
         if version == OADRVersion.OADR_310:
@@ -124,6 +135,7 @@ class BusinessLogicHttpClientFactory:
                 config=config,
                 verify_vtn_tls_certificate=verify_vtn_tls_certificate,
                 allow_insecure_http=allow_insecure_http,
+                timeout=timeout,
             )
 
         from openadr3_client.oadr301._bl.client import get_oadr301_bl_client  # noqa: PLC0415
@@ -131,4 +143,5 @@ class BusinessLogicHttpClientFactory:
         return get_oadr301_bl_client(
             vtn_base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         )

@@ -7,6 +7,7 @@
 from pydantic.type_adapter import TypeAdapter
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client.logging import logger
 from openadr3_client.oadr301._vtn.http.http_interface import HttpInterface
 from openadr3_client.oadr301._vtn.interfaces.filters import PaginationFilter
@@ -23,8 +24,8 @@ BASE_PREFIX = "reports"
 class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
     """Implements the read communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)
 
     def get_reports(
         self,
@@ -87,8 +88,8 @@ class ReportsReadOnlyHttpInterface(ReadOnlyReportsInterface, HttpInterface):
 class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
     """Implements the write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)
 
     def create_report(self, new_report: NewReport) -> ExistingReport:
         """
@@ -147,5 +148,5 @@ class ReportsWriteOnlyHttpInterface(WriteOnlyReportsInterface, HttpInterface):
 class ReportsHttpInterface(ReadWriteReportsInterface, ReportsReadOnlyHttpInterface, ReportsWriteOnlyHttpInterface):
     """Implements the read and write communication with the reports HTTP interface of an OpenADR 3 VTN."""
 
-    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None) -> None:
-        super().__init__(base_url, config)
+    def __init__(self, base_url: str, config: OAuthTokenManagerConfig | None, *, timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT) -> None:
+        super().__init__(base_url, config, timeout=timeout)

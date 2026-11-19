@@ -5,6 +5,7 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 from openadr3_client.bl._client import BaseBusinessLogicClient
 from openadr3_client.oadr310._vtn.http.auth import AuthReadOnlyInterface
@@ -166,6 +167,7 @@ def get_oadr310_bl_client(
     *,
     verify_vtn_tls_certificate: TlsVerification = True,
     allow_insecure_http: bool = False,
+    timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
 ) -> BusinessLogicClient:
     """
     Creates the OpenADR 3.1.0 business logic client.
@@ -176,6 +178,7 @@ def get_oadr310_bl_client(
         anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
         verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True.
         allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+        timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
     Returns:
         BusinessLogicClient: The business logic client instance.
@@ -186,47 +189,55 @@ def get_oadr310_bl_client(
         auth=AuthReadOnlyInterface(
             base_url=vtn_base_url,
             verify_tls_certificate=verify_vtn_tls_certificate,
+            timeout=timeout,
         ),
         events=EventsHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
         programs=ProgramsHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
         reports=ReportsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
         vens=VensHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
         subscriptions=SubscriptionsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
         notifiers=NotifiersReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
         resources=ResourcesHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=verify_vtn_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         ),
     )

@@ -7,6 +7,7 @@
 from typing import final
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification, normalize_tls_verification
 from openadr3_client.extensions.resource_group._client.http import (
     ResourceGroupsHttpInterface,
@@ -38,6 +39,7 @@ class ResourceGroupClientFactory:
         *,
         verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> ReadWriteResourceGroupsInterface:
         """
         Create a BL (read-write) resource group client.
@@ -52,6 +54,8 @@ class ResourceGroupClientFactory:
             verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True. Passing a str path to a CA
             certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            timeout: The timeout for every HTTP request made by the client, including token requests. See `HttpTimeout`.
+            Defaults to `DEFAULT_HTTP_TIMEOUT` (30 seconds). Waiting indefinitely is not supported.
 
         """
         config = OAuthTokenManagerConfig(
@@ -60,12 +64,14 @@ class ResourceGroupClientFactory:
             token_url=token_url,
             scopes=scopes,
             audience=audience,
+            timeout=timeout,
         )
         return ResourceGroupsHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=normalize_tls_verification(verify_vtn_tls_certificate),
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         )
 
     @staticmethod
@@ -79,6 +85,7 @@ class ResourceGroupClientFactory:
         *,
         verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> ReadOnlyResourceGroupsInterface:
         """
         Create a VEN (read-only) resource group client.
@@ -93,6 +100,8 @@ class ResourceGroupClientFactory:
             verify_vtn_tls_certificate: See `TlsVerification`. Defaults to True. Passing a str path to a CA
             certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            timeout: The timeout for every HTTP request made by the client, including token requests. See `HttpTimeout`.
+            Defaults to `DEFAULT_HTTP_TIMEOUT` (30 seconds). Waiting indefinitely is not supported.
 
         """
         config = OAuthTokenManagerConfig(
@@ -101,10 +110,12 @@ class ResourceGroupClientFactory:
             token_url=token_url,
             scopes=scopes,
             audience=audience,
+            timeout=timeout,
         )
         return ResourceGroupsReadOnlyHttpInterface(
             base_url=vtn_base_url,
             config=config,
             verify_tls_certificate=normalize_tls_verification(verify_vtn_tls_certificate),
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         )

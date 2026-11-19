@@ -2,14 +2,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from requests import Session
-
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
 from openadr3_client._common.http.authenticated_session import (
     HTTPSOnlySession,
     _BearerAuthenticatedHttpsOnlySession,
     _configure_tls_verification,
+    _TimeoutSession,
 )
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 
 
@@ -19,14 +19,14 @@ class _BaseHttpInterface:
     def __init__(
         self,
         base_url: str,
-        session: Session,
+        session: _TimeoutSession,
     ) -> None:
         """
         Initializes the client with a specified base URL.
 
         Args:
             base_url (str): The base URL for the HTTP interface.
-            session (Session): The requests session to use when communicating through HTTP(S).
+            session (_TimeoutSession): The requests session to use when communicating through HTTP(S).
 
         """
         if base_url is None:
@@ -44,6 +44,7 @@ class AnonymousHttpInterface(_BaseHttpInterface):
         base_url: str,
         *,
         verify_tls_certificate: TlsVerification = True,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         """
         Initializes the client with a specified base URL.
@@ -51,9 +52,10 @@ class AnonymousHttpInterface(_BaseHttpInterface):
         Args:
             base_url (str): The base URL for the HTTP interface.
             verify_tls_certificate: See `TlsVerification`. Defaults to True.
+            timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
         """
-        session = Session()
+        session = _TimeoutSession(timeout=timeout)
         _configure_tls_verification(session, verify_tls_certificate=verify_tls_certificate)
         super().__init__(base_url=base_url, session=session)
 
@@ -74,6 +76,7 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
         *,
         verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         """
         Initializes the client with a specified base URL.
@@ -84,18 +87,21 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
             anonymous (unauthenticated) session is used instead of a bearer-authenticated one.
             verify_tls_certificate: See `TlsVerification`. Defaults to True.
             allow_insecure_http (bool): Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
+            timeout: See `HttpTimeout`. Defaults to `DEFAULT_HTTP_TIMEOUT`.
 
         """  # noqa: E501
         session = (
             HTTPSOnlySession(
                 verify_tls_certificate=verify_tls_certificate,
                 allow_insecure_http=allow_insecure_http,
+                timeout=timeout,
             )
             if config is None
             else _BearerAuthenticatedHttpsOnlySession(
                 token_manager=OAuthTokenManager(config),
                 verify_tls_certificate=verify_tls_certificate,
                 allow_insecure_http=allow_insecure_http,
+                timeout=timeout,
             )
         )
         super().__init__(base_url=base_url, session=session)

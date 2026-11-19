@@ -6,6 +6,7 @@ from typing import final
 
 from openadr3_client._auth.config_builder import build_token_manager_config
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification, normalize_tls_verification
 from openadr3_client.ven._client import BaseVirtualEndNodeClient
 from openadr3_client.version import OADRVersion
@@ -26,6 +27,7 @@ class VirtualEndNodeHttpClientFactory:
         verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> BaseVirtualEndNodeClient:
         """
         Creates an authenticated VEN client which uses the HTTP interface of a VTN.
@@ -44,6 +46,8 @@ class VirtualEndNodeHttpClientFactory:
             certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version: The OpenADR version to use for the VEN client.
+            timeout: The timeout for every HTTP request made by the client, including token requests. See `HttpTimeout`.
+            Defaults to `DEFAULT_HTTP_TIMEOUT` (30 seconds). Waiting indefinitely is not supported.
 
         """
         verify_tls = normalize_tls_verification(verify_vtn_tls_certificate)
@@ -57,6 +61,7 @@ class VirtualEndNodeHttpClientFactory:
             verify_vtn_tls_certificate=verify_tls,
             version=version,
             factory_name="VEN client factory",
+            timeout=timeout,
         )
         return VirtualEndNodeHttpClientFactory._create_ven_client(
             vtn_base_url=vtn_base_url,
@@ -64,6 +69,7 @@ class VirtualEndNodeHttpClientFactory:
             verify_vtn_tls_certificate=verify_tls,
             allow_insecure_http=allow_insecure_http,
             version=version,
+            timeout=timeout,
         )
 
     @staticmethod
@@ -73,6 +79,7 @@ class VirtualEndNodeHttpClientFactory:
         verify_vtn_tls_certificate: TlsVerification | str = True,
         allow_insecure_http: bool = False,
         version: OADRVersion,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> BaseVirtualEndNodeClient:
         """
         Creates an anonymous (unauthenticated) VEN client which uses the HTTP interface of a VTN.
@@ -88,6 +95,8 @@ class VirtualEndNodeHttpClientFactory:
             certificate bundle is deprecated, pass a `pathlib.Path` instead.
             allow_insecure_http: Whether to allow plain HTTP requests. Defaults to False. Since this is not spec-compliant, only use in development or test environments.
             version: The OpenADR version to use for the VEN client.
+            timeout: The timeout for every HTTP request made by the client, including token requests. See `HttpTimeout`.
+            Defaults to `DEFAULT_HTTP_TIMEOUT` (30 seconds). Waiting indefinitely is not supported.
 
         """
         return VirtualEndNodeHttpClientFactory._create_ven_client(
@@ -96,6 +105,7 @@ class VirtualEndNodeHttpClientFactory:
             verify_vtn_tls_certificate=normalize_tls_verification(verify_vtn_tls_certificate),
             allow_insecure_http=allow_insecure_http,
             version=version,
+            timeout=timeout,
         )
 
     @staticmethod
@@ -106,6 +116,7 @@ class VirtualEndNodeHttpClientFactory:
         verify_vtn_tls_certificate: TlsVerification,
         allow_insecure_http: bool,
         version: OADRVersion,
+        timeout: HttpTimeout,
     ) -> BaseVirtualEndNodeClient:
         """Dispatches to the version-specific VEN client. `config` is None for an anonymous client."""
         if version == OADRVersion.OADR_310:
@@ -116,6 +127,7 @@ class VirtualEndNodeHttpClientFactory:
                 config=config,
                 verify_vtn_tls_certificate=verify_vtn_tls_certificate,
                 allow_insecure_http=allow_insecure_http,
+                timeout=timeout,
             )
 
         from openadr3_client.oadr301._ven.client import get_oadr301_ven_client  # noqa: PLC0415
@@ -123,4 +135,5 @@ class VirtualEndNodeHttpClientFactory:
         return get_oadr301_ven_client(
             vtn_base_url=vtn_base_url,
             config=config,
+            timeout=timeout,
         )

@@ -4,17 +4,16 @@
 
 """Version-neutral authenticated HTTP base for the resource group extension."""
 
-from requests import Session
-
 from openadr3_client._auth.token_manager import OAuthTokenManager, OAuthTokenManagerConfig
-from openadr3_client._common.http.authenticated_session import _BearerAuthenticatedHttpsOnlySession
+from openadr3_client._common.http.authenticated_session import _BearerAuthenticatedHttpsOnlySession, _TimeoutSession
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 
 
 class _BaseHttpInterface:
     """Base class holding the base URL and requests session."""
 
-    def __init__(self, base_url: str, session: Session) -> None:
+    def __init__(self, base_url: str, session: _TimeoutSession) -> None:
         self.base_url = base_url
         self.session = session
 
@@ -29,10 +28,12 @@ class AuthenticatedHttpInterface(_BaseHttpInterface):
         *,
         verify_tls_certificate: TlsVerification = True,
         allow_insecure_http: bool = False,
+        timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
     ) -> None:
         session = _BearerAuthenticatedHttpsOnlySession(
             token_manager=OAuthTokenManager(config),
             verify_tls_certificate=verify_tls_certificate,
             allow_insecure_http=allow_insecure_http,
+            timeout=timeout,
         )
         super().__init__(base_url=base_url, session=session)

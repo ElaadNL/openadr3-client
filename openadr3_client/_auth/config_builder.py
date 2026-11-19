@@ -5,6 +5,7 @@
 """Shared helper for building the OAuth token manager configuration from client factory arguments."""
 
 from openadr3_client._auth.token_manager import OAuthTokenManagerConfig
+from openadr3_client._common.http.timeout import DEFAULT_HTTP_TIMEOUT, HttpTimeout
 from openadr3_client._common.tls import TlsVerification
 from openadr3_client.logging import logger
 from openadr3_client.version import OADRVersion
@@ -21,6 +22,7 @@ def build_token_manager_config(
     verify_vtn_tls_certificate: TlsVerification,
     version: OADRVersion,
     factory_name: str,
+    timeout: HttpTimeout = DEFAULT_HTTP_TIMEOUT,
 ) -> OAuthTokenManagerConfig:
     """
     Builds the OAuth token manager configuration for an authenticated client factory.
@@ -40,6 +42,7 @@ def build_token_manager_config(
         verify_vtn_tls_certificate: Whether to verify the TLS certificate of the VTN during discovery.
         version: The OpenADR version to use.
         factory_name: A human readable name of the calling factory, used in log messages.
+        timeout: See `HttpTimeout`. Used for the discovery request and for requests to the token endpoint.
 
     Returns:
         OAuthTokenManagerConfig: The token manager configuration.
@@ -56,7 +59,7 @@ def build_token_manager_config(
 
             # If token URL is None, discover the token URL from the VTN through the discovery endpoint.
             logger.info(f"Token URL not provided to {factory_name}, calling VTN discovery endpoint to fetch token URL...")
-            auth_interface = AuthReadOnlyInterface(base_url=vtn_base_url, verify_tls_certificate=verify_vtn_tls_certificate)
+            auth_interface = AuthReadOnlyInterface(base_url=vtn_base_url, verify_tls_certificate=verify_vtn_tls_certificate, timeout=timeout)
             auth_server_info = auth_interface.get_auth_server()
             token_url = auth_server_info.token_url
 
@@ -66,4 +69,5 @@ def build_token_manager_config(
         token_url=token_url,
         scopes=scopes,
         audience=audience,
+        timeout=timeout,
     )
